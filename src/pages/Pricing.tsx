@@ -6,10 +6,12 @@ import { Button } from '@/components/ui/button';
 import { CheckCircle2, Loader2 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
 
 const Pricing = () => {
   const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = useState<string | null>(null);
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
 
   const handlePayment = (tierName: string) => {
     if (tierName === 'Starter') {
@@ -18,27 +20,32 @@ const Pricing = () => {
     }
 
     if (tierName === 'Enterprise') {
-      toast.info("Our sales team will contact you shortly.");
+      toast.info("Our sales team will contact you shortly to discuss your custom requirements.");
       return;
     }
 
     setIsProcessing(tierName);
     
-    // Simulate Razorpay loading
+    // Simulate payment gateway loading
     setTimeout(() => {
-      toast.loading("Initializing Razorpay Secure Checkout...");
+      toast.loading("Initializing Secure Checkout...");
       
       setTimeout(() => {
         setIsProcessing(null);
         toast.dismiss();
         
-        // Mock Razorpay Success
+        // Mock Success
         toast.success("Payment Successful!", {
-          description: "Welcome to Guardian AI Pro. Redirecting to your dashboard..."
+          description: `Welcome to Guardian AI ${tierName}. Redirecting to your dashboard...`
         });
         
         setTimeout(() => {
-          localStorage.setItem('user', JSON.stringify({ email: 'pro@user.com', name: 'Pro User', confirmed: true }));
+          localStorage.setItem('user', JSON.stringify({ 
+            email: `${tierName.toLowerCase()}@user.com`, 
+            name: `${tierName} User`, 
+            confirmed: true,
+            plan: tierName
+          }));
           navigate('/dashboard');
         }, 1500);
       }, 2000);
@@ -48,68 +55,142 @@ const Pricing = () => {
   const tiers = [
     {
       name: 'Starter',
-      price: '$0',
+      price: billingCycle === 'monthly' ? '$49' : '$39',
       desc: 'Perfect for small communities and side projects.',
-      features: ['Up to 10k requests/mo', 'Basic text moderation', 'Community support', 'Standard API access'],
+      features: [
+        'Up to 50K scans',
+        'Basic moderation AI',
+        'Email alerts',
+        '7-day retention',
+        'Community support'
+      ],
       button: 'Start for Free',
+      color: 'slate'
     },
     {
       name: 'Pro',
-      price: '$99',
+      price: billingCycle === 'monthly' ? '$149' : '$119',
       desc: 'Advanced safety for growing platforms.',
-      features: ['Up to 500k requests/mo', 'Image & Video analysis', 'Priority support', 'Custom policy rules', 'Threat intelligence'],
-      button: 'Get Started with Razorpay',
-      popular: true
+      features: [
+        'Up to 500K scans',
+        'Advanced AI models',
+        'Real-time alerts',
+        'Priority support',
+        '30-day retention',
+        'API access'
+      ],
+      button: 'Get Started',
+      popular: true,
+      color: 'blue'
+    },
+    {
+      name: 'Business',
+      price: billingCycle === 'monthly' ? '$399' : '$349',
+      desc: 'Scale your operations with custom workflows.',
+      features: [
+        'Up to 2M scans',
+        'Full AI suite',
+        'Custom workflows',
+        'Team collaboration',
+        '90-day retention',
+        'Webhooks + integrations'
+      ],
+      button: 'Upgrade Now',
+      color: 'indigo'
     },
     {
       name: 'Enterprise',
       price: 'Custom',
       desc: 'Dedicated infrastructure for global scale.',
-      features: ['Unlimited requests', 'Dedicated account manager', 'SLA guarantees', 'On-premise deployment', 'Custom AI training'],
+      features: [
+        'Unlimited scans',
+        'Dedicated AI models',
+        'On-premise deployment',
+        'SLA + compliance',
+        'Dedicated manager'
+      ],
       button: 'Contact Sales',
+      color: 'amber'
     }
   ];
 
   return (
     <LandingLayout>
       <section className="py-24 px-4">
-        <div className="max-w-5xl mx-auto text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">Simple, transparent pricing</h1>
-          <p className="text-xl text-slate-600">Choose the plan that fits your platform's needs.</p>
+        <div className="max-w-5xl mx-auto text-center mb-12">
+          <h1 className="text-4xl md:text-6xl font-extrabold text-slate-900 mb-6 tracking-tight">
+            Simple, transparent pricing
+          </h1>
+          <p className="text-xl text-slate-600 mb-10">
+            Choose the plan that fits your platform's needs.
+          </p>
+
+          {/* Billing Toggle */}
+          <div className="flex items-center justify-center gap-4 mb-12">
+            <span className={cn("text-sm font-medium", billingCycle === 'monthly' ? "text-slate-900" : "text-slate-400")}>Monthly</span>
+            <button 
+              onClick={() => setBillingCycle(billingCycle === 'monthly' ? 'yearly' : 'monthly')}
+              className="w-14 h-7 bg-slate-200 rounded-full p-1 transition-colors relative"
+            >
+              <div className={cn(
+                "w-5 h-5 bg-white rounded-full shadow-sm transition-transform",
+                billingCycle === 'yearly' ? "translate-x-7" : "translate-x-0"
+              )} />
+            </button>
+            <span className={cn("text-sm font-medium", billingCycle === 'yearly' ? "text-slate-900" : "text-slate-400")}>
+              Yearly <span className="text-emerald-500 font-bold ml-1">(Save up to 20%)</span>
+            </span>
+          </div>
         </div>
 
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {tiers.map((tier, i) => (
-            <div key={i} className={`relative p-8 rounded-3xl border ${tier.popular ? 'border-primary shadow-xl ring-1 ring-primary' : 'border-slate-200 shadow-sm'} bg-white flex flex-col`}>
+            <div 
+              key={i} 
+              className={cn(
+                "relative p-8 rounded-[2.5rem] border transition-all duration-300 flex flex-col",
+                tier.popular 
+                  ? "border-primary shadow-2xl shadow-primary/10 ring-1 ring-primary bg-white scale-105 z-10" 
+                  : "border-slate-100 shadow-sm bg-white hover:shadow-md"
+              )}
+            >
               {tier.popular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-white text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest">
                   Most Popular
                 </div>
               )}
+              
               <div className="mb-8">
                 <h3 className="text-xl font-bold text-slate-900 mb-2">{tier.name}</h3>
                 <div className="flex items-baseline gap-1 mb-4">
-                  <span className="text-4xl font-bold text-slate-900">{tier.price}</span>
-                  {tier.price !== 'Custom' && <span className="text-slate-500">/mo</span>}
+                  <span className="text-4xl font-black text-slate-900">{tier.price}</span>
+                  {tier.price !== 'Custom' && (
+                    <span className="text-slate-400 font-medium">/mo</span>
+                  )}
                 </div>
-                <p className="text-slate-600 text-sm">{tier.desc}</p>
+                <p className="text-slate-500 text-sm leading-relaxed">{tier.desc}</p>
               </div>
-              <div className="space-y-4 mb-8 flex-1">
+
+              <div className="space-y-4 mb-10 flex-1">
                 {tier.features.map((feature, j) => (
-                  <div key={j} className="flex items-center gap-3 text-sm text-slate-600">
-                    <CheckCircle2 className="text-emerald-500 shrink-0" size={18} />
-                    {feature}
+                  <div key={j} className="flex items-start gap-3 text-sm text-slate-600">
+                    <CheckCircle2 className="text-emerald-500 shrink-0 mt-0.5" size={16} />
+                    <span>{feature}</span>
                   </div>
                 ))}
               </div>
+
               <Button 
                 onClick={() => handlePayment(tier.name)}
                 disabled={isProcessing === tier.name}
                 variant={tier.popular ? 'default' : 'outline'} 
-                className="w-full rounded-2xl h-12 font-bold"
+                className={cn(
+                  "w-full rounded-2xl h-14 font-bold text-base transition-all",
+                  tier.popular ? "bg-slate-900 hover:bg-slate-800 shadow-lg shadow-slate-200" : "border-slate-200 hover:bg-slate-50"
+                )}
               >
                 {isProcessing === tier.name ? (
-                  <Loader2 className="animate-spin mr-2" size={18} />
+                  <Loader2 className="animate-spin mr-2" size={20} />
                 ) : null}
                 {tier.button}
               </Button>
