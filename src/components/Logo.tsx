@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+import { Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface LogoProps {
@@ -10,31 +11,47 @@ interface LogoProps {
 }
 
 const Logo = ({ className, iconOnly = false, size = 'md' }: LogoProps) => {
-  const sizeClasses = {
-    sm: 'h-6 w-6',
-    md: 'h-8 w-8',
-    lg: 'h-10 w-10'
+  const iconSize = {
+    sm: 18,
+    md: 24,
+    lg: 32
+  };
+
+  const containerSize = {
+    sm: 'p-1.5',
+    md: 'p-2',
+    lg: 'p-2.5'
   };
 
   return (
-    <div className={cn("flex items-center gap-2", className)}>
+    <div className={cn("flex items-center gap-3", className)}>
       <div className={cn(
-        "bg-slate-900 rounded-xl flex items-center justify-center overflow-hidden",
-        sizeClasses[size]
+        "bg-slate-900 rounded-xl flex items-center justify-center shadow-lg shadow-slate-200",
+        containerSize[size]
       )}>
-        <img 
-          src="/placeholder.svg" 
-          alt="Guardian AI Logo" 
-          className="w-full h-full object-cover p-1.5 invert"
+        <Shield 
+          size={iconSize[size]} 
+          className="text-white fill-white/10" 
+          strokeWidth={2.5}
         />
       </div>
       {!iconOnly && (
-        <span className={cn(
-          "font-bold text-slate-900 tracking-tight",
-          size === 'sm' ? 'text-lg' : size === 'lg' ? 'text-2xl' : 'text-xl'
-        )}>
-          Guardian AI
-        </span>
+        <div className="flex flex-col leading-none">
+          <span className={cn(
+            "font-black text-slate-900 tracking-tight uppercase",
+            size === 'sm' ? 'text-base' : size === 'lg' ? 'text-2xl' : 'text-xl'
+          )}>
+            Guardian AI
+          </span>
+          {size !== 'sm' && (
+            <span className={cn(
+              "text-slate-400 font-medium tracking-wide mt-0.5",
+              size === 'lg' ? 'text-[10px]' : 'text-[8px]'
+            )}>
+              Where Safety Meets Technology
+            </span>
+          )}
+        </div>
       )}
     </div>
   );
