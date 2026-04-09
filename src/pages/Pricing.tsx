@@ -1,12 +1,50 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import LandingLayout from '@/components/LandingLayout';
 import { Button } from '@/components/ui/button';
-import { CheckCircle2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { CheckCircle2, Loader2 } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 const Pricing = () => {
+  const navigate = useNavigate();
+  const [isProcessing, setIsProcessing] = useState<string | null>(null);
+
+  const handlePayment = (tierName: string) => {
+    if (tierName === 'Starter') {
+      navigate('/signup');
+      return;
+    }
+
+    if (tierName === 'Enterprise') {
+      toast.info("Our sales team will contact you shortly.");
+      return;
+    }
+
+    setIsProcessing(tierName);
+    
+    // Simulate Razorpay loading
+    setTimeout(() => {
+      toast.loading("Initializing Razorpay Secure Checkout...");
+      
+      setTimeout(() => {
+        setIsProcessing(null);
+        toast.dismiss();
+        
+        // Mock Razorpay Success
+        toast.success("Payment Successful!", {
+          description: "Welcome to Guardian AI Pro. Redirecting to your dashboard..."
+        });
+        
+        setTimeout(() => {
+          localStorage.setItem('user', JSON.stringify({ email: 'pro@user.com', name: 'Pro User', confirmed: true }));
+          navigate('/dashboard');
+        }, 1500);
+      }, 2000);
+    }, 800);
+  };
+
   const tiers = [
     {
       name: 'Starter',
@@ -14,15 +52,13 @@ const Pricing = () => {
       desc: 'Perfect for small communities and side projects.',
       features: ['Up to 10k requests/mo', 'Basic text moderation', 'Community support', 'Standard API access'],
       button: 'Start for Free',
-      link: '/signup'
     },
     {
       name: 'Pro',
       price: '$99',
       desc: 'Advanced safety for growing platforms.',
       features: ['Up to 500k requests/mo', 'Image & Video analysis', 'Priority support', 'Custom policy rules', 'Threat intelligence'],
-      button: 'Get Started',
-      link: '/signup',
+      button: 'Get Started with Razorpay',
       popular: true
     },
     {
@@ -31,7 +67,6 @@ const Pricing = () => {
       desc: 'Dedicated infrastructure for global scale.',
       features: ['Unlimited requests', 'Dedicated account manager', 'SLA guarantees', 'On-premise deployment', 'Custom AI training'],
       button: 'Contact Sales',
-      link: '/signup'
     }
   ];
 
@@ -67,8 +102,16 @@ const Pricing = () => {
                   </div>
                 ))}
               </div>
-              <Button asChild variant={tier.popular ? 'default' : 'outline'} className="w-full rounded-full h-12">
-                <Link to={tier.link}>{tier.button}</Link>
+              <Button 
+                onClick={() => handlePayment(tier.name)}
+                disabled={isProcessing === tier.name}
+                variant={tier.popular ? 'default' : 'outline'} 
+                className="w-full rounded-2xl h-12 font-bold"
+              >
+                {isProcessing === tier.name ? (
+                  <Loader2 className="animate-spin mr-2" size={18} />
+                ) : null}
+                {tier.button}
               </Button>
             </div>
           ))}
