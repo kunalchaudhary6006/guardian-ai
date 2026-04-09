@@ -1,7 +1,7 @@
 "use client";
 
-import React from 'react';
-import { Search, Bell, User, HelpCircle, Command } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Search, Bell, HelpCircle, Command } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
@@ -15,6 +15,28 @@ import {
 import { toast } from "sonner";
 
 const Header = () => {
+  const [user, setUser] = useState({ name: 'John Doe', role: 'Senior Security Analyst' });
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      const parsed = JSON.parse(storedUser);
+      setUser({
+        name: parsed.name || 'John Doe',
+        role: parsed.role || 'Senior Security Analyst'
+      });
+    }
+  }, []);
+
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase()
+      .substring(0, 2);
+  };
+
   return (
     <header className="h-16 border-b border-slate-200 bg-white/80 backdrop-blur-md sticky top-0 z-30 px-4 lg:px-8 flex items-center justify-between">
       <div className="flex-1 max-w-md hidden md:block">
@@ -56,11 +78,11 @@ const Header = () => {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="gap-3 px-2 hover:bg-slate-50 rounded-xl">
               <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center text-white text-xs font-bold shadow-lg shadow-slate-200">
-                JD
+                {getInitials(user.name)}
               </div>
               <div className="text-left hidden lg:block">
-                <p className="text-sm font-bold text-slate-900 leading-none">John Doe</p>
-                <p className="text-[10px] text-slate-500 mt-1">Senior Security Analyst</p>
+                <p className="text-sm font-bold text-slate-900 leading-none">{user.name}</p>
+                <p className="text-[10px] text-slate-500 mt-1">{user.role}</p>
               </div>
             </Button>
           </DropdownMenuTrigger>
