@@ -12,7 +12,8 @@ import {
   Settings as SettingsIcon,
   LogOut,
   Menu,
-  X
+  X,
+  HeadphonesIcon
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -96,6 +97,17 @@ const Sidebar = () => {
           </div>
           
           <div className="space-y-1">
+            <Link 
+              to="/contact"
+              onClick={() => setIsOpen(false)}
+              className={cn(
+                "w-full flex items-center gap-3 px-4 py-2.5 rounded-2xl transition-colors",
+                location.pathname === '/contact' ? "bg-slate-100 text-slate-900" : "text-slate-600 hover:text-slate-900"
+              )}
+            >
+              <HeadphonesIcon size={18} />
+              <span className="text-sm font-medium">Contact Support</span>
+            </Link>
             <Link 
               to="/settings"
               onClick={() => setIsOpen(false)}
