@@ -14,6 +14,7 @@ import PolicyEnforcement from "./pages/PolicyEnforcement";
 import ResearchAnalytics from "./pages/ResearchAnalytics";
 import MarketingDashboard from "./pages/MarketingDashboard";
 import Settings from "./pages/Settings";
+import MockInbox from "./pages/MockInbox";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,6 +30,7 @@ const App = () => (
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/inbox" element={<MockInbox />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/moderation" element={<ContentModeration />} />
           <Route path="/threats" element={<ThreatIntelligence />} />

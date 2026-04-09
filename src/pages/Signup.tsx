@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ShieldCheck, ArrowRight, CheckCircle2, Mail } from 'lucide-react';
+import { ShieldCheck, ArrowRight, CheckCircle2, Mail, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -30,22 +30,22 @@ const Signup = () => {
       const mockUser = { email, name: firstName, confirmed: false };
       localStorage.setItem('pending_user', JSON.stringify(mockUser));
       
-      toast.success(`Confirmation email sent to ${email}!`, {
-        description: "Please check your inbox to verify your account.",
-        duration: 5000,
-      });
+      // Add to mock inbox
+      const newEmail = {
+        id: Math.random().toString(36).substr(2, 9),
+        subject: "Verify your Guardian AI account",
+        from: "no-reply@guardian-ai.com",
+        to: email,
+        body: `Hi ${firstName},\n\nWelcome to Guardian AI! Please click the button below to verify your email address and complete your registration.`,
+        timestamp: new Date().toLocaleTimeString(),
+        type: 'verification'
+      };
+      
+      const existingEmails = JSON.parse(localStorage.getItem('mock_emails') || '[]');
+      localStorage.setItem('mock_emails', JSON.stringify([newEmail, ...existingEmails]));
+      
+      toast.success(`Confirmation email sent to ${email}!`);
     }, 1500);
-  };
-
-  const handleConfirmPrototype = () => {
-    const pendingUser = JSON.parse(localStorage.getItem('pending_user') || '{}');
-    const confirmedUser = { ...pendingUser, confirmed: true };
-    
-    localStorage.setItem('user', JSON.stringify(confirmedUser));
-    localStorage.removeItem('pending_user');
-    
-    toast.success("Email verified successfully!");
-    navigate('/dashboard');
   };
 
   if (isEmailSent) {
@@ -57,10 +57,10 @@ const Signup = () => {
           </div>
           <h1 className="text-3xl font-bold text-slate-900 mb-4">Check your email</h1>
           <p className="text-slate-600 mb-8">
-            We've sent a confirmation link to your email address. Since this is a prototype, you can click the button below to simulate the verification.
+            We've sent a confirmation link to your email address. You can view it in our prototype inbox.
           </p>
-          <Button onClick={handleConfirmPrototype} className="w-full bg-slate-900 hover:bg-slate-800 h-12 rounded-xl">
-            Verify Email (Prototype)
+          <Button asChild className="w-full bg-slate-900 hover:bg-slate-800 h-12 rounded-xl gap-2">
+            <Link to="/inbox">Open Prototype Inbox <ExternalLink size={18} /></Link>
           </Button>
         </div>
       </div>
