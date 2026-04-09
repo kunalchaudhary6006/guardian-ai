@@ -3,6 +3,7 @@
 import React from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { ShieldCheck, Globe, Zap, Lock, AlertCircle } from 'lucide-react';
 import { 
   BarChart, 
