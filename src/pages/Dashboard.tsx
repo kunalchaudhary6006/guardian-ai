@@ -10,7 +10,9 @@ import {
   TrendingUp,
   AlertTriangle,
   CheckCircle2,
-  Clock
+  Clock,
+  ArrowUpRight,
+  MoreHorizontal
 } from 'lucide-react';
 import { 
   AreaChart, 
@@ -22,6 +24,7 @@ import {
   ResponsiveContainer
 } from 'recharts';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 
 const data = [
   { name: 'Mon', threats: 40, moderation: 240 },
@@ -34,33 +37,45 @@ const data = [
 ];
 
 const stats = [
-  { label: 'Active Threats', value: '12', icon: ShieldAlert, color: 'text-rose-600', bg: 'bg-rose-50' },
-  { label: 'Users Monitored', value: '1.2M', icon: Users, color: 'text-blue-600', bg: 'bg-blue-50' },
-  { label: 'System Health', value: '99.9%', icon: Activity, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-  { label: 'Safety Score', value: '94/100', icon: TrendingUp, color: 'text-indigo-600', bg: 'bg-indigo-50' },
+  { label: 'Active Threats', value: '12', change: '+2.5%', icon: ShieldAlert, color: 'text-rose-600', bg: 'bg-rose-50' },
+  { label: 'Users Monitored', value: '1.2M', change: '+12%', icon: Users, color: 'text-blue-600', bg: 'bg-blue-50' },
+  { label: 'System Health', value: '99.9%', change: 'Stable', icon: Activity, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+  { label: 'Safety Score', value: '94/100', change: '+4', icon: TrendingUp, color: 'text-indigo-600', bg: 'bg-indigo-50' },
 ];
 
 const Dashboard = () => {
   return (
     <DashboardLayout>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900">System Overview</h1>
-        <p className="text-slate-500">Welcome back, Guardian. Here's what's happening across your network.</p>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-slate-900">System Overview</h1>
+          <p className="text-slate-500">Real-time safety metrics and platform health.</p>
+        </div>
+        <div className="flex gap-3">
+          <Button variant="outline" className="rounded-xl">Download Report</Button>
+          <Button className="bg-slate-900 hover:bg-slate-800 rounded-xl">Manage Policies</Button>
+        </div>
       </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {stats.map((stat, i) => (
-          <Card key={i} className="border-none shadow-sm hover:shadow-md transition-shadow">
+          <Card key={i} className="border-none shadow-sm hover:shadow-md transition-all duration-300 group">
             <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-slate-500">{stat.label}</p>
-                  <h3 className="text-2xl font-bold text-slate-900 mt-1">{stat.value}</h3>
-                </div>
-                <div className={`${stat.bg} p-3 rounded-2xl`}>
+              <div className="flex items-center justify-between mb-4">
+                <div className={`${stat.bg} p-3 rounded-2xl group-hover:scale-110 transition-transform`}>
                   <stat.icon className={stat.color} size={24} />
                 </div>
+                <span className={cn(
+                  "text-xs font-bold px-2 py-1 rounded-full",
+                  stat.change.startsWith('+') ? "bg-emerald-50 text-emerald-600" : "bg-slate-50 text-slate-600"
+                )}>
+                  {stat.change}
+                </span>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-slate-500">{stat.label}</p>
+                <h3 className="text-2xl font-bold text-slate-900 mt-1">{stat.value}</h3>
               </div>
             </CardContent>
           </Card>
@@ -70,8 +85,9 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Chart */}
         <Card className="lg:col-span-2 border-none shadow-sm">
-          <CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-lg font-semibold">Threat Activity vs Moderation</CardTitle>
+            <Button variant="ghost" size="icon" className="text-slate-400"><MoreHorizontal size={20} /></Button>
           </CardHeader>
           <CardContent className="h-[350px]">
             <ResponsiveContainer width="100%" height="100%">
@@ -90,10 +106,10 @@ const Dashboard = () => {
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} />
                 <YAxis axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} />
                 <Tooltip 
-                  contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                  contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)' }}
                 />
-                <Area type="monotone" dataKey="threats" stroke="#ef4444" fillOpacity={1} fill="url(#colorThreats)" strokeWidth={2} />
-                <Area type="monotone" dataKey="moderation" stroke="#3b82f6" fillOpacity={1} fill="url(#colorMod)" strokeWidth={2} />
+                <Area type="monotone" dataKey="threats" stroke="#ef4444" fillOpacity={1} fill="url(#colorThreats)" strokeWidth={3} />
+                <Area type="monotone" dataKey="moderation" stroke="#3b82f6" fillOpacity={1} fill="url(#colorMod)" strokeWidth={3} />
               </AreaChart>
             </ResponsiveContainer>
           </CardContent>
@@ -101,8 +117,9 @@ const Dashboard = () => {
 
         {/* Recent Alerts */}
         <Card className="border-none shadow-sm">
-          <CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-lg font-semibold">Recent Alerts</CardTitle>
+            <Button variant="ghost" size="sm" className="text-primary font-bold">View All</Button>
           </CardHeader>
           <CardContent>
             <div className="space-y-6">
@@ -112,9 +129,9 @@ const Dashboard = () => {
                 { title: 'New Threat Pattern Identified', time: '1 hour ago', type: 'warning', icon: Clock },
                 { title: 'System Backup Complete', time: '3 hours ago', type: 'info', icon: CheckCircle2 },
               ].map((alert, i) => (
-                <div key={i} className="flex gap-4">
+                <div key={i} className="flex gap-4 group cursor-pointer">
                   <div className={cn(
-                    "w-10 h-10 rounded-full flex items-center justify-center shrink-0",
+                    "w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110",
                     alert.type === 'critical' ? "bg-rose-100 text-rose-600" :
                     alert.type === 'warning' ? "bg-amber-100 text-amber-600" :
                     alert.type === 'success' ? "bg-emerald-100 text-emerald-600" :
@@ -122,16 +139,16 @@ const Dashboard = () => {
                   )}>
                     <alert.icon size={20} />
                   </div>
-                  <div>
-                    <p className="text-sm font-semibold text-slate-900">{alert.title}</p>
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm font-bold text-slate-900">{alert.title}</p>
+                      <ArrowUpRight size={14} className="text-slate-300 group-hover:text-slate-900 transition-colors" />
+                    </div>
                     <p className="text-xs text-slate-500">{alert.time}</p>
                   </div>
                 </div>
               ))}
             </div>
-            <button className="w-full mt-6 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors border-t border-slate-100">
-              View All Alerts
-            </button>
           </CardContent>
         </Card>
       </div>
