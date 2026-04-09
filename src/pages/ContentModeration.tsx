@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -40,22 +40,22 @@ const ContentModeration = () => {
           <p className="text-slate-500">Review and manage flagged content across all platforms.</p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" className="gap-2" onClick={() => toast.info("Filter options coming soon")}>
+          <Button variant="outline" className="rounded-2xl gap-2 h-11 px-6 border-slate-200" onClick={() => toast.info("Filter options coming soon")}>
             <Filter size={18} /> Filter
           </Button>
-          <Button className="bg-slate-900 hover:bg-slate-800 gap-2" onClick={() => toast.promise(new Promise(r => setTimeout(r, 1000)), { loading: 'Processing bulk action...', success: 'Bulk action completed', error: 'Failed to process' })}>
+          <Button className="bg-slate-900 hover:bg-slate-800 rounded-2xl gap-2 h-11 px-6 shadow-lg shadow-slate-200" onClick={() => toast.promise(new Promise(r => setTimeout(r, 1000)), { loading: 'Processing bulk action...', success: 'Bulk action completed', error: 'Failed to process' })}>
             <ShieldAlert size={18} /> Bulk Action
           </Button>
         </div>
       </div>
 
-      <Card className="border-none shadow-sm mb-8">
-        <CardHeader className="border-b border-slate-50">
+      <Card className="border-none shadow-sm mb-8 rounded-3xl overflow-hidden">
+        <CardHeader className="border-b border-slate-50 p-6">
           <div className="flex items-center gap-4">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
               <Input 
-                className="pl-10 bg-slate-50 border-none" 
+                className="pl-12 bg-slate-50 border-none h-12 rounded-2xl focus-visible:ring-1 focus-visible:ring-slate-200" 
                 placeholder="Search by ID, user, or content..." 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -84,7 +84,7 @@ const ContentModeration = () => {
                     <td className="px-6 py-4 text-sm text-slate-600 max-w-xs truncate">{item.content}</td>
                     <td className="px-6 py-4">
                       <Badge className={cn(
-                        "font-medium",
+                        "font-medium rounded-full px-3",
                         item.risk === 'Critical' ? "bg-rose-100 text-rose-700 hover:bg-rose-100" :
                         item.risk === 'High' ? "bg-orange-100 text-orange-700 hover:bg-orange-100" :
                         "bg-amber-100 text-amber-700 hover:bg-amber-100"
@@ -98,7 +98,7 @@ const ContentModeration = () => {
                         <Button 
                           size="icon" 
                           variant="ghost" 
-                          className="h-8 w-8 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
+                          className="h-9 w-9 rounded-xl text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
                           onClick={() => handleAction(item.id, 'approve')}
                         >
                           <CheckCircle size={18} />
@@ -106,12 +106,12 @@ const ContentModeration = () => {
                         <Button 
                           size="icon" 
                           variant="ghost" 
-                          className="h-8 w-8 text-rose-600 hover:text-rose-700 hover:bg-rose-50"
+                          className="h-9 w-9 rounded-xl text-rose-600 hover:text-rose-700 hover:bg-rose-50"
                           onClick={() => handleAction(item.id, 'reject')}
                         >
                           <XCircle size={18} />
                         </Button>
-                        <Button size="icon" variant="ghost" className="h-8 w-8 text-slate-400" onClick={() => toast.info(`Details for ${item.id}`)}>
+                        <Button size="icon" variant="ghost" className="h-9 w-9 rounded-xl text-slate-400" onClick={() => toast.info(`Details for ${item.id}`)}>
                           <MoreVertical size={18} />
                         </Button>
                       </div>

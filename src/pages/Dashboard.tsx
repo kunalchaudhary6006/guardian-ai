@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
@@ -12,7 +12,6 @@ import {
   CheckCircle2,
   Clock,
   ArrowUpRight,
-  MoreHorizontal,
   RefreshCw,
   Download,
   Settings
@@ -87,21 +86,20 @@ const Dashboard = () => {
           </p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" className="rounded-xl gap-2" onClick={handleDownload}>
+          <Button variant="outline" className="rounded-2xl gap-2 h-11 px-6 border-slate-200 hover:bg-slate-50" onClick={handleDownload}>
             <Download size={18} /> Download Report
           </Button>
-          <Button className="bg-slate-900 hover:bg-slate-800 rounded-xl gap-2" onClick={() => navigate('/policy')}>
+          <Button className="bg-slate-900 hover:bg-slate-800 rounded-2xl gap-2 h-11 px-6 shadow-lg shadow-slate-200" onClick={() => navigate('/policy')}>
             <Settings size={18} /> Manage Policies
           </Button>
         </div>
       </div>
 
-      {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {stats.map((stat, i) => (
           <Card 
             key={i} 
-            className="border-none shadow-sm hover:shadow-md transition-all duration-300 group cursor-pointer"
+            className="border-none shadow-sm hover:shadow-md transition-all duration-300 group cursor-pointer rounded-3xl"
             onClick={() => toast.info(`Viewing detailed analytics for ${stat.label}`)}
           >
             <CardContent className="p-6">
@@ -126,14 +124,13 @@ const Dashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Main Chart */}
-        <Card className="lg:col-span-2 border-none shadow-sm">
+        <Card className="lg:col-span-2 border-none shadow-sm rounded-3xl">
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
               <CardTitle className="text-lg font-semibold">Threat Activity vs Moderation</CardTitle>
               <p className="text-xs text-slate-400 mt-1">Comparison of detected threats and automated actions</p>
             </div>
-            <Button variant="ghost" size="icon" className="text-slate-400" onClick={handleRefresh}>
+            <Button variant="ghost" size="icon" className="text-slate-400 rounded-full" onClick={handleRefresh}>
               <RefreshCw size={18} className={isRefreshing ? "animate-spin" : ""} />
             </Button>
           </CardHeader>
@@ -163,11 +160,10 @@ const Dashboard = () => {
           </CardContent>
         </Card>
 
-        {/* Recent Alerts */}
-        <Card className="border-none shadow-sm">
+        <Card className="border-none shadow-sm rounded-3xl">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-lg font-semibold">Recent Alerts</CardTitle>
-            <Button variant="ghost" size="sm" className="text-primary font-bold" onClick={() => navigate('/moderation')}>View All</Button>
+            <Button variant="ghost" size="sm" className="text-primary font-bold rounded-full" onClick={() => navigate('/moderation')}>View All</Button>
           </CardHeader>
           <CardContent>
             <div className="space-y-6">

@@ -15,8 +15,9 @@ import {
   Pie,
   Cell
 } from 'recharts';
-import { Download, Calendar, Filter } from 'lucide-react';
+import { Download, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 const trendData = [
   { date: '2024-01', value: 400 },
@@ -37,6 +38,14 @@ const pieData = [
 const COLORS = ['#3b82f6', '#6366f1', '#8b5cf6', '#ec4899'];
 
 const ResearchAnalytics = () => {
+  const handleExport = () => {
+    toast.promise(new Promise(r => setTimeout(r, 1200)), {
+      loading: 'Preparing analytics export...',
+      success: 'Analytics report exported successfully',
+      error: 'Export failed'
+    });
+  };
+
   return (
     <DashboardLayout>
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
@@ -45,17 +54,17 @@ const ResearchAnalytics = () => {
           <p className="text-slate-500">Deep dive into safety trends and behavioral patterns.</p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" className="gap-2">
+          <Button variant="outline" className="rounded-2xl gap-2 h-11 px-6 border-slate-200" onClick={() => toast.info("Date range selector opened")}>
             <Calendar size={18} /> Last 30 Days
           </Button>
-          <Button variant="outline" className="gap-2">
+          <Button className="bg-slate-900 hover:bg-slate-800 rounded-2xl gap-2 h-11 px-6 shadow-lg shadow-slate-200" onClick={handleExport}>
             <Download size={18} /> Export Report
           </Button>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <Card className="lg:col-span-2 border-none shadow-sm">
+        <Card className="lg:col-span-2 border-none shadow-sm rounded-3xl">
           <CardHeader>
             <CardTitle className="text-lg font-semibold">Safety Trend Analysis</CardTitle>
           </CardHeader>
@@ -74,7 +83,7 @@ const ResearchAnalytics = () => {
           </CardContent>
         </Card>
 
-        <Card className="border-none shadow-sm">
+        <Card className="border-none shadow-sm rounded-3xl">
           <CardHeader>
             <CardTitle className="text-lg font-semibold">Content Type Distribution</CardTitle>
           </CardHeader>

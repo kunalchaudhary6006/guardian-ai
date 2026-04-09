@@ -34,16 +34,22 @@ const Sidebar = () => {
   const [isOpen, setIsOpen] = React.useState(false);
 
   const handleLogout = () => {
-    localStorage.removeItem('user');
-    toast.success("Logged out successfully");
-    navigate('/');
+    toast.promise(new Promise((resolve) => setTimeout(resolve, 800)), {
+      loading: 'Logging out...',
+      success: () => {
+        localStorage.removeItem('user');
+        navigate('/');
+        return 'Logged out successfully';
+      },
+      error: 'Logout failed',
+    });
   };
 
   return (
     <>
       {/* Mobile Toggle */}
       <div className="lg:hidden fixed top-4 left-4 z-50">
-        <Button variant="outline" size="icon" onClick={() => setIsOpen(!isOpen)}>
+        <Button variant="outline" size="icon" className="rounded-xl bg-white shadow-sm" onClick={() => setIsOpen(!isOpen)}>
           {isOpen ? <X /> : <Menu />}
         </Button>
       </div>
@@ -67,7 +73,7 @@ const Sidebar = () => {
                 to={item.path}
                 onClick={() => setIsOpen(false)}
                 className={cn(
-                  "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group",
+                  "flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 group",
                   isActive 
                     ? "bg-slate-900 text-white shadow-lg shadow-slate-200" 
                     : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
@@ -94,7 +100,7 @@ const Sidebar = () => {
               to="/settings"
               onClick={() => setIsOpen(false)}
               className={cn(
-                "w-full flex items-center gap-3 px-4 py-2 rounded-xl transition-colors",
+                "w-full flex items-center gap-3 px-4 py-2.5 rounded-2xl transition-colors",
                 location.pathname === '/settings' ? "bg-slate-100 text-slate-900" : "text-slate-600 hover:text-slate-900"
               )}
             >
@@ -103,7 +109,7 @@ const Sidebar = () => {
             </Link>
             <button 
               onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-4 py-2 text-rose-600 hover:text-rose-700 transition-colors"
+              className="w-full flex items-center gap-3 px-4 py-2.5 text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-2xl transition-colors"
             >
               <LogOut size={18} />
               <span className="text-sm font-medium">Logout</span>
