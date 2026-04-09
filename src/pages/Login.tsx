@@ -2,18 +2,18 @@
 
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ShieldCheck, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
+import Logo from '@/components/Logo';
 
 const Login = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    // Redirect if already logged in
     const user = localStorage.getItem('user');
     if (user) {
       navigate('/dashboard');
@@ -27,7 +27,6 @@ const Login = () => {
     const formData = new FormData(e.currentTarget);
     const email = formData.get('email') as string;
 
-    // Simulate login check
     setTimeout(() => {
       setIsLoading(false);
       const storedUser = localStorage.getItem('user');
@@ -50,11 +49,8 @@ const Login = () => {
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-2 mb-6">
-            <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center">
-              <ShieldCheck className="text-white" size={24} />
-            </div>
-            <span className="font-bold text-2xl text-slate-900">Guardian AI</span>
+          <Link to="/" className="inline-flex mb-6">
+            <Logo size="lg" />
           </Link>
           <h1 className="text-2xl font-bold text-slate-900">Log in to your account</h1>
           <p className="text-slate-500 mt-2">Enter your credentials to access the dashboard</p>

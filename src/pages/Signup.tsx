@@ -2,11 +2,12 @@
 
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ShieldCheck, ArrowRight, CheckCircle2, Mail, ExternalLink } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Mail, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
+import Logo from '@/components/Logo';
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -21,16 +22,13 @@ const Signup = () => {
     const email = formData.get('email') as string;
     const firstName = formData.get('first-name') as string;
 
-    // Simulate sending confirmation email
     setTimeout(() => {
       setIsLoading(false);
       setIsEmailSent(true);
       
-      // Store mock user data
       const mockUser = { email, name: firstName, confirmed: false };
       localStorage.setItem('pending_user', JSON.stringify(mockUser));
       
-      // Add to mock inbox
       const newEmail = {
         id: Math.random().toString(36).substr(2, 9),
         subject: "Verify your Guardian AI account",
@@ -72,11 +70,8 @@ const Signup = () => {
       <div className="flex-1 flex items-center justify-center p-8">
         <div className="max-w-md w-full">
           <div className="mb-8">
-            <Link to="/" className="inline-flex items-center gap-2 mb-6">
-              <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center">
-                <ShieldCheck className="text-white" size={24} />
-              </div>
-              <span className="font-bold text-2xl text-slate-900">Guardian AI</span>
+            <Link to="/" className="inline-flex mb-6">
+              <Logo size="lg" />
             </Link>
             <h1 className="text-3xl font-bold text-slate-900">Create your account</h1>
             <p className="text-slate-500 mt-2">Start securing your platform in minutes.</p>

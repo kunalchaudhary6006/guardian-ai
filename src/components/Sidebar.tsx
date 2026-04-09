@@ -17,6 +17,7 @@ import {
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import Logo from './Logo';
 
 const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
@@ -52,14 +53,9 @@ const Sidebar = () => {
         "fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-slate-200 transition-transform duration-300 ease-in-out lg:translate-x-0 flex flex-col",
         isOpen ? "translate-x-0" : "-translate-x-full"
       )}>
-        <div className="p-6 flex items-center gap-3">
-          <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center">
-            <ShieldCheck className="text-white" size={24} />
-          </div>
-          <div>
-            <h1 className="font-bold text-slate-900 text-lg leading-tight">Guardian AI</h1>
-            <p className="text-[10px] text-slate-500 uppercase tracking-widest">Safety First</p>
-          </div>
+        <div className="p-6">
+          <Logo />
+          <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1 ml-10">Safety First</p>
         </div>
 
         <nav className="flex-1 px-4 space-y-1 mt-4">
