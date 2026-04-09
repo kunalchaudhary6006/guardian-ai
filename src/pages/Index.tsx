@@ -19,10 +19,9 @@ import {
   YAxis, 
   CartesianGrid, 
   Tooltip, 
-  ResponsiveContainer,
-  BarChart,
-  Bar
+  ResponsiveContainer
 } from 'recharts';
+import { cn } from '@/lib/utils';
 
 const data = [
   { name: 'Mon', threats: 40, moderation: 240 },
