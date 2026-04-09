@@ -4,52 +4,80 @@ import React, { useState } from 'react';
 import LandingLayout from '@/components/LandingLayout';
 import { Button } from '@/components/ui/button';
 import { CheckCircle2, Loader2 } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import useRazorpay from "react-razorpay";
 
 const Pricing = () => {
   const navigate = useNavigate();
+  const [Razorpay] = useRazorpay();
   const [isProcessing, setIsProcessing] = useState<string | null>(null);
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
 
-  const handlePayment = (tierName: string) => {
-    if (tierName === 'Starter') {
+  const handlePayment = async (tier: any) => {
+    if (tier.name === 'Starter') {
       navigate('/signup');
       return;
     }
 
-    if (tierName === 'Enterprise') {
+    if (tier.name === 'Enterprise') {
       toast.info("Our sales team will contact you shortly to discuss your custom requirements.");
       return;
     }
 
-    setIsProcessing(tierName);
+    setIsProcessing(tier.name);
+
+    // In a real app, you would call your backend here to create an order
+    // const order = await fetch('/api/create-order', { method: 'POST', body: JSON.stringify({ amount: tier.priceValue }) });
     
-    // Simulate payment gateway loading
-    setTimeout(() => {
-      toast.loading("Initializing Secure Checkout...");
-      
-      setTimeout(() => {
-        setIsProcessing(null);
-        toast.dismiss();
-        
-        // Mock Success
+    const options = {
+      key: "rzp_test_YOUR_KEY_HERE", // Replace with your actual Razorpay Key ID
+      amount: (parseInt(tier.price.replace('$', '')) * 100).toString(), // Amount in paise
+      currency: "USD",
+      name: "Guardian AI",
+      description: `Subscription for ${tier.name} Plan`,
+      image: "/placeholder.svg",
+      handler: (res: any) => {
+        console.log(res);
         toast.success("Payment Successful!", {
-          description: `Welcome to Guardian AI ${tierName}. Redirecting to your dashboard...`
+          description: `Transaction ID: ${res.razorpay_payment_id}`
         });
         
-        setTimeout(() => {
-          localStorage.setItem('user', JSON.stringify({ 
-            email: `${tierName.toLowerCase()}@user.com`, 
-            name: `${tierName} User`, 
-            confirmed: true,
-            plan: tierName
-          }));
-          navigate('/dashboard');
-        }, 1500);
-      }, 2000);
-    }, 800);
+        // Mock user update
+        localStorage.setItem('user', JSON.stringify({ 
+          email: `${tier.name.toLowerCase()}@user.com`, 
+          name: `${tier.name} User`, 
+          confirmed: true,
+          plan: tier.name
+        }));
+        
+        setTimeout(() => navigate('/dashboard'), 1500);
+      },
+      prefill: {
+        name: "John Doe",
+        email: "john@example.com",
+        contact: "9999999999",
+      },
+      notes: {
+        address: "Guardian AI Corporate Office",
+      },
+      theme: {
+        color: "#0f172a",
+      },
+    };
+
+    const rzp1 = new (Razorpay as any)(options);
+    
+    rzp1.on("payment.failed", function (response: any) {
+      toast.error("Payment Failed", {
+        description: response.error.description
+      });
+      setIsProcessing(null);
+    });
+
+    rzp1.open();
+    setIsProcessing(null);
   };
 
   const tiers = [
@@ -65,7 +93,6 @@ const Pricing = () => {
         'Community support'
       ],
       button: 'Start for Free',
-      color: 'slate'
     },
     {
       name: 'Pro',
@@ -81,7 +108,6 @@ const Pricing = () => {
       ],
       button: 'Get Started',
       popular: true,
-      color: 'blue'
     },
     {
       name: 'Business',
@@ -96,7 +122,6 @@ const Pricing = () => {
         'Webhooks + integrations'
       ],
       button: 'Upgrade Now',
-      color: 'indigo'
     },
     {
       name: 'Enterprise',
@@ -110,7 +135,6 @@ const Pricing = () => {
         'Dedicated manager'
       ],
       button: 'Contact Sales',
-      color: 'amber'
     }
   ];
 
@@ -125,7 +149,6 @@ const Pricing = () => {
             Choose the plan that fits your platform's needs.
           </p>
 
-          {/* Billing Toggle */}
           <div className="flex items-center justify-center gap-4 mb-12">
             <span className={cn("text-sm font-medium", billingCycle === 'monthly' ? "text-slate-900" : "text-slate-400")}>Monthly</span>
             <button 
@@ -181,7 +204,7 @@ const Pricing = () => {
               </div>
 
               <Button 
-                onClick={() => handlePayment(tier.name)}
+                onClick={() => handlePayment(tier)}
                 disabled={isProcessing === tier.name}
                 variant={tier.popular ? 'default' : 'outline'} 
                 className={cn(
