@@ -1,12 +1,21 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import LandingLayout from '@/components/LandingLayout';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
-import { Shield, Zap, Lock, Globe, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Shield, Zap, Lock, Globe, ArrowRight } from 'lucide-react';
 
 const Home = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [navigate]);
+
   return (
     <LandingLayout>
       {/* Hero Section */}

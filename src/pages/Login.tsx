@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ShieldCheck, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -10,11 +10,40 @@ import { toast } from 'sonner';
 
 const Login = () => {
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  useEffect(() => {
+    // Redirect if already logged in
+    const user = localStorage.getItem('user');
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [navigate]);
+
+  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    toast.success("Welcome back!");
-    navigate('/dashboard');
+    setIsLoading(true);
+
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get('email') as string;
+
+    // Simulate login check
+    setTimeout(() => {
+      setIsLoading(false);
+      const storedUser = localStorage.getItem('user');
+      
+      if (storedUser) {
+        const user = JSON.parse(storedUser);
+        if (user.email === email) {
+          toast.success("Welcome back!");
+          navigate('/dashboard');
+        } else {
+          toast.error("No user found with this email address.");
+        }
+      } else {
+        toast.error("No user found. Please sign up first.");
+      }
+    }, 1000);
   };
 
   return (
@@ -35,17 +64,17 @@ const Login = () => {
           <form className="space-y-6" onSubmit={handleLogin}>
             <div className="space-y-2">
               <Label htmlFor="email">Email Address</Label>
-              <Input id="email" type="email" placeholder="name@company.com" required />
+              <Input id="email" name="email" type="email" placeholder="name@company.com" required />
             </div>
             <div className="space-y-2">
               <div className="flex justify-between">
                 <Label htmlFor="password">Password</Label>
                 <button type="button" className="text-xs text-primary hover:underline">Forgot password?</button>
               </div>
-              <Input id="password" type="password" placeholder="••••••••" required />
+              <Input id="password" name="password" type="password" placeholder="••••••••" required />
             </div>
-            <Button type="submit" className="w-full bg-slate-900 hover:bg-slate-800 h-12 rounded-xl">
-              Log In <ArrowRight className="ml-2" size={18} />
+            <Button type="submit" disabled={isLoading} className="w-full bg-slate-900 hover:bg-slate-800 h-12 rounded-xl">
+              {isLoading ? "Logging in..." : "Log In"} <ArrowRight className="ml-2" size={18} />
             </Button>
           </form>
 

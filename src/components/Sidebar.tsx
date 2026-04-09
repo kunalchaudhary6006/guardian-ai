@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   ShieldAlert, 
@@ -16,9 +16,10 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 const navItems = [
-  { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
+  { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
   { icon: ShieldAlert, label: 'Content Moderation', path: '/moderation' },
   { icon: ShieldCheck, label: 'Threat Intelligence', path: '/threats' },
   { icon: FileCheck, label: 'Policy Enforcement', path: '/policy' },
@@ -28,7 +29,14 @@ const navItems = [
 
 const Sidebar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = React.useState(false);
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    toast.success("Logged out successfully");
+    navigate('/');
+  };
 
   return (
     <>
@@ -97,7 +105,10 @@ const Sidebar = () => {
               <SettingsIcon size={18} />
               <span className="text-sm font-medium">Settings</span>
             </Link>
-            <button className="w-full flex items-center gap-3 px-4 py-2 text-rose-600 hover:text-rose-700 transition-colors">
+            <button 
+              onClick={handleLogout}
+              className="w-full flex items-center gap-3 px-4 py-2 text-rose-600 hover:text-rose-700 transition-colors"
+            >
               <LogOut size={18} />
               <span className="text-sm font-medium">Logout</span>
             </button>
