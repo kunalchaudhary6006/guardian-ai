@@ -1,14 +1,15 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { FileText, Plus, Shield, Info } from 'lucide-react';
+import { toast } from "sonner";
 
-const policies = [
+const initialPolicies = [
   { id: 1, name: 'Hate Speech Detection', description: 'Automatically flag and remove content containing hate speech patterns.', active: true },
   { id: 2, name: 'Spam Prevention', description: 'Limit message frequency and detect repetitive automated content.', active: true },
   { id: 3, name: 'NSFW Filtering', description: 'Use AI vision to detect and blur sexually explicit imagery.', active: false },
@@ -17,6 +18,19 @@ const policies = [
 ];
 
 const PolicyEnforcement = () => {
+  const [policies, setPolicies] = useState(initialPolicies);
+
+  const togglePolicy = (id: number) => {
+    setPolicies(prev => prev.map(p => {
+      if (p.id === id) {
+        const newState = !p.active;
+        toast.success(`${p.name} is now ${newState ? 'enabled' : 'disabled'}`);
+        return { ...p, active: newState };
+      }
+      return p;
+    }));
+  };
+
   return (
     <DashboardLayout>
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
@@ -24,7 +38,7 @@ const PolicyEnforcement = () => {
           <h1 className="text-3xl font-bold text-slate-900">Policy Enforcement</h1>
           <p className="text-slate-500">Configure and manage automated safety rules and compliance policies.</p>
         </div>
-        <Button className="bg-slate-900 hover:bg-slate-800 gap-2">
+        <Button className="bg-slate-900 hover:bg-slate-800 gap-2" onClick={() => toast.info("Policy creation wizard opened")}>
           <Plus size={18} /> Create New Policy
         </Button>
       </div>
@@ -42,10 +56,16 @@ const PolicyEnforcement = () => {
                     <h3 className="text-lg font-bold text-slate-900">{policy.name}</h3>
                     <p className="text-slate-500 mt-1 max-w-2xl">{policy.description}</p>
                     <div className="flex items-center gap-4 mt-4">
-                      <button className="text-sm font-medium text-primary hover:underline flex items-center gap-1">
+                      <button 
+                        className="text-sm font-medium text-primary hover:underline flex items-center gap-1"
+                        onClick={() => toast.info(`Opening documentation for ${policy.name}`)}
+                      >
                         <FileText size={14} /> View Documentation
                       </button>
-                      <button className="text-sm font-medium text-slate-400 hover:text-slate-600 flex items-center gap-1">
+                      <button 
+                        className="text-sm font-medium text-slate-400 hover:text-slate-600 flex items-center gap-1"
+                        onClick={() => toast.info(`Loading audit logs for ${policy.name}`)}
+                      >
                         <Info size={14} /> Audit Logs
                       </button>
                     </div>
@@ -53,12 +73,16 @@ const PolicyEnforcement = () => {
                 </div>
                 <div className="flex flex-col items-end gap-2">
                   <div className="flex items-center space-x-2">
-                    <Switch id={`policy-${policy.id}`} checked={policy.active} />
+                    <Switch 
+                      id={`policy-${policy.id}`} 
+                      checked={policy.active} 
+                      onCheckedChange={() => togglePolicy(policy.id)}
+                    />
                     <Label htmlFor={`policy-${policy.id}`} className="text-sm font-semibold">
                       {policy.active ? 'Active' : 'Disabled'}
                     </Label>
                   </div>
-                  <Button variant="ghost" size="sm" className="text-slate-400">Edit Rules</Button>
+                  <Button variant="ghost" size="sm" className="text-slate-400" onClick={() => toast.info(`Editing rules for ${policy.name}`)}>Edit Rules</Button>
                 </div>
               </div>
             </CardContent>

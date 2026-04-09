@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -9,8 +9,24 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Shield, Bell, Globe, Key, User } from 'lucide-react';
+import { toast } from "sonner";
 
 const Settings = () => {
+  const [is2FA, setIs2FA] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSaveProfile = () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      toast.success("Profile information updated successfully");
+    }, 1000);
+  };
+
+  const handleUpdatePassword = () => {
+    toast.success("Password update request sent to your email");
+  };
+
   return (
     <DashboardLayout>
       <div className="mb-8">
@@ -53,7 +69,13 @@ const Settings = () => {
                     <Label htmlFor="bio">Professional Bio</Label>
                     <Input id="bio" defaultValue="Senior Security Analyst specializing in AI-driven threat detection." />
                   </div>
-                  <Button className="bg-slate-900 hover:bg-slate-800">Save Changes</Button>
+                  <Button 
+                    className="bg-slate-900 hover:bg-slate-800" 
+                    onClick={handleSaveProfile}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? "Saving..." : "Save Changes"}
+                  </Button>
                 </CardContent>
               </Card>
 
@@ -66,11 +88,15 @@ const Settings = () => {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label>Language</Label>
-                      <Button variant="outline" className="w-full justify-between">English (US) <Globe size={16} /></Button>
+                      <Button variant="outline" className="w-full justify-between" onClick={() => toast.info("Language selection opened")}>
+                        English (US) <Globe size={16} />
+                      </Button>
                     </div>
                     <div className="space-y-2">
                       <Label>Timezone</Label>
-                      <Button variant="outline" className="w-full justify-between">UTC-05:00 (EST)</Button>
+                      <Button variant="outline" className="w-full justify-between" onClick={() => toast.info("Timezone selection opened")}>
+                        UTC-05:00 (EST)
+                      </Button>
                     </div>
                   </div>
                 </CardContent>
@@ -111,7 +137,13 @@ const Settings = () => {
                     <p className="text-sm text-slate-500">Add an extra layer of security to your account.</p>
                   </div>
                 </div>
-                <Switch checked={true} />
+                <Switch 
+                  checked={is2FA} 
+                  onCheckedChange={(val) => {
+                    setIs2FA(val);
+                    toast.success(`2FA has been ${val ? 'enabled' : 'disabled'}`);
+                  }} 
+                />
               </div>
               <div className="space-y-4">
                 <div className="space-y-2">
@@ -122,7 +154,7 @@ const Settings = () => {
                   <Label>New Password</Label>
                   <Input type="password" />
                 </div>
-                <Button className="bg-slate-900 hover:bg-slate-800">Update Password</Button>
+                <Button className="bg-slate-900 hover:bg-slate-800" onClick={handleUpdatePassword}>Update Password</Button>
               </div>
             </CardContent>
           </Card>

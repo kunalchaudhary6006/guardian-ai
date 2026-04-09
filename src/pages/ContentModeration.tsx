@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -8,8 +8,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Search, Filter, MoreVertical, ShieldAlert, CheckCircle, XCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { toast } from "sonner";
 
-const moderationQueue = [
+const initialQueue = [
   { id: 'MOD-1024', user: 'user_882', content: 'Suspicious link detected in private message...', risk: 'High', type: 'Spam', status: 'Pending' },
   { id: 'MOD-1025', user: 'alpha_tester', content: 'Potential hate speech identified in community forum...', risk: 'Critical', type: 'Hate Speech', status: 'Pending' },
   { id: 'MOD-1026', user: 'new_member_2', content: 'Inappropriate image upload attempt...', risk: 'Medium', type: 'NSFW', status: 'Pending' },
@@ -17,6 +18,20 @@ const moderationQueue = [
 ];
 
 const ContentModeration = () => {
+  const [queue, setQueue] = useState(initialQueue);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleAction = (id: string, action: 'approve' | 'reject') => {
+    setQueue(prev => prev.filter(item => item.id !== id));
+    toast.success(`Item ${id} has been ${action === 'approve' ? 'approved' : 'rejected'}.`);
+  };
+
+  const filteredQueue = queue.filter(item => 
+    item.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.user.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.content.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <DashboardLayout>
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
@@ -25,10 +40,10 @@ const ContentModeration = () => {
           <p className="text-slate-500">Review and manage flagged content across all platforms.</p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" className="gap-2">
+          <Button variant="outline" className="gap-2" onClick={() => toast.info("Filter options coming soon")}>
             <Filter size={18} /> Filter
           </Button>
-          <Button className="bg-slate-900 hover:bg-slate-800 gap-2">
+          <Button className="bg-slate-900 hover:bg-slate-800 gap-2" onClick={() => toast.promise(new Promise(r => setTimeout(r, 1000)), { loading: 'Processing bulk action...', success: 'Bulk action completed', error: 'Failed to process' })}>
             <ShieldAlert size={18} /> Bulk Action
           </Button>
         </div>
@@ -39,7 +54,12 @@ const ContentModeration = () => {
           <div className="flex items-center gap-4">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-              <Input className="pl-10 bg-slate-50 border-none" placeholder="Search by ID, user, or content..." />
+              <Input 
+                className="pl-10 bg-slate-50 border-none" 
+                placeholder="Search by ID, user, or content..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
           </div>
         </CardHeader>
@@ -57,7 +77,7 @@ const ContentModeration = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
-                {moderationQueue.map((item) => (
+                {filteredQueue.length > 0 ? filteredQueue.map((item) => (
                   <tr key={item.id} className="hover:bg-slate-50/50 transition-colors group">
                     <td className="px-6 py-4 text-sm font-medium text-slate-900">{item.id}</td>
                     <td className="px-6 py-4 text-sm text-slate-600">{item.user}</td>
@@ -75,19 +95,35 @@ const ContentModeration = () => {
                     <td className="px-6 py-4 text-sm text-slate-600">{item.type}</td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Button size="icon" variant="ghost" className="h-8 w-8 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50">
+                        <Button 
+                          size="icon" 
+                          variant="ghost" 
+                          className="h-8 w-8 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
+                          onClick={() => handleAction(item.id, 'approve')}
+                        >
                           <CheckCircle size={18} />
                         </Button>
-                        <Button size="icon" variant="ghost" className="h-8 w-8 text-rose-600 hover:text-rose-700 hover:bg-rose-50">
+                        <Button 
+                          size="icon" 
+                          variant="ghost" 
+                          className="h-8 w-8 text-rose-600 hover:text-rose-700 hover:bg-rose-50"
+                          onClick={() => handleAction(item.id, 'reject')}
+                        >
                           <XCircle size={18} />
                         </Button>
-                        <Button size="icon" variant="ghost" className="h-8 w-8 text-slate-400">
+                        <Button size="icon" variant="ghost" className="h-8 w-8 text-slate-400" onClick={() => toast.info(`Details for ${item.id}`)}>
                           <MoreVertical size={18} />
                         </Button>
                       </div>
                     </td>
                   </tr>
-                ))}
+                )) : (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-12 text-center text-slate-500">
+                      No items found in the moderation queue.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

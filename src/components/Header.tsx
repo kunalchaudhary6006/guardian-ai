@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Badge } from '@/components/ui/badge';
+import { toast } from "sonner";
 
 const Header = () => {
   return (
@@ -23,17 +23,28 @@ const Header = () => {
           <Input 
             className="pl-10 bg-slate-50 border-none focus-visible:ring-1 focus-visible:ring-slate-200" 
             placeholder="Search for threats, users, or logs..." 
+            onKeyDown={(e) => e.key === 'Enter' && toast.info(`Searching for: ${e.currentTarget.value}`)}
           />
         </div>
       </div>
 
       <div className="flex items-center gap-2 lg:gap-4">
-        <Button variant="ghost" size="icon" className="text-slate-500 hover:text-slate-900 relative">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="text-slate-500 hover:text-slate-900 relative"
+          onClick={() => toast.info("You have 3 new security alerts")}
+        >
           <Bell size={20} />
           <span className="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full border-2 border-white" />
         </Button>
         
-        <Button variant="ghost" size="icon" className="text-slate-500 hover:text-slate-900 hidden sm:flex">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="text-slate-500 hover:text-slate-900 hidden sm:flex"
+          onClick={() => toast.info("Opening help center...")}
+        >
           <HelpCircle size={20} />
         </Button>
 
@@ -54,11 +65,11 @@ const Header = () => {
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Profile Settings</DropdownMenuItem>
-            <DropdownMenuItem>Security Preferences</DropdownMenuItem>
-            <DropdownMenuItem>API Keys</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => toast.info("Navigating to Profile Settings")}>Profile Settings</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => toast.info("Navigating to Security Preferences")}>Security Preferences</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => toast.info("Navigating to API Keys")}>API Keys</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-rose-600">Log out</DropdownMenuItem>
+            <DropdownMenuItem className="text-rose-600" onClick={() => toast.error("Logging out...")}>Log out</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
