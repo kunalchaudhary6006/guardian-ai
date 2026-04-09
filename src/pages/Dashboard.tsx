@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
@@ -12,7 +12,10 @@ import {
   CheckCircle2,
   Clock,
   ArrowUpRight,
-  MoreHorizontal
+  MoreHorizontal,
+  RefreshCw,
+  Download,
+  Settings
 } from 'lucide-react';
 import { 
   AreaChart, 
@@ -25,42 +28,82 @@ import {
 } from 'recharts';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
-const data = [
-  { name: 'Mon', threats: 40, moderation: 240 },
-  { name: 'Tue', threats: 30, moderation: 198 },
-  { name: 'Wed', threats: 20, moderation: 980 },
-  { name: 'Thu', threats: 27, moderation: 390 },
-  { name: 'Fri', threats: 18, moderation: 480 },
-  { name: 'Sat', threats: 23, moderation: 380 },
-  { name: 'Sun', threats: 34, moderation: 430 },
-];
-
-const stats = [
-  { label: 'Active Threats', value: '12', change: '+2.5%', icon: ShieldAlert, color: 'text-rose-600', bg: 'bg-rose-50' },
-  { label: 'Users Monitored', value: '1.2M', change: '+12%', icon: Users, color: 'text-blue-600', bg: 'bg-blue-50' },
-  { label: 'System Health', value: '99.9%', change: 'Stable', icon: Activity, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-  { label: 'Safety Score', value: '94/100', change: '+4', icon: TrendingUp, color: 'text-indigo-600', bg: 'bg-indigo-50' },
+const generateData = () => [
+  { name: 'Mon', threats: Math.floor(Math.random() * 50) + 10, moderation: Math.floor(Math.random() * 300) + 100 },
+  { name: 'Tue', threats: Math.floor(Math.random() * 50) + 10, moderation: Math.floor(Math.random() * 300) + 100 },
+  { name: 'Wed', threats: Math.floor(Math.random() * 50) + 10, moderation: Math.floor(Math.random() * 300) + 100 },
+  { name: 'Thu', threats: Math.floor(Math.random() * 50) + 10, moderation: Math.floor(Math.random() * 300) + 100 },
+  { name: 'Fri', threats: Math.floor(Math.random() * 50) + 10, moderation: Math.floor(Math.random() * 300) + 100 },
+  { name: 'Sat', threats: Math.floor(Math.random() * 50) + 10, moderation: Math.floor(Math.random() * 300) + 100 },
+  { name: 'Sun', threats: Math.floor(Math.random() * 50) + 10, moderation: Math.floor(Math.random() * 300) + 100 },
 ];
 
 const Dashboard = () => {
+  const navigate = useNavigate();
+  const [chartData, setChartData] = useState(generateData());
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState(new Date().toLocaleTimeString());
+
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    setTimeout(() => {
+      setChartData(generateData());
+      setLastUpdated(new Date().toLocaleTimeString());
+      setIsRefreshing(false);
+      toast.success("System data synchronized", {
+        description: "All metrics have been updated to the latest real-time values."
+      });
+    }, 800);
+  };
+
+  const handleDownload = () => {
+    toast.promise(new Promise((resolve) => setTimeout(resolve, 1500)), {
+      loading: 'Generating PDF report...',
+      success: 'Report downloaded successfully',
+      error: 'Failed to generate report',
+    });
+  };
+
+  const stats = [
+    { label: 'Active Threats', value: '12', change: '+2.5%', icon: ShieldAlert, color: 'text-rose-600', bg: 'bg-rose-50' },
+    { label: 'Users Monitored', value: '1.2M', change: '+12%', icon: Users, color: 'text-blue-600', bg: 'bg-blue-50' },
+    { label: 'System Health', value: '99.9%', change: 'Stable', icon: Activity, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+    { label: 'Safety Score', value: '94/100', change: '+4', icon: TrendingUp, color: 'text-indigo-600', bg: 'bg-indigo-50' },
+  ];
+
   return (
     <DashboardLayout>
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-3xl font-bold text-slate-900">System Overview</h1>
-          <p className="text-slate-500">Real-time safety metrics and platform health.</p>
+          <p className="text-slate-500 flex items-center gap-2">
+            Real-time safety metrics as of {lastUpdated}
+            <button onClick={handleRefresh} className={cn("hover:text-primary transition-colors", isRefreshing && "animate-spin")}>
+              <RefreshCw size={14} />
+            </button>
+          </p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" className="rounded-xl">Download Report</Button>
-          <Button className="bg-slate-900 hover:bg-slate-800 rounded-xl">Manage Policies</Button>
+          <Button variant="outline" className="rounded-xl gap-2" onClick={handleDownload}>
+            <Download size={18} /> Download Report
+          </Button>
+          <Button className="bg-slate-900 hover:bg-slate-800 rounded-xl gap-2" onClick={() => navigate('/policy')}>
+            <Settings size={18} /> Manage Policies
+          </Button>
         </div>
       </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {stats.map((stat, i) => (
-          <Card key={i} className="border-none shadow-sm hover:shadow-md transition-all duration-300 group">
+          <Card 
+            key={i} 
+            className="border-none shadow-sm hover:shadow-md transition-all duration-300 group cursor-pointer"
+            onClick={() => toast.info(`Viewing detailed analytics for ${stat.label}`)}
+          >
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <div className={`${stat.bg} p-3 rounded-2xl group-hover:scale-110 transition-transform`}>
@@ -86,12 +129,17 @@ const Dashboard = () => {
         {/* Main Chart */}
         <Card className="lg:col-span-2 border-none shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-lg font-semibold">Threat Activity vs Moderation</CardTitle>
-            <Button variant="ghost" size="icon" className="text-slate-400"><MoreHorizontal size={20} /></Button>
+            <div>
+              <CardTitle className="text-lg font-semibold">Threat Activity vs Moderation</CardTitle>
+              <p className="text-xs text-slate-400 mt-1">Comparison of detected threats and automated actions</p>
+            </div>
+            <Button variant="ghost" size="icon" className="text-slate-400" onClick={handleRefresh}>
+              <RefreshCw size={18} className={isRefreshing ? "animate-spin" : ""} />
+            </Button>
           </CardHeader>
           <CardContent className="h-[350px]">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={data}>
+              <AreaChart data={chartData}>
                 <defs>
                   <linearGradient id="colorThreats" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#ef4444" stopOpacity={0.1}/>
@@ -119,17 +167,24 @@ const Dashboard = () => {
         <Card className="border-none shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-lg font-semibold">Recent Alerts</CardTitle>
-            <Button variant="ghost" size="sm" className="text-primary font-bold">View All</Button>
+            <Button variant="ghost" size="sm" className="text-primary font-bold" onClick={() => navigate('/moderation')}>View All</Button>
           </CardHeader>
           <CardContent>
             <div className="space-y-6">
               {[
-                { title: 'High Risk Content Detected', time: '2 mins ago', type: 'critical', icon: AlertTriangle },
-                { title: 'Policy Update Applied', time: '15 mins ago', type: 'success', icon: CheckCircle2 },
-                { title: 'New Threat Pattern Identified', time: '1 hour ago', type: 'warning', icon: Clock },
-                { title: 'System Backup Complete', time: '3 hours ago', type: 'info', icon: CheckCircle2 },
+                { title: 'High Risk Content Detected', time: '2 mins ago', type: 'critical', icon: AlertTriangle, path: '/moderation' },
+                { title: 'Policy Update Applied', time: '15 mins ago', type: 'success', icon: CheckCircle2, path: '/policy' },
+                { title: 'New Threat Pattern Identified', time: '1 hour ago', type: 'warning', icon: Clock, path: '/threats' },
+                { title: 'System Backup Complete', time: '3 hours ago', type: 'info', icon: CheckCircle2, path: '/settings' },
               ].map((alert, i) => (
-                <div key={i} className="flex gap-4 group cursor-pointer">
+                <div 
+                  key={i} 
+                  className="flex gap-4 group cursor-pointer"
+                  onClick={() => {
+                    toast.info(`Opening details for: ${alert.title}`);
+                    navigate(alert.path);
+                  }}
+                >
                   <div className={cn(
                     "w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110",
                     alert.type === 'critical' ? "bg-rose-100 text-rose-600" :
