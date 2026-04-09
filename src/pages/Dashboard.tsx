@@ -67,10 +67,10 @@ const Dashboard = () => {
   };
 
   const stats = [
-    { label: 'Active Threats', value: '12', change: '+2.5%', icon: ShieldAlert, color: 'text-rose-600', bg: 'bg-rose-50' },
-    { label: 'Users Monitored', value: '1.2M', change: '+12%', icon: Users, color: 'text-blue-600', bg: 'bg-blue-50' },
-    { label: 'System Health', value: '99.9%', change: 'Stable', icon: Activity, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-    { label: 'Safety Score', value: '94/100', change: '+4', icon: TrendingUp, color: 'text-indigo-600', bg: 'bg-indigo-50' },
+    { label: 'Active Threats', value: '12', change: '+2.5%', icon: ShieldAlert, color: 'text-rose-600', bg: 'bg-rose-50', path: '/threats' },
+    { label: 'Users Monitored', value: '1.2M', change: '+12%', icon: Users, color: 'text-blue-600', bg: 'bg-blue-50', path: '/analytics' },
+    { label: 'System Health', value: '99.9%', change: 'Stable', icon: Activity, color: 'text-emerald-600', bg: 'bg-emerald-50', path: '/settings' },
+    { label: 'Safety Score', value: '94/100', change: '+4', icon: TrendingUp, color: 'text-indigo-600', bg: 'bg-indigo-50', path: '/policy' },
   ];
 
   return (
@@ -100,7 +100,7 @@ const Dashboard = () => {
           <Card 
             key={i} 
             className="border-none shadow-sm hover:shadow-md transition-all duration-300 group cursor-pointer rounded-3xl"
-            onClick={() => toast.info(`Viewing detailed analytics for ${stat.label}`)}
+            onClick={() => navigate(stat.path)}
           >
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
@@ -176,10 +176,7 @@ const Dashboard = () => {
                 <div 
                   key={i} 
                   className="flex gap-4 group cursor-pointer"
-                  onClick={() => {
-                    toast.info(`Opening details for: ${alert.title}`);
-                    navigate(alert.path);
-                  }}
+                  onClick={() => navigate(alert.path)}
                 >
                   <div className={cn(
                     "w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110",

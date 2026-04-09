@@ -13,9 +13,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
+import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
+  const navigate = useNavigate();
   const [user, setUser] = useState({ name: 'John Doe', role: 'Senior Security Analyst' });
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -28,6 +31,16 @@ const Header = () => {
     }
   }, []);
 
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!searchQuery) return;
+    toast.info(`Searching for: "${searchQuery}"...`);
+    // Simulate navigation to a search results page or filtering
+    if (searchQuery.toLowerCase().includes('mod')) navigate('/moderation');
+    if (searchQuery.toLowerCase().includes('threat')) navigate('/threats');
+    if (searchQuery.toLowerCase().includes('policy')) navigate('/policy');
+  };
+
   const getInitials = (name: string) => {
     return name
       .split(' ')
@@ -37,37 +50,64 @@ const Header = () => {
       .substring(0, 2);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    toast.success("Logged out successfully");
+    navigate('/');
+  };
+
   return (
     <header className="h-16 border-b border-slate-200 bg-white/80 backdrop-blur-md sticky top-0 z-30 px-4 lg:px-8 flex items-center justify-between">
       <div className="flex-1 max-w-md hidden md:block">
-        <div className="relative group">
+        <form onSubmit={handleSearch} className="relative group">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" size={18} />
           <Input 
             className="pl-10 bg-slate-50 border-none focus-visible:ring-1 focus-visible:ring-slate-200 transition-all" 
             placeholder="Search for threats, users, or logs..." 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
           <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 px-1.5 py-0.5 rounded border border-slate-200 bg-white text-[10px] font-medium text-slate-400">
             <Command size={10} /> K
           </div>
-        </div>
+        </form>
       </div>
 
       <div className="flex items-center gap-2 lg:gap-4">
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="text-slate-500 hover:text-slate-900 relative rounded-full"
-          onClick={() => toast.info("You have 3 new security alerts")}
-        >
-          <Bell size={20} />
-          <span className="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full border-2 border-white" />
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="text-slate-500 hover:text-slate-900 relative rounded-full"
+            >
+              <Bell size={20} />
+              <span className="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full border-2 border-white" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-80 rounded-2xl p-2 shadow-xl border-slate-100">
+            <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="p-3 cursor-pointer" onClick={() => navigate('/moderation')}>
+              <div className="flex flex-col gap-1">
+                <p className="text-sm font-bold">New High Risk Content</p>
+                <p className="text-xs text-slate-500">A new item requires immediate review in the moderation queue.</p>
+              </div>
+            </DropdownMenuItem>
+            <DropdownMenuItem className="p-3 cursor-pointer" onClick={() => navigate('/threats')}>
+              <div className="flex flex-col gap-1">
+                <p className="text-sm font-bold">Threat Level Elevated</p>
+                <p className="text-xs text-slate-500">Global threat level has been updated to Elevated.</p>
+              </div>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
         
         <Button 
           variant="ghost" 
           size="icon" 
           className="text-slate-500 hover:text-slate-900 hidden sm:flex rounded-full"
-          onClick={() => toast.info("Opening help center...")}
+          onClick={() => toast.info("Opening help center documentation...")}
         >
           <HelpCircle size={20} />
         </Button>
@@ -89,11 +129,11 @@ const Header = () => {
           <DropdownMenuContent align="end" className="w-56 rounded-2xl p-2 shadow-xl border-slate-100">
             <DropdownMenuLabel className="text-xs text-slate-400 uppercase tracking-wider">My Account</DropdownMenuLabel>
             <DropdownMenuSeparator className="bg-slate-50" />
-            <DropdownMenuItem className="rounded-lg py-2 cursor-pointer">Profile Settings</DropdownMenuItem>
-            <DropdownMenuItem className="rounded-lg py-2 cursor-pointer">Security Preferences</DropdownMenuItem>
-            <DropdownMenuItem className="rounded-lg py-2 cursor-pointer">API Keys</DropdownMenuItem>
+            <DropdownMenuItem className="rounded-lg py-2 cursor-pointer" onClick={() => navigate('/settings')}>Profile Settings</DropdownMenuItem>
+            <DropdownMenuItem className="rounded-lg py-2 cursor-pointer" onClick={() => navigate('/settings')}>Security Preferences</DropdownMenuItem>
+            <DropdownMenuItem className="rounded-lg py-2 cursor-pointer" onClick={() => toast.info("API Keys management coming soon")}>API Keys</DropdownMenuItem>
             <DropdownMenuSeparator className="bg-slate-50" />
-            <DropdownMenuItem className="text-rose-600 rounded-lg py-2 cursor-pointer font-medium">Log out</DropdownMenuItem>
+            <DropdownMenuItem className="text-rose-600 rounded-lg py-2 cursor-pointer font-medium" onClick={handleLogout}>Log out</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

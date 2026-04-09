@@ -29,7 +29,8 @@ const initialPolicies = [
 const PolicyEnforcement = () => {
   const [policies, setPolicies] = useState(initialPolicies);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [newPolicy, setNewPolicy] = useState({ name: '', description: '' });
+  const [editingPolicy, setEditingPolicy] = useState<any>(null);
+  const [formData, setFormData] = useState({ name: '', description: '' });
 
   const togglePolicy = (id: number) => {
     setPolicies(prev => prev.map(p => {
@@ -42,22 +43,40 @@ const PolicyEnforcement = () => {
     }));
   };
 
-  const handleCreatePolicy = (e: React.FormEvent) => {
+  const handleOpenCreate = () => {
+    setEditingPolicy(null);
+    setFormData({ name: '', description: '' });
+    setIsDialogOpen(true);
+  };
+
+  const handleOpenEdit = (policy: any) => {
+    setEditingPolicy(policy);
+    setFormData({ name: policy.name, description: policy.description });
+    setIsDialogOpen(true);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newPolicy.name || !newPolicy.description) {
+    if (!formData.name || !formData.description) {
       toast.error("Please fill in all fields");
       return;
     }
-    const policy = {
-      id: Date.now(),
-      name: newPolicy.name,
-      description: newPolicy.description,
-      active: true
-    };
-    setPolicies([policy, ...policies]);
-    setNewPolicy({ name: '', description: '' });
+
+    if (editingPolicy) {
+      setPolicies(prev => prev.map(p => p.id === editingPolicy.id ? { ...p, ...formData } : p));
+      toast.success("Policy updated successfully");
+    } else {
+      const policy = {
+        id: Date.now(),
+        name: formData.name,
+        description: formData.description,
+        active: true
+      };
+      setPolicies([policy, ...policies]);
+      toast.success("New policy created successfully");
+    }
+    
     setIsDialogOpen(false);
-    toast.success("New policy created successfully");
   };
 
   const deletePolicy = (id: number) => {
@@ -75,16 +94,16 @@ const PolicyEnforcement = () => {
         
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="bg-slate-900 hover:bg-slate-800 gap-2 rounded-2xl h-11 px-6 w-full sm:w-auto">
+            <Button className="bg-slate-900 hover:bg-slate-800 gap-2 rounded-2xl h-11 px-6 w-full sm:w-auto" onClick={handleOpenCreate}>
               <Plus size={18} /> Create New Policy
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px] rounded-3xl">
-            <form onSubmit={handleCreatePolicy}>
+            <form onSubmit={handleSubmit}>
               <DialogHeader>
-                <DialogTitle>Create New Policy</DialogTitle>
+                <DialogTitle>{editingPolicy ? 'Edit Policy' : 'Create New Policy'}</DialogTitle>
                 <DialogDescription>
-                  Define a new automated safety rule for your platform.
+                  {editingPolicy ? 'Update the details of this safety rule.' : 'Define a new automated safety rule for your platform.'}
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
@@ -93,8 +112,8 @@ const PolicyEnforcement = () => {
                   <Input 
                     id="name" 
                     placeholder="e.g. Fraud Detection" 
-                    value={newPolicy.name}
-                    onChange={(e) => setNewPolicy({...newPolicy, name: e.target.value})}
+                    value={formData.name}
+                    onChange={(e) => setFormData({...formData, name: e.target.value})}
                     className="rounded-xl"
                   />
                 </div>
@@ -103,14 +122,16 @@ const PolicyEnforcement = () => {
                   <Textarea 
                     id="description" 
                     placeholder="Describe what this policy does..." 
-                    value={newPolicy.description}
-                    onChange={(e) => setNewPolicy({...newPolicy, description: e.target.value})}
+                    value={formData.description}
+                    onChange={(e) => setFormData({...formData, description: e.target.value})}
                     className="rounded-xl min-h-[100px]"
                   />
                 </div>
               </div>
               <DialogFooter>
-                <Button type="submit" className="w-full bg-slate-900 rounded-xl">Save Policy</Button>
+                <Button type="submit" className="w-full bg-slate-900 rounded-xl">
+                  {editingPolicy ? 'Update Policy' : 'Save Policy'}
+                </Button>
               </DialogFooter>
             </form>
           </DialogContent>
@@ -132,13 +153,13 @@ const PolicyEnforcement = () => {
                     <div className="flex flex-wrap items-center gap-4 mt-4">
                       <button 
                         className="text-xs font-bold text-primary hover:underline flex items-center gap-1"
-                        onClick={() => toast.info(`Opening documentation for ${policy.name}`)}
+                        onClick={() => toast.info(`Opening documentation for ${policy.name}...`)}
                       >
                         <FileText size={14} /> Documentation
                       </button>
                       <button 
                         className="text-xs font-bold text-slate-400 hover:text-slate-600 flex items-center gap-1"
-                        onClick={() => toast.info(`Loading audit logs for ${policy.name}`)}
+                        onClick={() => toast.info(`Loading last 50 audit logs for ${policy.name}...`)}
                       >
                         <Info size={14} /> Audit Logs
                       </button>
@@ -157,7 +178,7 @@ const PolicyEnforcement = () => {
                     </Label>
                   </div>
                   <div className="flex gap-2">
-                    <Button variant="ghost" size="sm" className="text-slate-400 hover:text-slate-900 rounded-xl" onClick={() => toast.info("Edit mode enabled")}>Edit</Button>
+                    <Button variant="ghost" size="sm" className="text-slate-400 hover:text-slate-900 rounded-xl" onClick={() => handleOpenEdit(policy)}>Edit</Button>
                     <Button variant="ghost" size="sm" className="text-rose-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl" onClick={() => deletePolicy(policy.id)}>
                       <Trash2 size={16} />
                     </Button>

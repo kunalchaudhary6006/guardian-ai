@@ -8,12 +8,20 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Shield, Bell, Globe, Key, User } from 'lucide-react';
+import { Shield, Globe, Key } from 'lucide-react';
 import { toast } from "sonner";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Settings = () => {
   const [is2FA, setIs2FA] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [language, setLanguage] = useState("English (US)");
+  const [timezone, setTimezone] = useState("UTC-05:00 (EST)");
 
   const handleSaveProfile = () => {
     setIsLoading(true);
@@ -88,15 +96,34 @@ const Settings = () => {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label>Language</Label>
-                      <Button variant="outline" className="w-full justify-between" onClick={() => toast.info("Language selection opened")}>
-                        English (US) <Globe size={16} />
-                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="outline" className="w-full justify-between">
+                            {language} <Globe size={16} />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="w-full min-w-[200px] rounded-xl">
+                          <DropdownMenuItem onClick={() => setLanguage("English (US)")}>English (US)</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => setLanguage("Spanish")}>Spanish</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => setLanguage("French")}>French</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => setLanguage("German")}>German</DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                     <div className="space-y-2">
                       <Label>Timezone</Label>
-                      <Button variant="outline" className="w-full justify-between" onClick={() => toast.info("Timezone selection opened")}>
-                        UTC-05:00 (EST)
-                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="outline" className="w-full justify-between">
+                            {timezone}
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="w-full min-w-[200px] rounded-xl">
+                          <DropdownMenuItem onClick={() => setTimezone("UTC-05:00 (EST)")}>UTC-05:00 (EST)</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => setTimezone("UTC+00:00 (GMT)")}>UTC+00:00 (GMT)</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => setTimezone("UTC+05:30 (IST)")}>UTC+05:30 (IST)</DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                   </div>
                 </CardContent>

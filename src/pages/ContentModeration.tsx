@@ -9,6 +9,12 @@ import { Badge } from '@/components/ui/badge';
 import { Search, Filter, MoreVertical, ShieldAlert, CheckCircle, XCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from "sonner";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const initialQueue = [
   { id: 'MOD-1024', user: 'user_882', content: 'Suspicious link detected in private message...', risk: 'High', type: 'Spam', status: 'Pending' },
@@ -20,17 +26,33 @@ const initialQueue = [
 const ContentModeration = () => {
   const [queue, setQueue] = useState(initialQueue);
   const [searchQuery, setSearchQuery] = useState("");
+  const [riskFilter, setRiskFilter] = useState<string | null>(null);
 
   const handleAction = (id: string, action: 'approve' | 'reject') => {
     setQueue(prev => prev.filter(item => item.id !== id));
     toast.success(`Item ${id} has been ${action === 'approve' ? 'approved' : 'rejected'}.`);
   };
 
-  const filteredQueue = queue.filter(item => 
-    item.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.user.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.content.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const handleBulkAction = () => {
+    if (queue.length === 0) return;
+    const count = queue.length;
+    toast.promise(new Promise(r => setTimeout(r, 1000)), {
+      loading: `Processing ${count} items...`,
+      success: () => {
+        setQueue([]);
+        return `Successfully processed ${count} items.`;
+      },
+      error: 'Bulk action failed'
+    });
+  };
+
+  const filteredQueue = queue.filter(item => {
+    const matchesSearch = item.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.user.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.content.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesRisk = riskFilter ? item.risk === riskFilter : true;
+    return matchesSearch && matchesRisk;
+  });
 
   return (
     <DashboardLayout>
@@ -40,11 +62,26 @@ const ContentModeration = () => {
           <p className="text-slate-500">Review and manage flagged content across all platforms.</p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" className="rounded-2xl gap-2 h-11 px-6 border-slate-200" onClick={() => toast.info("Filter options coming soon")}>
-            <Filter size={18} /> Filter
-          </Button>
-          <Button className="bg-slate-900 hover:bg-slate-800 rounded-2xl gap-2 h-11 px-6 shadow-lg shadow-slate-200" onClick={() => toast.promise(new Promise(r => setTimeout(r, 1000)), { loading: 'Processing bulk action...', success: 'Bulk action completed', error: 'Failed to process' })}>
-            <ShieldAlert size={18} /> Bulk Action
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="rounded-2xl gap-2 h-11 px-6 border-slate-200">
+                <Filter size={18} /> {riskFilter || 'Filter'}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="rounded-xl">
+              <DropdownMenuItem onClick={() => setRiskFilter(null)}>All Risks</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setRiskFilter('Critical')}>Critical</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setRiskFilter('High')}>High</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setRiskFilter('Medium')}>Medium</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setRiskFilter('Low')}>Low</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <Button 
+            className="bg-slate-900 hover:bg-slate-800 rounded-2xl gap-2 h-11 px-6 shadow-lg shadow-slate-200" 
+            onClick={handleBulkAction}
+            disabled={queue.length === 0}
+          >
+            <ShieldAlert size={18} /> Bulk Approve
           </Button>
         </div>
       </div>
@@ -111,9 +148,18 @@ const ContentModeration = () => {
                         >
                           <XCircle size={18} />
                         </Button>
-                        <Button size="icon" variant="ghost" className="h-9 w-9 rounded-xl text-slate-400" onClick={() => toast.info(`Details for ${item.id}`)}>
-                          <MoreVertical size={18} />
-                        </Button>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button size="icon" variant="ghost" className="h-9 w-9 rounded-xl text-slate-400">
+                              <MoreVertical size={18} />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="rounded-xl">
+                            <DropdownMenuItem onClick={() => toast.info(`Viewing full logs for ${item.id}`)}>View Logs</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => toast.info(`User ${item.user} has been flagged for review`)}>Flag User</DropdownMenuItem>
+                            <DropdownMenuItem className="text-rose-600" onClick={() => toast.error(`User ${item.user} has been banned`)}>Ban User</DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </div>
                     </td>
                   </tr>
