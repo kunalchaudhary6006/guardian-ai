@@ -40,7 +40,7 @@ const stats = [
   { label: 'Safety Score', value: '94/100', icon: TrendingUp, color: 'text-indigo-600', bg: 'bg-indigo-50' },
 ];
 
-const Index = () => {
+const Dashboard = () => {
   return (
     <DashboardLayout>
       <div className="mb-8">
@@ -139,4 +139,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default Dashboard;
