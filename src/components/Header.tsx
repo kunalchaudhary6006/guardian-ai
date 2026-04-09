@@ -17,37 +17,42 @@ import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState({ name: 'John Doe', role: 'Senior Security Analyst' });
+  const [user, setUser] = useState({ name: 'Guest User', role: 'Security Analyst' });
   const [searchQuery, setSearchQuery] = useState("");
 
-  useEffect(() => {
+  const loadUser = () => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       const parsed = JSON.parse(storedUser);
       setUser({
-        name: parsed.name || 'John Doe',
-        role: parsed.role || 'Senior Security Analyst'
+        name: parsed.name || 'Guest User',
+        role: parsed.role || 'Security Analyst'
       });
     }
+  };
+
+  useEffect(() => {
+    loadUser();
+    
+    // Listen for changes to localStorage to update the header in real-time
+    window.addEventListener('storage', loadUser);
+    return () => window.removeEventListener('storage', loadUser);
   }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (!searchQuery) return;
     toast.info(`Searching for: "${searchQuery}"...`);
-    // Simulate navigation to a search results page or filtering
     if (searchQuery.toLowerCase().includes('mod')) navigate('/moderation');
     if (searchQuery.toLowerCase().includes('threat')) navigate('/threats');
     if (searchQuery.toLowerCase().includes('policy')) navigate('/policy');
   };
 
   const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map((n) => n[0])
-      .join('')
-      .toUpperCase()
-      .substring(0, 2);
+    if (!name) return "GU";
+    const parts = name.trim().split(/\s+/);
+    if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   };
 
   const handleLogout = () => {

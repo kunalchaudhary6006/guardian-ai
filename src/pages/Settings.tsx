@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -22,10 +22,42 @@ const Settings = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [language, setLanguage] = useState("English (US)");
   const [timezone, setTimezone] = useState("UTC-05:00 (EST)");
+  
+  const [profile, setProfile] = useState({
+    firstName: 'John',
+    lastName: 'Doe',
+    email: 'john.doe@guardian-ai.com',
+    bio: 'Senior Security Analyst specializing in AI-driven threat detection.'
+  });
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      const parsed = JSON.parse(storedUser);
+      const nameParts = (parsed.name || 'John Doe').split(' ');
+      setProfile({
+        firstName: nameParts[0] || '',
+        lastName: nameParts.slice(1).join(' ') || '',
+        email: parsed.email || 'john.doe@guardian-ai.com',
+        bio: parsed.bio || 'Senior Security Analyst specializing in AI-driven threat detection.'
+      });
+    }
+  }, []);
 
   const handleSaveProfile = () => {
     setIsLoading(true);
     setTimeout(() => {
+      const updatedUser = {
+        name: `${profile.firstName} ${profile.lastName}`.trim(),
+        email: profile.email,
+        bio: profile.bio,
+        confirmed: true
+      };
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      
+      // Trigger storage event for other components (like Header) to update
+      window.dispatchEvent(new Event('storage'));
+      
       setIsLoading(false);
       toast.success("Profile information updated successfully");
     }, 1000);
@@ -62,20 +94,37 @@ const Settings = () => {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="first-name">First Name</Label>
-                      <Input id="first-name" defaultValue="John" />
+                      <Input 
+                        id="first-name" 
+                        value={profile.firstName} 
+                        onChange={(e) => setProfile({...profile, firstName: e.target.value})}
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="last-name">Last Name</Label>
-                      <Input id="last-name" defaultValue="Doe" />
+                      <Input 
+                        id="last-name" 
+                        value={profile.lastName} 
+                        onChange={(e) => setProfile({...profile, lastName: e.target.value})}
+                      />
                     </div>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="email">Email Address</Label>
-                    <Input id="email" type="email" defaultValue="john.doe@guardian-ai.com" />
+                    <Input 
+                      id="email" 
+                      type="email" 
+                      value={profile.email} 
+                      onChange={(e) => setProfile({...profile, email: e.target.value})}
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="bio">Professional Bio</Label>
-                    <Input id="bio" defaultValue="Senior Security Analyst specializing in AI-driven threat detection." />
+                    <Input 
+                      id="bio" 
+                      value={profile.bio} 
+                      onChange={(e) => setProfile({...profile, bio: e.target.value})}
+                    />
                   </div>
                   <Button 
                     className="bg-slate-900 hover:bg-slate-800" 
