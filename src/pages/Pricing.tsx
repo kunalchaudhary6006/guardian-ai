@@ -16,11 +16,6 @@ const Pricing = () => {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
 
   const handlePayment = async (tier: any) => {
-    if (tier.name === 'Starter') {
-      navigate('/signup');
-      return;
-    }
-
     if (tier.name === 'Enterprise') {
       toast.info("Our sales team will contact you shortly to discuss your custom requirements.");
       return;
@@ -94,7 +89,7 @@ const Pricing = () => {
         '7-day retention',
         'Community support'
       ],
-      button: 'Start for Free',
+      button: 'Get Started',
     },
     {
       name: 'Pro',
