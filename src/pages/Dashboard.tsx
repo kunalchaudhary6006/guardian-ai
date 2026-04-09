@@ -29,6 +29,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { downloadFile, generateDashboardCSV } from '@/utils/download';
 
 const generateData = () => [
   { name: 'Mon', threats: Math.floor(Math.random() * 50) + 10, moderation: Math.floor(Math.random() * 300) + 100 },
@@ -59,11 +60,20 @@ const Dashboard = () => {
   };
 
   const handleDownload = () => {
-    toast.promise(new Promise((resolve) => setTimeout(resolve, 1500)), {
-      loading: 'Generating PDF report...',
-      success: 'Report downloaded successfully',
-      error: 'Failed to generate report',
-    });
+    toast.promise(
+      new Promise((resolve) => {
+        setTimeout(() => {
+          const csvContent = generateDashboardCSV(chartData);
+          downloadFile(csvContent, `guardian-ai-report-${new Date().toISOString().split('T')[0]}.csv`);
+          resolve(true);
+        }, 1500);
+      }), 
+      {
+        loading: 'Generating system report...',
+        success: 'Report downloaded to your system successfully',
+        error: 'Failed to generate report',
+      }
+    );
   };
 
   const stats = [

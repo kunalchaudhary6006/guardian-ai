@@ -18,6 +18,7 @@ import {
 import { Download, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { downloadFile } from '@/utils/download';
 
 const trendData = [
   { date: '2024-01', value: 400 },
@@ -39,11 +40,21 @@ const COLORS = ['#3b82f6', '#6366f1', '#8b5cf6', '#ec4899'];
 
 const ResearchAnalytics = () => {
   const handleExport = () => {
-    toast.promise(new Promise(r => setTimeout(r, 1200)), {
-      loading: 'Preparing analytics export...',
-      success: 'Analytics report exported successfully',
-      error: 'Export failed'
-    });
+    toast.promise(
+      new Promise(resolve => {
+        setTimeout(() => {
+          const header = "Date,Value\n";
+          const rows = trendData.map(item => `${item.date},${item.value}`).join("\n");
+          downloadFile(header + rows, `analytics-export-${new Date().toISOString().split('T')[0]}.csv`);
+          resolve(true);
+        }, 1200);
+      }), 
+      {
+        loading: 'Preparing analytics export...',
+        success: 'Analytics report exported to your system successfully',
+        error: 'Export failed'
+      }
+    );
   };
 
   return (
