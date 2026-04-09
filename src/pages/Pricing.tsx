@@ -7,11 +7,11 @@ import { CheckCircle2, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
-import useRazorpay from "react-razorpay";
+import { useRazorpay } from "react-razorpay";
 
 const Pricing = () => {
   const navigate = useNavigate();
-  const [Razorpay] = useRazorpay();
+  const Razorpay = useRazorpay();
   const [isProcessing, setIsProcessing] = useState<string | null>(null);
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
 
@@ -28,9 +28,6 @@ const Pricing = () => {
 
     setIsProcessing(tier.name);
 
-    // In a real app, you would call your backend here to create an order
-    // const order = await fetch('/api/create-order', { method: 'POST', body: JSON.stringify({ amount: tier.priceValue }) });
-    
     const options = {
       key: "rzp_test_YOUR_KEY_HERE", // Replace with your actual Razorpay Key ID
       amount: (parseInt(tier.price.replace('$', '')) * 100).toString(), // Amount in paise
@@ -44,7 +41,6 @@ const Pricing = () => {
           description: `Transaction ID: ${res.razorpay_payment_id}`
         });
         
-        // Mock user update
         localStorage.setItem('user', JSON.stringify({ 
           email: `${tier.name.toLowerCase()}@user.com`, 
           name: `${tier.name} User`, 
@@ -67,17 +63,23 @@ const Pricing = () => {
       },
     };
 
-    const rzp1 = new (Razorpay as any)(options);
-    
-    rzp1.on("payment.failed", function (response: any) {
-      toast.error("Payment Failed", {
-        description: response.error.description
+    try {
+      const rzp1 = new (Razorpay as any)(options);
+      
+      rzp1.on("payment.failed", function (response: any) {
+        toast.error("Payment Failed", {
+          description: response.error.description
+        });
+        setIsProcessing(null);
       });
-      setIsProcessing(null);
-    });
 
-    rzp1.open();
-    setIsProcessing(null);
+      rzp1.open();
+    } catch (error) {
+      console.error("Razorpay error:", error);
+      toast.error("Could not initialize payment gateway.");
+    } finally {
+      setIsProcessing(null);
+    }
   };
 
   const tiers = [
