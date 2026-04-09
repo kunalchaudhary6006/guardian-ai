@@ -20,6 +20,7 @@ const LandingLayout = ({ children }: { children: React.ReactNode }) => {
             
             <div className="hidden md:flex items-center gap-8">
               <Link to="/pricing" className="text-sm font-medium text-slate-600 hover:text-slate-900">Pricing</Link>
+              <Link to="/contact" className="text-sm font-medium text-slate-600 hover:text-slate-900">Contact</Link>
               <Link to="/dashboard" className="text-sm font-medium text-slate-600 hover:text-slate-900">Demo</Link>
               <div className="h-4 w-[1px] bg-slate-200" />
               <Link to="/login" className="text-sm font-medium text-slate-600 hover:text-slate-900">Log in</Link>
@@ -38,6 +39,7 @@ const LandingLayout = ({ children }: { children: React.ReactNode }) => {
         {isMenuOpen && (
           <div className="md:hidden border-t border-slate-100 p-4 space-y-4 bg-white">
             <Link to="/pricing" className="block text-base font-medium text-slate-600">Pricing</Link>
+            <Link to="/contact" className="block text-base font-medium text-slate-600">Contact</Link>
             <Link to="/dashboard" className="block text-base font-medium text-slate-600">Demo</Link>
             <Link to="/login" className="block text-base font-medium text-slate-600">Log in</Link>
             <Button asChild className="w-full bg-slate-900 hover:bg-slate-800 rounded-full">
@@ -53,8 +55,13 @@ const LandingLayout = ({ children }: { children: React.ReactNode }) => {
 
       <footer className="bg-slate-50 border-t border-slate-100 py-12">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <div className="flex justify-center mb-4">
+          <div className="flex justify-center mb-6">
             <Logo size="sm" />
+          </div>
+          <div className="flex justify-center gap-8 mb-8">
+            <Link to="/pricing" className="text-sm text-slate-500 hover:text-slate-900">Pricing</Link>
+            <Link to="/contact" className="text-sm text-slate-500 hover:text-slate-900">Contact</Link>
+            <Link to="/login" className="text-sm text-slate-500 hover:text-slate-900">Login</Link>
           </div>
           <p className="text-slate-500 text-sm">© 2024 Guardian AI. All rights reserved.</p>
         </div>
