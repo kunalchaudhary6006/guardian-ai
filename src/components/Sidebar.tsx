@@ -9,7 +9,7 @@ import {
   FileCheck, 
   BarChart3, 
   ShieldCheck,
-  Settings,
+  Settings as SettingsIcon,
   LogOut,
   Menu,
   X
@@ -86,10 +86,17 @@ const Sidebar = () => {
           </div>
           
           <div className="space-y-1">
-            <button className="w-full flex items-center gap-3 px-4 py-2 text-slate-600 hover:text-slate-900 transition-colors">
-              <Settings size={18} />
+            <Link 
+              to="/settings"
+              onClick={() => setIsOpen(false)}
+              className={cn(
+                "w-full flex items-center gap-3 px-4 py-2 rounded-xl transition-colors",
+                location.pathname === '/settings' ? "bg-slate-100 text-slate-900" : "text-slate-600 hover:text-slate-900"
+              )}
+            >
+              <SettingsIcon size={18} />
               <span className="text-sm font-medium">Settings</span>
-            </button>
+            </Link>
             <button className="w-full flex items-center gap-3 px-4 py-2 text-rose-600 hover:text-rose-700 transition-colors">
               <LogOut size={18} />
               <span className="text-sm font-medium">Logout</span>

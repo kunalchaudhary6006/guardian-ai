@@ -9,6 +9,7 @@ import ThreatIntelligence from "./pages/ThreatIntelligence";
 import PolicyEnforcement from "./pages/PolicyEnforcement";
 import ResearchAnalytics from "./pages/ResearchAnalytics";
 import MarketingDashboard from "./pages/MarketingDashboard";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/policy" element={<PolicyEnforcement />} />
           <Route path="/analytics" element={<ResearchAnalytics />} />
           <Route path="/marketing" element={<MarketingDashboard />} />
+          <Route path="/settings" element={<Settings />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
