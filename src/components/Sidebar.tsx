@@ -16,8 +16,7 @@ import {
   Database,
   Lock,
   LogOut,
-  Shield,
-  Layout
+  Shield
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -35,8 +34,7 @@ export default function Sidebar() {
     { label: "Research & Analytics", icon: Search, path: "/analytics" },
     { label: "Brand Safety", icon: Shield, path: "/brand-safety" },
     { label: "Threat Intelligence", icon: ShieldBan, path: "/threats" },
-    { label: "Marketing Intelligence", icon: "/marketing" },
-    { label: "Creative Studio", icon: Layout, path: "/studio" },
+    { label: "Marketing Intelligence", icon: BarChart3, path: "/marketing" },
   ];
 
   const ai = [

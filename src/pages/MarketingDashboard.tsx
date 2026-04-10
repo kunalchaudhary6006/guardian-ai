@@ -18,7 +18,6 @@ import {
   ShieldCheck, 
   BarChart3, 
   Globe, 
-  Layout, 
   FileText,
   TrendingUp,
   AlertTriangle,
@@ -92,13 +91,6 @@ export default function MarketingDashboard() {
             className="bg-blue-600 hover:bg-blue-700 rounded-2xl gap-2 h-11 px-6 shadow-lg shadow-blue-900/20"
           >
             <Plus size={18} /> Create Campaign
-          </Button>
-          <Button 
-            variant="outline" 
-            onClick={() => navigate('/studio')}
-            className="rounded-2xl gap-2 h-11 px-6 border-[#1E293B] bg-[#0F172A] text-white hover:bg-[#1E293B]"
-          >
-            <Layout size={18} /> Creative Studio
           </Button>
           <Button 
             variant="outline" 
