@@ -15,7 +15,8 @@ import {
   UserCheck,
   Database,
   Lock,
-  LogOut
+  LogOut,
+  Shield
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -31,8 +32,8 @@ export default function Sidebar() {
     { label: "Content Moderation", icon: ShieldAlert, path: "/moderation" },
     { label: "Policy Enforcement", icon: FileCheck, path: "/policy" },
     { label: "Research & Analytics", icon: Search, path: "/analytics" },
-    { label: "Brand Safety", icon: ShieldCheck, path: "/threats" },
-    { label: "Threat Response", icon: ShieldBan, path: "/threats" },
+    { label: "Brand Safety", icon: Shield, path: "/brand-safety" },
+    { label: "Threat Intelligence", icon: ShieldBan, path: "/threats" },
     { label: "Marketing Intelligence", icon: BarChart3, path: "/marketing" },
   ];
 

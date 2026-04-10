@@ -3,6 +3,7 @@
 import React from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import SentimentTracker from '@/components/SentimentTracker';
 import { 
   BarChart, 
   Bar, 
@@ -59,49 +60,54 @@ const MarketingDashboard = () => {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <Card className="border-[#1E293B] bg-[#0F172A] shadow-sm rounded-3xl">
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold text-white">Campaign Reach</CardTitle>
-          </CardHeader>
-          <CardContent className="h-[350px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={campaignData}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1E293B" />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} />
-                <YAxis axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} />
-                <Tooltip 
-                  contentStyle={{ backgroundColor: '#0F172A', borderRadius: '12px', border: '1px solid #1E293B', color: '#fff' }}
-                  itemStyle={{ color: '#fff' }}
-                />
-                <Bar dataKey="reach" fill="#3b82f6" radius={[6, 6, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-8">
+          <Card className="border-[#1E293B] bg-[#0F172A] shadow-sm rounded-3xl">
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold text-white">Campaign Reach</CardTitle>
+            </CardHeader>
+            <CardContent className="h-[350px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={campaignData}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1E293B" />
+                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} />
+                  <YAxis axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: '#0F172A', borderRadius: '12px', border: '1px solid #1E293B', color: '#fff' }}
+                    itemStyle={{ color: '#fff' }}
+                  />
+                  <Bar dataKey="reach" fill="#3b82f6" radius={[6, 6, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
 
-        <Card className="border-none shadow-sm bg-gradient-to-br from-blue-600 to-indigo-700 text-white rounded-3xl">
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold flex items-center gap-2">
-              <Sparkles size={20} /> AI Recommendations
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {[
-              { title: 'Optimize "Secure Future"', desc: 'Increase budget by 20% for maximum ROI.' },
-              { title: 'New Audience Segment', desc: 'Target "Cybersecurity Professionals" demographic.' },
-              { title: 'Content Refresh', desc: 'Update visual assets for "Trust Tech" campaign.' },
-            ].map((rec, i) => (
-              <div key={i} className="p-4 bg-white/10 rounded-2xl backdrop-blur-sm group cursor-pointer hover:bg-white/20 transition-colors" onClick={() => handleRecommendation(rec.title)}>
-                <div className="flex items-center justify-between">
-                  <h4 className="font-bold mb-1">{rec.title}</h4>
-                  <ArrowRight size={16} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+          <Card className="border-none shadow-sm bg-gradient-to-br from-blue-600 to-indigo-700 text-white rounded-3xl">
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                <Sparkles size={20} /> AI Recommendations
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {[
+                { title: 'Optimize "Secure Future"', desc: 'Increase budget by 20% for maximum ROI.' },
+                { title: 'New Audience Segment', desc: 'Target "Cybersecurity Professionals" demographic.' },
+                { title: 'Content Refresh', desc: 'Update visual assets for "Trust Tech" campaign.' },
+              ].map((rec, i) => (
+                <div key={i} className="p-4 bg-white/10 rounded-2xl backdrop-blur-sm group cursor-pointer hover:bg-white/20 transition-colors" onClick={() => handleRecommendation(rec.title)}>
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-bold mb-1">{rec.title}</h4>
+                    <ArrowRight size={16} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </div>
+                  <p className="text-sm text-blue-100">{rec.desc}</p>
                 </div>
-                <p className="text-sm text-blue-100">{rec.desc}</p>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
+              ))}
+            </CardContent>
+          </Card>
+        </div>
+        <div className="space-y-8">
+          <SentimentTracker />
+        </div>
       </div>
     </DashboardLayout>
   );

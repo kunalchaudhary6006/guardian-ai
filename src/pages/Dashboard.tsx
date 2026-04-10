@@ -16,7 +16,8 @@ import {
   BarChart3, 
   ShieldBan,
   Lock,
-  UserCheck
+  UserCheck,
+  Shield
 } from "lucide-react";
 
 export default function Dashboard() {
@@ -24,8 +25,8 @@ export default function Dashboard() {
     { title: "Content Moderation", icon: ShieldAlert, path: "/moderation" },
     { title: "Policy Enforcement", icon: FileCheck, path: "/policy" },
     { title: "Research & Analytics", icon: Search, path: "/analytics" },
-    { title: "Brand Safety", icon: ShieldCheck, path: "/threats" },
-    { title: "Threat Response", icon: ShieldBan, path: "/threats" },
+    { title: "Brand Safety", icon: Shield, path: "/brand-safety" },
+    { title: "Threat Intelligence", icon: ShieldBan, path: "/threats" },
     { title: "Marketing Intelligence", icon: BarChart3, path: "/marketing" },
   ];
 
@@ -45,8 +46,8 @@ export default function Dashboard() {
               <div>
                 <h3 className="text-sm font-black text-slate-500 uppercase tracking-widest mb-4">AI Suite Quick Access</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <ModuleCard title="Financial Fraud Bot" icon={Lock} path="/moderation" />
-                  <ModuleCard title="AI Verification Bot" icon={UserCheck} path="/policy" />
+                  <ModuleCard title="Financial Fraud Bot" icon={Lock} path="/fraud" />
+                  <ModuleCard title="AI Verification Bot" icon={UserCheck} path="/verification" />
                 </div>
               </div>
 

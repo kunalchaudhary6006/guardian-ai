@@ -6,7 +6,8 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Search, Filter, MoreVertical, ShieldAlert, CheckCircle, XCircle } from 'lucide-react';
+import { Search, Filter, ShieldAlert, CheckCircle, XCircle } from 'lucide-react';
+import ModerationLiveQueue from '@/components/ModerationLiveQueue';
 import { cn } from '@/lib/utils';
 import { toast } from "sonner";
 import {
@@ -71,73 +72,80 @@ const ContentModeration = () => {
         </div>
       </div>
 
-      <Card className="border-[#1E293B] bg-[#0F172A] shadow-sm mb-8 rounded-3xl overflow-hidden">
-        <CardHeader className="border-b border-[#1E293B] p-6">
-          <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
-            <Input 
-              className="pl-12 bg-[#020617] border-[#1E293B] text-white h-12 rounded-2xl focus-visible:ring-1 focus-visible:ring-blue-500" 
-              placeholder="Search by ID, user, or content..." 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-        </CardHeader>
-        <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead>
-                <tr className="bg-[#020617]/50 text-slate-500 text-xs uppercase tracking-wider">
-                  <th className="px-6 py-4 font-semibold">ID</th>
-                  <th className="px-6 py-4 font-semibold">User</th>
-                  <th className="px-6 py-4 font-semibold">Content Preview</th>
-                  <th className="px-6 py-4 font-semibold">Risk Level</th>
-                  <th className="px-6 py-4 font-semibold">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#1E293B]">
-                {filteredQueue.map((item) => (
-                  <tr key={item.id} className="hover:bg-[#1E293B]/30 transition-colors group">
-                    <td className="px-6 py-4 text-sm font-medium text-white">{item.id}</td>
-                    <td className="px-6 py-4 text-sm text-slate-400">{item.user}</td>
-                    <td className="px-6 py-4 text-sm text-slate-400 max-w-xs truncate">{item.content}</td>
-                    <td className="px-6 py-4">
-                      <Badge className={cn(
-                        "font-medium rounded-full px-3",
-                        item.risk === 'Critical' ? "bg-rose-500/10 text-rose-400 border-rose-500/20" :
-                        item.risk === 'High' ? "bg-orange-500/10 text-orange-400 border-orange-500/20" :
-                        "bg-amber-500/10 text-amber-400 border-amber-500/20"
-                      )}>
-                        {item.risk}
-                      </Badge>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <Button 
-                          size="icon" 
-                          variant="ghost" 
-                          className="h-9 w-9 rounded-xl text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10"
-                          onClick={() => handleAction(item.id, 'approve')}
-                        >
-                          <CheckCircle size={18} />
-                        </Button>
-                        <Button 
-                          size="icon" 
-                          variant="ghost" 
-                          className="h-9 w-9 rounded-xl text-rose-400 hover:text-rose-300 hover:bg-rose-500/10"
-                          onClick={() => handleAction(item.id, 'reject')}
-                        >
-                          <XCircle size={18} />
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2">
+          <Card className="border-[#1E293B] bg-[#0F172A] shadow-sm rounded-3xl overflow-hidden">
+            <CardHeader className="border-b border-[#1E293B] p-6">
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                <Input 
+                  className="pl-12 bg-[#020617] border-[#1E293B] text-white h-12 rounded-2xl focus-visible:ring-1 focus-visible:ring-blue-500" 
+                  placeholder="Search by ID, user, or content..." 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="bg-[#020617]/50 text-slate-500 text-xs uppercase tracking-wider">
+                      <th className="px-6 py-4 font-semibold">ID</th>
+                      <th className="px-6 py-4 font-semibold">User</th>
+                      <th className="px-6 py-4 font-semibold">Content Preview</th>
+                      <th className="px-6 py-4 font-semibold">Risk Level</th>
+                      <th className="px-6 py-4 font-semibold">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#1E293B]">
+                    {filteredQueue.map((item) => (
+                      <tr key={item.id} className="hover:bg-[#1E293B]/30 transition-colors group">
+                        <td className="px-6 py-4 text-sm font-medium text-white">{item.id}</td>
+                        <td className="px-6 py-4 text-sm text-slate-400">{item.user}</td>
+                        <td className="px-6 py-4 text-sm text-slate-400 max-w-xs truncate">{item.content}</td>
+                        <td className="px-6 py-4">
+                          <Badge className={cn(
+                            "font-medium rounded-full px-3",
+                            item.risk === 'Critical' ? "bg-rose-500/10 text-rose-400 border-rose-500/20" :
+                            item.risk === 'High' ? "bg-orange-500/10 text-orange-400 border-orange-500/20" :
+                            "bg-amber-500/10 text-amber-400 border-amber-500/20"
+                          )}>
+                            {item.risk}
+                          </Badge>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-2">
+                            <Button 
+                              size="icon" 
+                              variant="ghost" 
+                              className="h-9 w-9 rounded-xl text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10"
+                              onClick={() => handleAction(item.id, 'approve')}
+                            >
+                              <CheckCircle size={18} />
+                            </Button>
+                            <Button 
+                              size="icon" 
+                              variant="ghost" 
+                              className="h-9 w-9 rounded-xl text-rose-400 hover:text-rose-300 hover:bg-rose-500/10"
+                              onClick={() => handleAction(item.id, 'reject')}
+                            >
+                              <XCircle size={18} />
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        <div className="space-y-8">
+          <ModerationLiveQueue />
+        </div>
+      </div>
     </DashboardLayout>
   );
 };

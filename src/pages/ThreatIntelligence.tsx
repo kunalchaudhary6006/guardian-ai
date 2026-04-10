@@ -5,6 +5,7 @@ import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ShieldCheck, Globe, Zap, Lock, AlertCircle } from 'lucide-react';
+import ThreatResponseCenter from '@/components/ThreatResponseCenter';
 import { 
   BarChart, 
   Bar, 
@@ -33,39 +34,43 @@ const ThreatIntelligence = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-        <Card className="lg:col-span-2 border-[#1E293B] bg-[#0F172A] shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold text-white">Attack Vector Distribution</CardTitle>
-          </CardHeader>
-          <CardContent className="h-[400px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={threatData} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#1E293B" />
-                <XAxis type="number" hide />
-                <YAxis 
-                  dataKey="name" 
-                  type="category" 
-                  axisLine={false} 
-                  tickLine={false} 
-                  tick={{fill: '#64748b', fontSize: 14, fontWeight: 500}}
-                  width={100}
-                />
-                <Tooltip 
-                  cursor={{fill: '#1E293B'}}
-                  contentStyle={{ backgroundColor: '#0F172A', borderRadius: '12px', border: '1px solid #1E293B', color: '#fff' }}
-                />
-                <Bar dataKey="value" radius={[0, 8, 8, 0]} barSize={32}>
-                  {threatData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
+        <div className="lg:col-span-2 space-y-8">
+          <Card className="border-[#1E293B] bg-[#0F172A] shadow-sm rounded-3xl">
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold text-white">Attack Vector Distribution</CardTitle>
+            </CardHeader>
+            <CardContent className="h-[400px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={threatData} layout="vertical">
+                  <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#1E293B" />
+                  <XAxis type="number" hide />
+                  <YAxis 
+                    dataKey="name" 
+                    type="category" 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{fill: '#64748b', fontSize: 14, fontWeight: 500}}
+                    width={100}
+                  />
+                  <Tooltip 
+                    cursor={{fill: '#1E293B'}}
+                    contentStyle={{ backgroundColor: '#0F172A', borderRadius: '12px', border: '1px solid #1E293B', color: '#fff' }}
+                  />
+                  <Bar dataKey="value" radius={[0, 8, 8, 0]} barSize={32}>
+                    {threatData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+          
+          <ThreatResponseCenter />
+        </div>
 
         <div className="space-y-6">
-          <Card className="border-[#1E293B] bg-[#0F172A] shadow-sm text-white">
+          <Card className="border-[#1E293B] bg-[#0F172A] shadow-sm text-white rounded-3xl">
             <CardContent className="p-6">
               <div className="flex items-center gap-4 mb-4">
                 <div className="w-12 h-12 bg-[#020617] border border-[#1E293B] rounded-2xl flex items-center justify-center">
@@ -82,7 +87,7 @@ const ThreatIntelligence = () => {
             </CardContent>
           </Card>
 
-          <Card className="border-[#1E293B] bg-[#0F172A] shadow-sm">
+          <Card className="border-[#1E293B] bg-[#0F172A] shadow-sm rounded-3xl">
             <CardHeader>
               <CardTitle className="text-base font-semibold text-white">Active Countermeasures</CardTitle>
             </CardHeader>
