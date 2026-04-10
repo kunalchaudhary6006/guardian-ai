@@ -47,47 +47,160 @@ import {
   CheckCircle2,
   XCircle,
   AlertTriangle,
-  Info
+  Info,
+  Copy,
+  RefreshCw,
+  Search,
+  Terminal,
+  LayoutGrid,
+  List as ListIcon
 } from 'lucide-react';
 import { toast } from "sonner";
 
 const Settings = () => {
   const [isLoading, setIsLoading] = useState(false);
   
-  // --- State for various sections ---
-  const [profile, setProfile] = useState({
-    name: 'John Doe',
-    email: 'john.doe@guardian-ai.com',
-    company: 'Guardian Tech',
-    orgType: 'Enterprise'
+  // --- Comprehensive State Management ---
+  const [settings, setSettings] = useState(() => {
+    const saved = localStorage.getItem('guardian_settings');
+    return saved ? JSON.parse(saved) : {
+      profile: {
+        name: 'John Doe',
+        email: 'john.doe@guardian-ai.com',
+        company: 'Guardian Tech',
+        orgType: 'Enterprise',
+        timezone: 'UTC+5:30 (IST)',
+        language: 'English'
+      },
+      preferences: {
+        landingPage: 'Dashboard',
+        theme: 'Dark',
+        layout: 'Grid',
+        widgets: {
+          alerts: true,
+          activity: true,
+          aiChat: true,
+          safetyScan: true
+        }
+      },
+      security: {
+        twoFactor: true,
+        backupEmail: 'recovery@guardian-ai.com'
+      },
+      billing: {
+        plan: 'Pro',
+        cycle: 'monthly',
+        autoRenew: true,
+        coupon: ''
+      },
+      team: [
+        { id: 1, name: 'John Doe', email: 'john@guardian.ai', role: 'Admin', status: 'Active' },
+        { id: 2, name: 'Sarah Chen', email: 'sarah@guardian.ai', role: 'Analyst', status: 'Active' },
+        { id: 3, name: 'Mike Ross', email: 'mike@guardian.ai', role: 'Viewer', status: 'Suspended' },
+      ],
+      ai: {
+        model: 'Advanced',
+        sensitivity: 65,
+        threshold: 85,
+        autoMod: true,
+        autoActions: {
+          remove: true,
+          flag: true,
+          shadowBan: false
+        },
+        policies: {
+          hateSpeech: true,
+          nsfw: true,
+          spam: true,
+          fraud: true,
+          violence: false
+        },
+        customRules: [
+          { id: 1, keyword: 'scam', action: 'Remove' }
+        ]
+      },
+      system: {
+        apiKey: 'sk_live_' + Math.random().toString(36).substring(2, 15),
+        region: 'India',
+        retention: '30',
+        gdpr: true,
+        integrations: {
+          slack: true,
+          discord: false,
+          zapier: false,
+          shopify: false
+        }
+      }
+    };
   });
 
-  const [aiSettings, setAiSettings] = useState({
-    sensitivity: 50,
-    threshold: 85,
-    autoMod: true,
-    policies: {
-      hateSpeech: true,
-      nsfw: true,
-      spam: true,
-      fraud: true,
-      violence: false
-    }
-  });
-
-  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
+  // Persist settings on change
+  useEffect(() => {
+    localStorage.setItem('guardian_settings', JSON.stringify(settings));
+  }, [settings]);
 
   // --- Handlers ---
+  const updateNested = (path: string, value: any) => {
+    const keys = path.split('.');
+    setSettings((prev: any) => {
+      const next = { ...prev };
+      let current = next;
+      for (let i = 0; i < keys.length - 1; i++) {
+        current[keys[i]] = { ...current[keys[i]] };
+        current = current[keys[i]];
+      }
+      current[keys[keys.length - 1]] = value;
+      return next;
+    });
+  };
+
   const handleSave = (section: string) => {
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
-      toast.success(`${section} settings updated successfully`);
-    }, 800);
+      toast.success(`${section} settings saved successfully`);
+    }, 600);
   };
 
-  const handleToggle = (key: string, val: boolean) => {
-    toast.info(`${key} is now ${val ? 'enabled' : 'disabled'}`);
+  const handleRegenerateKey = () => {
+    const newKey = 'sk_live_' + Math.random().toString(36).substring(2, 15);
+    updateNested('system.apiKey', newKey);
+    toast.success("New API Key generated");
+  };
+
+  const handleAddRule = () => {
+    const keyword = prompt("Enter keyword to filter:");
+    if (!keyword) return;
+    const action = prompt("Enter action (Remove/Flag):", "Remove");
+    const newRule = { id: Date.now(), keyword, action: action || 'Remove' };
+    updateNested('ai.customRules', [...settings.ai.customRules, newRule]);
+    toast.success(`Rule added for "${keyword}"`);
+  };
+
+  const handleInvite = (e: React.FormEvent) => {
+    e.preventDefault();
+    const form = e.target as HTMLFormElement;
+    const email = (form.elements.namedItem('invite-email') as HTMLInputElement).value;
+    const role = (form.elements.namedItem('invite-role') as HTMLSelectElement).value;
+    
+    if (!email) return;
+    
+    const newMember = {
+      id: Date.now(),
+      name: email.split('@')[0],
+      email,
+      role,
+      status: 'Active'
+    };
+    
+    updateNested('team', [...settings.team, newMember]);
+    form.reset();
+    toast.success(`Invitation sent to ${email}`);
+  };
+
+  const handleRemoveMember = (id: number) => {
+    updateNested('team', settings.team.filter((m: any) => m.id !== id));
+    toast.error("Team member removed");
   };
 
   return (
@@ -128,30 +241,40 @@ const Settings = () => {
               <Card className="border-[#1E293B] bg-[#0F172A] rounded-3xl overflow-hidden">
                 <CardHeader>
                   <CardTitle className="text-white">Profile Information</CardTitle>
-                  <CardDescription className="text-slate-400">Manage your personal and organizational details.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label className="text-white">Full Name</Label>
-                      <Input value={profile.name} onChange={e => setProfile({...profile, name: e.target.value})} className="bg-[#020617] border-[#1E293B] text-white rounded-xl" />
+                      <Input 
+                        value={settings.profile.name} 
+                        onChange={e => updateNested('profile.name', e.target.value)} 
+                        className="bg-[#020617] border-[#1E293B] text-white rounded-xl" 
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label className="text-white">Email Address</Label>
                       <div className="relative">
-                        <Input value={profile.email} readOnly className="bg-[#020617] border-[#1E293B] text-white rounded-xl pr-20" />
+                        <Input value={settings.profile.email} readOnly className="bg-[#020617] border-[#1E293B] text-white rounded-xl pr-20" />
                         <Badge className="absolute right-2 top-1/2 -translate-y-1/2 bg-emerald-500/10 text-emerald-400 border-emerald-500/20">Verified</Badge>
                       </div>
                     </div>
                     <div className="space-y-2">
                       <Label className="text-white">Company Name</Label>
-                      <Input value={profile.company} onChange={e => setProfile({...profile, company: e.target.value})} className="bg-[#020617] border-[#1E293B] text-white rounded-xl" />
+                      <Input 
+                        value={settings.profile.company} 
+                        onChange={e => updateNested('profile.company', e.target.value)} 
+                        className="bg-[#020617] border-[#1E293B] text-white rounded-xl" 
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label className="text-white">Organization Type</Label>
-                      <Select defaultValue={profile.orgType}>
+                      <Select 
+                        value={settings.profile.orgType} 
+                        onValueChange={v => updateNested('profile.orgType', v)}
+                      >
                         <SelectTrigger className="bg-[#020617] border-[#1E293B] text-white rounded-xl">
-                          <SelectValue placeholder="Select type" />
+                          <SelectValue />
                         </SelectTrigger>
                         <SelectContent className="bg-[#0F172A] border-[#1E293B] text-white">
                           <SelectItem value="Startup">Startup</SelectItem>
@@ -167,25 +290,51 @@ const Settings = () => {
 
               <Card className="border-[#1E293B] bg-[#0F172A] rounded-3xl">
                 <CardHeader>
-                  <CardTitle className="text-white">Dashboard Preferences</CardTitle>
+                  <CardTitle className="text-white">Preferences</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-white font-medium">Theme Mode</p>
-                      <p className="text-xs text-slate-500">Switch between dark and light interface.</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label className="text-white">Time Zone</Label>
+                      <Select value={settings.profile.timezone} onValueChange={v => updateNested('profile.timezone', v)}>
+                        <SelectTrigger className="bg-[#020617] border-[#1E293B] text-white rounded-xl">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-[#0F172A] border-[#1E293B] text-white">
+                          <SelectItem value="UTC+5:30 (IST)">UTC+5:30 (IST)</SelectItem>
+                          <SelectItem value="UTC-8:00 (PST)">UTC-8:00 (PST)</SelectItem>
+                          <SelectItem value="UTC+0:00 (GMT)">UTC+0:00 (GMT)</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
-                    <div className="flex items-center gap-2 bg-[#020617] p-1 rounded-xl border border-[#1E293B]">
-                      <Button variant="ghost" size="sm" className="bg-blue-600 text-white rounded-lg">Dark</Button>
-                      <Button variant="ghost" size="sm" className="text-slate-400 rounded-lg" onClick={() => toast.info("Light mode coming soon!")}>Light</Button>
+                    <div className="space-y-2">
+                      <Label className="text-white">Language</Label>
+                      <Select value={settings.profile.language} onValueChange={v => updateNested('profile.language', v)}>
+                        <SelectTrigger className="bg-[#020617] border-[#1E293B] text-white rounded-xl">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-[#0F172A] border-[#1E293B] text-white">
+                          <SelectItem value="English">English</SelectItem>
+                          <SelectItem value="Hindi">Hindi</SelectItem>
+                          <SelectItem value="Spanish">Spanish</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-[#1E293B] bg-[#0F172A] rounded-3xl">
+                <CardHeader>
+                  <CardTitle className="text-white">Dashboard Customization</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-white font-medium">Default Landing Page</p>
                       <p className="text-xs text-slate-500">Choose which page opens first.</p>
                     </div>
-                    <Select defaultValue="Dashboard">
+                    <Select value={settings.preferences.landingPage} onValueChange={v => updateNested('preferences.landingPage', v)}>
                       <SelectTrigger className="w-40 bg-[#020617] border-[#1E293B] text-white rounded-xl">
                         <SelectValue />
                       </SelectTrigger>
@@ -195,6 +344,41 @@ const Settings = () => {
                         <SelectItem value="Moderation">Moderation</SelectItem>
                       </SelectContent>
                     </Select>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-white font-medium">Layout Style</p>
+                      <p className="text-xs text-slate-500">Switch between grid and list views.</p>
+                    </div>
+                    <div className="flex items-center gap-2 bg-[#020617] p-1 rounded-xl border border-[#1E293B]">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className={settings.preferences.layout === 'Grid' ? "bg-blue-600 text-white rounded-lg" : "text-slate-400"}
+                        onClick={() => updateNested('preferences.layout', 'Grid')}
+                      >
+                        <LayoutGrid size={16} className="mr-2" /> Grid
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className={settings.preferences.layout === 'List' ? "bg-blue-600 text-white rounded-lg" : "text-slate-400"}
+                        onClick={() => updateNested('preferences.layout', 'List')}
+                      >
+                        <ListIcon size={16} className="mr-2" /> List
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="space-y-4 pt-4 border-t border-[#1E293B]">
+                    <p className="text-sm font-bold text-white uppercase tracking-widest">Active Widgets</p>
+                    <div className="grid grid-cols-2 gap-4">
+                      {Object.entries(settings.preferences.widgets).map(([key, val]) => (
+                        <div key={key} className="flex items-center justify-between p-3 bg-[#020617] rounded-xl border border-[#1E293B]">
+                          <span className="text-sm text-slate-300 capitalize">{key.replace(/([A-Z])/g, ' $1')}</span>
+                          <Switch checked={val as boolean} onCheckedChange={v => updateNested(`preferences.widgets.${key}`, v)} />
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -207,12 +391,9 @@ const Settings = () => {
                 </CardHeader>
                 <CardContent className="flex flex-col items-center gap-4">
                   <div className="w-24 h-24 bg-blue-600 rounded-3xl flex items-center justify-center text-3xl font-bold text-white shadow-xl shadow-blue-900/20">
-                    JD
+                    {settings.profile.name.substring(0, 2).toUpperCase()}
                   </div>
-                  <div className="flex gap-2 w-full">
-                    <Button variant="outline" className="flex-1 border-[#1E293B] text-white hover:bg-[#1E293B] rounded-xl">Upload</Button>
-                    <Button variant="ghost" className="text-rose-400 hover:bg-rose-500/10 rounded-xl"><Trash2 size={18} /></Button>
-                  </div>
+                  <Button variant="outline" className="w-full border-[#1E293B] text-white hover:bg-[#1E293B] rounded-xl">Change Photo</Button>
                 </CardContent>
               </Card>
             </div>
@@ -239,14 +420,9 @@ const Settings = () => {
                         <Input type="password" placeholder="••••••••" className="bg-[#020617] border-[#1E293B] text-white rounded-xl" />
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <div className="flex-1 h-1.5 bg-emerald-500 rounded-full" />
-                      <div className="flex-1 h-1.5 bg-emerald-500 rounded-full" />
-                      <div className="flex-1 h-1.5 bg-emerald-500 rounded-full" />
-                      <span className="text-[10px] font-bold text-emerald-400 uppercase">Strong</span>
-                    </div>
+                    <Button onClick={() => toast.success("Password updated")} className="bg-blue-600 hover:bg-blue-700 rounded-xl">Update Password</Button>
                   </div>
-                  <div className="pt-4 border-t border-[#1E293B] flex items-center justify-between">
+                  <div className="pt-6 border-t border-[#1E293B] flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <Smartphone className="text-blue-400" />
                       <div>
@@ -254,7 +430,10 @@ const Settings = () => {
                         <p className="text-xs text-slate-500">Secure your account with 2FA.</p>
                       </div>
                     </div>
-                    <Switch defaultChecked onCheckedChange={(v) => handleToggle('2FA', v)} />
+                    <Switch 
+                      checked={settings.security.twoFactor} 
+                      onCheckedChange={v => updateNested('security.twoFactor', v)} 
+                    />
                   </div>
                 </CardContent>
               </Card>
@@ -299,15 +478,20 @@ const Settings = () => {
             <div className="space-y-6">
               <Card className="border-[#1E293B] bg-[#0F172A] rounded-3xl">
                 <CardHeader>
-                  <CardTitle className="text-white">Active Sessions</CardTitle>
+                  <CardTitle className="text-white">Recovery</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="p-3 bg-blue-600/10 border border-blue-500/20 rounded-2xl">
-                    <p className="text-xs font-bold text-blue-400 uppercase mb-1">Current Session</p>
-                    <p className="text-sm text-white font-medium">MacBook Pro • San Francisco, US</p>
-                    <p className="text-[10px] text-slate-500">Active now</p>
+                  <div className="space-y-2">
+                    <Label className="text-white">Backup Email</Label>
+                    <Input 
+                      value={settings.security.backupEmail} 
+                      onChange={e => updateNested('security.backupEmail', e.target.value)}
+                      className="bg-[#020617] border-[#1E293B] text-white rounded-xl" 
+                    />
                   </div>
-                  <Button variant="outline" className="w-full border-rose-500/30 text-rose-400 hover:bg-rose-500/10 rounded-xl">Logout All Devices</Button>
+                  <Button variant="outline" className="w-full border-[#1E293B] text-white hover:bg-[#1E293B] rounded-xl gap-2">
+                    <Download size={16} /> Download Recovery Codes
+                  </Button>
                 </CardContent>
               </Card>
             </div>
@@ -321,10 +505,29 @@ const Settings = () => {
               <Card className="border-none bg-gradient-to-br from-blue-600 to-indigo-700 rounded-[2.5rem] text-white p-8">
                 <div className="flex justify-between items-start mb-8">
                   <div>
-                    <Badge className="bg-white/20 text-white border-none mb-2">Pro Plan</Badge>
-                    <h2 className="text-3xl font-black">$149<span className="text-lg font-normal opacity-70">/month</span></h2>
+                    <Badge className="bg-white/20 text-white border-none mb-2">{settings.billing.plan} Plan</Badge>
+                    <h2 className="text-3xl font-black">
+                      {settings.billing.cycle === 'monthly' ? '$149' : '$1,490'}
+                      <span className="text-lg font-normal opacity-70">/{settings.billing.cycle === 'monthly' ? 'month' : 'year'}</span>
+                    </h2>
                   </div>
-                  <Button className="bg-white text-blue-600 hover:bg-white/90 rounded-xl font-bold">Upgrade Plan</Button>
+                  <div className="flex flex-col gap-2">
+                    <Button className="bg-white text-blue-600 hover:bg-white/90 rounded-xl font-bold">Upgrade Plan</Button>
+                    <div className="flex items-center gap-2 bg-black/20 p-1 rounded-lg">
+                      <button 
+                        onClick={() => updateNested('billing.cycle', 'monthly')}
+                        className={`px-3 py-1 text-[10px] font-bold rounded ${settings.billing.cycle === 'monthly' ? 'bg-white text-blue-600' : 'text-white'}`}
+                      >
+                        MONTHLY
+                      </button>
+                      <button 
+                        onClick={() => updateNested('billing.cycle', 'yearly')}
+                        className={`px-3 py-1 text-[10px] font-bold rounded ${settings.billing.cycle === 'yearly' ? 'bg-white text-blue-600' : 'text-white'}`}
+                      >
+                        YEARLY
+                      </button>
+                    </div>
+                  </div>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {['500K Scans', 'Advanced AI', 'API Access', 'Priority Support'].map((f, i) => (
@@ -391,6 +594,7 @@ const Settings = () => {
                   <Button variant="outline" className="w-full border-[#1E293B] text-white hover:bg-[#1E293B] rounded-xl gap-2">
                     <Plus size={16} /> Add New Card
                   </Button>
+                  <Button variant="ghost" className="w-full text-slate-500 hover:text-white text-xs">Pay via UPI (India Only)</Button>
                 </CardContent>
               </Card>
 
@@ -401,13 +605,21 @@ const Settings = () => {
                 <CardContent className="space-y-4">
                   <div className="flex items-center justify-between">
                     <Label className="text-white">Auto-Renew</Label>
-                    <Switch defaultChecked />
+                    <Switch 
+                      checked={settings.billing.autoRenew} 
+                      onCheckedChange={v => updateNested('billing.autoRenew', v)} 
+                    />
                   </div>
                   <div className="pt-4 border-t border-[#1E293B]">
                     <Label className="text-xs text-slate-500 mb-2 block">Coupon Code</Label>
                     <div className="flex gap-2">
-                      <Input placeholder="SAVE20" className="bg-[#020617] border-[#1E293B] text-white rounded-xl" />
-                      <Button variant="secondary" className="rounded-xl">Apply</Button>
+                      <Input 
+                        placeholder="SAVE20" 
+                        value={settings.billing.coupon}
+                        onChange={e => updateNested('billing.coupon', e.target.value)}
+                        className="bg-[#020617] border-[#1E293B] text-white rounded-xl" 
+                      />
+                      <Button variant="secondary" className="rounded-xl" onClick={() => toast.success("Coupon applied!")}>Apply</Button>
                     </div>
                   </div>
                 </CardContent>
@@ -421,11 +633,8 @@ const Settings = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
               <Card className="border-[#1E293B] bg-[#0F172A] rounded-3xl overflow-hidden">
-                <CardHeader className="flex flex-row items-center justify-between">
+                <CardHeader>
                   <CardTitle className="text-white">Team Members</CardTitle>
-                  <Button className="bg-blue-600 hover:bg-blue-700 rounded-xl gap-2">
-                    <Plus size={16} /> Invite Member
-                  </Button>
                 </CardHeader>
                 <CardContent className="p-0">
                   <Table>
@@ -438,26 +647,54 @@ const Settings = () => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {[
-                        { name: 'John Doe', email: 'john@guardian.ai', role: 'Admin', status: 'Active' },
-                        { name: 'Sarah Chen', email: 'sarah@guardian.ai', role: 'Analyst', status: 'Active' },
-                        { name: 'Mike Ross', email: 'mike@guardian.ai', role: 'Viewer', status: 'Suspended' },
-                      ].map((member, i) => (
-                        <TableRow key={i} className="border-[#1E293B] hover:bg-[#1E293B]/30">
+                      {settings.team.map((member: any) => (
+                        <TableRow key={member.id} className="border-[#1E293B] hover:bg-[#1E293B]/30">
                           <TableCell>
                             <div>
                               <p className="text-white text-sm font-bold">{member.name}</p>
                               <p className="text-xs text-slate-500">{member.email}</p>
                             </div>
                           </TableCell>
-                          <TableCell><Badge variant="outline" className="border-[#1E293B] text-slate-400">{member.role}</Badge></TableCell>
                           <TableCell>
-                            <Badge className={member.status === 'Active' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}>
+                            <Select 
+                              value={member.role} 
+                              onValueChange={v => {
+                                const updated = settings.team.map((m: any) => m.id === member.id ? { ...m, role: v } : m);
+                                updateNested('team', updated);
+                                toast.success(`Role updated for ${member.name}`);
+                              }}
+                            >
+                              <SelectTrigger className="h-8 w-28 bg-transparent border-[#1E293B] text-xs">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent className="bg-[#0F172A] border-[#1E293B] text-white">
+                                <SelectItem value="Admin">Admin</SelectItem>
+                                <SelectItem value="Analyst">Analyst</SelectItem>
+                                <SelectItem value="Viewer">Viewer</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </TableCell>
+                          <TableCell>
+                            <Badge 
+                              className={member.status === 'Active' ? 'bg-emerald-500/10 text-emerald-400 cursor-pointer' : 'bg-rose-500/10 text-rose-400 cursor-pointer'}
+                              onClick={() => {
+                                const updated = settings.team.map((m: any) => m.id === member.id ? { ...m, status: m.status === 'Active' ? 'Suspended' : 'Active' } : m);
+                                updateNested('team', updated);
+                                toast.info(`Status changed for ${member.name}`);
+                              }}
+                            >
                               {member.status}
                             </Badge>
                           </TableCell>
                           <TableCell className="text-right">
-                            <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white rounded-lg">Edit</Button>
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="text-rose-400 hover:bg-rose-500/10 rounded-lg"
+                              onClick={() => handleRemoveMember(member.id)}
+                            >
+                              <Trash2 size={14} />
+                            </Button>
                           </TableCell>
                         </TableRow>
                       ))}
@@ -505,25 +742,27 @@ const Settings = () => {
                 <CardHeader>
                   <CardTitle className="text-white">Invite System</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label className="text-white">Email Address</Label>
-                    <Input placeholder="colleague@company.com" className="bg-[#020617] border-[#1E293B] text-white rounded-xl" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-white">Role</Label>
-                    <Select defaultValue="Analyst">
-                      <SelectTrigger className="bg-[#020617] border-[#1E293B] text-white rounded-xl">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className="bg-[#0F172A] border-[#1E293B] text-white">
-                        <SelectItem value="Admin">Admin</SelectItem>
-                        <SelectItem value="Analyst">Analyst</SelectItem>
-                        <SelectItem value="Viewer">Viewer</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700 rounded-xl">Send Invite</Button>
+                <CardContent>
+                  <form onSubmit={handleInvite} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label className="text-white">Email Address</Label>
+                      <Input name="invite-email" placeholder="colleague@company.com" className="bg-[#020617] border-[#1E293B] text-white rounded-xl" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-white">Role</Label>
+                      <Select name="invite-role" defaultValue="Analyst">
+                        <SelectTrigger className="bg-[#020617] border-[#1E293B] text-white rounded-xl">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-[#0F172A] border-[#1E293B] text-white">
+                          <SelectItem value="Admin">Admin</SelectItem>
+                          <SelectItem value="Analyst">Analyst</SelectItem>
+                          <SelectItem value="Viewer">Viewer</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 rounded-xl">Send Invite</Button>
+                  </form>
                 </CardContent>
               </Card>
             </div>
@@ -541,7 +780,11 @@ const Settings = () => {
                 <CardContent className="space-y-8">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {['Default', 'Advanced', 'Custom'].map((m) => (
-                      <div key={m} className={`p-4 rounded-2xl border cursor-pointer transition-all ${m === 'Advanced' ? 'bg-blue-600/10 border-blue-500 text-white' : 'bg-[#020617] border-[#1E293B] text-slate-400 hover:border-slate-700'}`}>
+                      <div 
+                        key={m} 
+                        onClick={() => updateNested('ai.model', m)}
+                        className={`p-4 rounded-2xl border cursor-pointer transition-all ${settings.ai.model === m ? 'bg-blue-600/10 border-blue-500 text-white' : 'bg-[#020617] border-[#1E293B] text-slate-400 hover:border-slate-700'}`}
+                      >
                         <p className="font-bold mb-1">{m} Model</p>
                         <p className="text-[10px] opacity-70">{m === 'Advanced' ? 'Best for complex threats' : 'Standard protection'}</p>
                       </div>
@@ -552,13 +795,13 @@ const Settings = () => {
                     <div className="space-y-4">
                       <div className="flex justify-between items-center">
                         <Label className="text-white">Global Sensitivity</Label>
-                        <Badge className="bg-blue-600">{aiSettings.sensitivity}%</Badge>
+                        <Badge className="bg-blue-600">{settings.ai.sensitivity}%</Badge>
                       </div>
                       <Slider 
-                        defaultValue={[aiSettings.sensitivity]} 
+                        value={[settings.ai.sensitivity]} 
                         max={100} 
                         step={1} 
-                        onValueChange={(v) => setAiSettings({...aiSettings, sensitivity: v[0]})}
+                        onValueChange={(v) => updateNested('ai.sensitivity', v[0])}
                       />
                       <div className="flex justify-between text-[10px] text-slate-500 font-bold uppercase tracking-widest">
                         <span>Lenient</span>
@@ -573,13 +816,13 @@ const Settings = () => {
                           <Label className="text-white">Confidence Threshold</Label>
                           <Info size={14} className="text-slate-500" />
                         </div>
-                        <Badge className="bg-indigo-600">{aiSettings.threshold}%</Badge>
+                        <Badge className="bg-indigo-600">{settings.ai.threshold}%</Badge>
                       </div>
                       <Slider 
-                        defaultValue={[aiSettings.threshold]} 
+                        value={[settings.ai.threshold]} 
                         max={100} 
                         step={1} 
-                        onValueChange={(v) => setAiSettings({...aiSettings, threshold: v[0]})}
+                        onValueChange={(v) => updateNested('ai.threshold', v[0])}
                       />
                       <p className="text-[10px] text-slate-500 italic">AI will act only if confidence exceeds this threshold.</p>
                     </div>
@@ -592,7 +835,7 @@ const Settings = () => {
                   <CardTitle className="text-white">Moderation Policies</CardTitle>
                 </CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {Object.entries(aiSettings.policies).map(([key, val]) => (
+                  {Object.entries(settings.ai.policies).map(([key, val]) => (
                     <div key={key} className="flex items-center justify-between p-4 bg-[#020617] border border-[#1E293B] rounded-2xl">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 bg-blue-600/10 rounded-lg flex items-center justify-center text-blue-400">
@@ -600,9 +843,47 @@ const Settings = () => {
                         </div>
                         <span className="text-sm font-bold text-white capitalize">{key.replace(/([A-Z])/g, ' $1')}</span>
                       </div>
-                      <Switch checked={val} onCheckedChange={(v) => handleToggle(key, v)} />
+                      <Switch checked={val as boolean} onCheckedChange={(v) => updateNested(`ai.policies.${key}`, v)} />
                     </div>
                   ))}
+                </CardContent>
+              </Card>
+
+              <Card className="border-[#1E293B] bg-[#0F172A] rounded-3xl">
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <CardTitle className="text-white">Custom Rules Engine</CardTitle>
+                  <Button variant="outline" size="sm" className="rounded-xl border-[#1E293B] text-white" onClick={handleAddRule}>
+                    <Plus size={14} className="mr-2" /> Add Rule
+                  </Button>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <Table>
+                    <TableHeader className="bg-[#020617]">
+                      <TableRow className="border-[#1E293B]">
+                        <TableHead className="text-slate-500">IF Keyword</TableHead>
+                        <TableHead className="text-slate-500">THEN Action</TableHead>
+                        <TableHead className="text-slate-500 text-right">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {settings.ai.customRules.map((rule: any) => (
+                        <TableRow key={rule.id} className="border-[#1E293B]">
+                          <TableCell className="text-white font-mono text-xs">"{rule.keyword}"</TableCell>
+                          <TableCell><Badge variant="outline" className="border-blue-500/30 text-blue-400">{rule.action}</Badge></TableCell>
+                          <TableCell className="text-right">
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="text-rose-400"
+                              onClick={() => updateNested('ai.customRules', settings.ai.customRules.filter((r: any) => r.id !== rule.id))}
+                            >
+                              <Trash2 size={14} />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
                 </CardContent>
               </Card>
             </div>
@@ -615,14 +896,17 @@ const Settings = () => {
                 <CardContent className="space-y-4">
                   <div className="flex items-center justify-between mb-4">
                     <Label className="text-white font-bold">Auto Moderation</Label>
-                    <Switch defaultChecked />
+                    <Switch 
+                      checked={settings.ai.autoMod} 
+                      onCheckedChange={v => updateNested('ai.autoMod', v)} 
+                    />
                   </div>
                   <div className="space-y-2">
                     <p className="text-xs text-slate-500 font-bold uppercase mb-2">Auto Actions</p>
-                    {['Auto Remove', 'Auto Flag', 'Auto Shadow Ban'].map((a) => (
-                      <div key={a} className="flex items-center justify-between py-2">
-                        <span className="text-sm text-slate-300">{a}</span>
-                        <Switch defaultChecked={a !== 'Auto Shadow Ban'} />
+                    {Object.entries(settings.ai.autoActions).map(([key, val]) => (
+                      <div key={key} className="flex items-center justify-between py-2">
+                        <span className="text-sm text-slate-300 capitalize">{key.replace(/([A-Z])/g, ' $1')}</span>
+                        <Switch checked={val as boolean} onCheckedChange={v => updateNested(`ai.autoActions.${key}`, v)} />
                       </div>
                     ))}
                   </div>
@@ -631,21 +915,21 @@ const Settings = () => {
 
               <Card className="border-[#1E293B] bg-[#0F172A] rounded-3xl">
                 <CardHeader>
-                  <CardTitle className="text-white">Model Insights</CardTitle>
+                  <CardTitle className="text-white">Training & Feedback</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs text-slate-500">Accuracy</span>
-                    <span className="text-sm font-bold text-emerald-400">99.4%</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs text-slate-500">False Positives</span>
-                    <span className="text-sm font-bold text-blue-400">0.02%</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs text-slate-500">Detection Speed</span>
-                    <span className="text-sm font-bold text-white">45ms</span>
-                  </div>
+                  <Button className="w-full bg-indigo-600 hover:bg-indigo-700 rounded-xl gap-2" onClick={() => toast.info("Dataset upload initiated")}>
+                    <Database size={16} /> Upload Dataset
+                  </Button>
+                  <Button variant="outline" className="w-full border-[#1E293B] text-white rounded-xl" onClick={() => {
+                    toast.loading("Training model...");
+                    setTimeout(() => {
+                      toast.dismiss();
+                      toast.success("Model training complete!");
+                    }, 3000);
+                  }}>
+                    Train Model
+                  </Button>
                 </CardContent>
               </Card>
             </div>
@@ -664,13 +948,19 @@ const Settings = () => {
                   <div className="space-y-2">
                     <Label className="text-white">Production API Key</Label>
                     <div className="flex gap-2">
-                      <Input value="sk_live_51Nf..." readOnly className="bg-[#020617] border-[#1E293B] text-white rounded-xl font-mono" />
-                      <Button variant="secondary" className="rounded-xl" onClick={() => toast.success("API Key copied!")}>Copy</Button>
+                      <Input value={settings.system.apiKey} readOnly className="bg-[#020617] border-[#1E293B] text-white rounded-xl font-mono" />
+                      <Button variant="secondary" className="rounded-xl" onClick={() => {
+                        navigator.clipboard.writeText(settings.system.apiKey);
+                        toast.success("API Key copied!");
+                      }}>
+                        <Copy size={16} />
+                      </Button>
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <Button className="bg-blue-600 hover:bg-blue-700 rounded-xl">Regenerate Key</Button>
-                    <Button variant="outline" className="border-[#1E293B] text-white hover:bg-[#1E293B] rounded-xl">View Docs</Button>
+                    <Button className="bg-blue-600 hover:bg-blue-700 rounded-xl" onClick={handleRegenerateKey}>
+                      <RefreshCw size={16} className="mr-2" /> Regenerate Key
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -681,18 +971,27 @@ const Settings = () => {
                 </CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {[
-                    { name: 'Slack', icon: Slack, status: 'Connected', color: 'text-purple-400' },
-                    { name: 'Discord', icon: MessageSquare, status: 'Connect', color: 'text-indigo-400' },
-                    { name: 'Zapier', icon: Zap, status: 'Connect', color: 'text-orange-400' },
-                    { name: 'Shopify', icon: Database, status: 'Connect', color: 'text-emerald-400' },
+                    { id: 'slack', name: 'Slack', icon: Slack, color: 'text-purple-400' },
+                    { id: 'discord', name: 'Discord', icon: MessageSquare, color: 'text-indigo-400' },
+                    { id: 'zapier', name: 'Zapier', icon: Zap, color: 'text-orange-400' },
+                    { id: 'shopify', name: 'Shopify', icon: Database, color: 'text-emerald-400' },
                   ].map((app) => (
-                    <div key={app.name} className="p-4 bg-[#020617] border border-[#1E293B] rounded-2xl flex items-center justify-between">
+                    <div key={app.id} className="p-4 bg-[#020617] border border-[#1E293B] rounded-2xl flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <app.icon className={app.color} size={20} />
                         <span className="text-sm font-bold text-white">{app.name}</span>
                       </div>
-                      <Button variant={app.status === 'Connected' ? 'secondary' : 'outline'} size="sm" className="rounded-lg h-8 text-xs">
-                        {app.status}
+                      <Button 
+                        variant={(settings.system.integrations as any)[app.id] ? 'secondary' : 'outline'} 
+                        size="sm" 
+                        className="rounded-lg h-8 text-xs"
+                        onClick={() => {
+                          const current = (settings.system.integrations as any)[app.id];
+                          updateNested(`system.integrations.${app.id}`, !current);
+                          toast.success(`${app.name} ${!current ? 'connected' : 'disconnected'}`);
+                        }}
+                      >
+                        {(settings.system.integrations as any)[app.id] ? 'Connected' : 'Connect'}
                       </Button>
                     </div>
                   ))}
@@ -707,7 +1006,7 @@ const Settings = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <Label className="text-white">Data Region</Label>
-                      <Select defaultValue="India">
+                      <Select value={settings.system.region} onValueChange={v => updateNested('system.region', v)}>
                         <SelectTrigger className="bg-[#020617] border-[#1E293B] text-white rounded-xl">
                           <SelectValue />
                         </SelectTrigger>
@@ -720,7 +1019,7 @@ const Settings = () => {
                     </div>
                     <div className="space-y-2">
                       <Label className="text-white">Data Retention</Label>
-                      <Select defaultValue="30">
+                      <Select value={settings.system.retention} onValueChange={v => updateNested('system.retention', v)}>
                         <SelectTrigger className="bg-[#020617] border-[#1E293B] text-white rounded-xl">
                           <SelectValue />
                         </SelectTrigger>
@@ -737,7 +1036,10 @@ const Settings = () => {
                       <Shield className="text-blue-400" size={18} />
                       <span className="text-sm text-white font-medium">GDPR Compliance Mode</span>
                     </div>
-                    <Switch defaultChecked />
+                    <Switch 
+                      checked={settings.system.gdpr} 
+                      onCheckedChange={v => updateNested('system.gdpr', v)} 
+                    />
                   </div>
                 </CardContent>
               </Card>
@@ -758,7 +1060,9 @@ const Settings = () => {
                       <div className="bg-blue-600 h-full w-[68%]" />
                     </div>
                   </div>
-                  <Button variant="outline" className="w-full border-[#1E293B] text-white hover:bg-[#1E293B] rounded-xl">View Detailed Usage</Button>
+                  <Button variant="outline" className="w-full border-[#1E293B] text-white hover:bg-[#1E293B] rounded-xl" onClick={() => toast.info("Usage report exported")}>
+                    Export Usage Data
+                  </Button>
                 </CardContent>
               </Card>
 
@@ -767,7 +1071,7 @@ const Settings = () => {
                   <CardTitle className="text-white">Support</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2">
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700 rounded-xl gap-2">
+                  <Button className="w-full bg-blue-600 hover:bg-blue-700 rounded-xl gap-2" onClick={() => toast.success("Support ticket created")}>
                     <LifeBuoy size={16} /> Contact Support
                   </Button>
                   <Button variant="ghost" className="w-full text-slate-400 hover:text-white rounded-xl">Help Documentation</Button>
