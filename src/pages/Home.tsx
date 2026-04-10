@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import LandingLayout from '@/components/LandingLayout';
 import { Button } from '@/components/ui/button';
 import { Link, useNavigate } from 'react-router-dom';
-import { Shield, Zap, Lock, Globe, ArrowRight } from 'lucide-react';
+import { Shield, Zap, Lock, Globe, ArrowRight, Play } from 'lucide-react';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -31,11 +31,13 @@ const Home = () => {
             Guardian AI provides real-time content moderation, threat intelligence, and policy enforcement for modern digital communities.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700 rounded-full px-8 h-14 text-lg shadow-lg shadow-blue-900/20">
+            <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700 rounded-full px-8 h-14 text-lg shadow-lg shadow-blue-900/20 w-full sm:w-auto">
               <Link to="/signup">Get Started for Free <ArrowRight className="ml-2" size={20} /></Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="rounded-full px-8 h-14 text-lg border-[#1E293B] text-white hover:bg-[#1E293B]">
-              <Link to="/dashboard">View Live Demo</Link>
+            <Button asChild variant="outline" size="lg" className="rounded-full px-8 h-14 text-lg border-blue-500/50 text-blue-400 hover:bg-blue-500/10 hover:border-blue-400 transition-all w-full sm:w-auto shadow-lg shadow-blue-500/5">
+              <Link to="/dashboard" className="flex items-center justify-center gap-2">
+                <Play size={18} fill="currentColor" /> View Live Demo
+              </Link>
             </Button>
           </div>
         </div>
