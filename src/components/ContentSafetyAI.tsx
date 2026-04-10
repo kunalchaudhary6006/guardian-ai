@@ -3,10 +3,12 @@
 import React, { useState } from "react";
 import { ShieldBan, Zap, AlertTriangle, CheckCircle, Search } from "lucide-react";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 export default function ContentSafetyAI() {
   const [risk, setRisk] = useState("LOW");
   const [isScanning, setIsScanning] = useState(false);
+  const navigate = useNavigate();
 
   const scan = () => {
     setIsScanning(true);
@@ -24,6 +26,14 @@ export default function ContentSafetyAI() {
         toast.success(`Scan complete. Risk level: ${newRisk}`);
       }
     }, 1500);
+  };
+
+  const handleAction = (type: string) => {
+    toast.promise(new Promise(r => setTimeout(r, 800)), {
+      loading: `Applying ${type} protocol...`,
+      success: `Content successfully ${type}ed.`,
+      error: 'Action failed'
+    });
   };
 
   const getRiskColor = () => {
@@ -50,13 +60,22 @@ export default function ContentSafetyAI() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
-        <button className="bg-rose-500 hover:bg-rose-600 text-white py-2.5 rounded-xl font-bold text-sm transition-colors flex items-center justify-center gap-2">
+        <button 
+          onClick={() => handleAction('block')}
+          className="bg-rose-500 hover:bg-rose-600 text-white py-2.5 rounded-xl font-bold text-sm transition-colors flex items-center justify-center gap-2"
+        >
           <ShieldBan size={16} /> Block
         </button>
-        <button className="bg-orange-500 hover:bg-orange-600 text-white py-2.5 rounded-xl font-bold text-sm transition-colors flex items-center justify-center gap-2">
+        <button 
+          onClick={() => handleAction('restrict')}
+          className="bg-orange-500 hover:bg-orange-600 text-white py-2.5 rounded-xl font-bold text-sm transition-colors flex items-center justify-center gap-2"
+        >
           <AlertTriangle size={16} /> Restrict
         </button>
-        <button className="bg-blue-500 hover:bg-blue-600 text-white py-2.5 rounded-xl font-bold text-sm transition-colors flex items-center justify-center gap-2">
+        <button 
+          onClick={() => navigate('/moderation')}
+          className="bg-blue-500 hover:bg-blue-600 text-white py-2.5 rounded-xl font-bold text-sm transition-colors flex items-center justify-center gap-2"
+        >
           <Search size={16} /> Review
         </button>
       </div>

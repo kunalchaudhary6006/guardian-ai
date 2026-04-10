@@ -17,6 +17,9 @@ import MarketingDashboard from "./pages/MarketingDashboard";
 import Settings from "./pages/Settings";
 import MockInbox from "./pages/MockInbox";
 import NotFound from "./pages/NotFound";
+import FinancialFraud from "./pages/FinancialFraud";
+import AIVerification from "./pages/AIVerification";
+import LogCenter from "./pages/LogCenter";
 
 const queryClient = new QueryClient();
 
@@ -40,6 +43,9 @@ const App = () => (
           <Route path="/analytics" element={<ResearchAnalytics />} />
           <Route path="/marketing" element={<MarketingDashboard />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/fraud" element={<FinancialFraud />} />
+          <Route path="/verification" element={<AIVerification />} />
+          <Route path="/logs" element={<LogCenter />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

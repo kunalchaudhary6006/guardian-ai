@@ -37,10 +37,10 @@ export default function Sidebar() {
   ];
 
   const ai = [
-    { label: "Financial Fraud Bot", icon: Lock },
-    { label: "AI Verification Bot", icon: UserCheck },
-    { label: "AI Log Center", icon: Database },
-    { label: "Content Safety AI", icon: ShieldBan },
+    { label: "Financial Fraud Bot", icon: Lock, path: "/fraud" },
+    { label: "AI Verification Bot", icon: UserCheck, path: "/verification" },
+    { label: "AI Log Center", icon: Database, path: "/logs" },
+    { label: "Content Safety AI", icon: ShieldBan, path: "/moderation" },
   ];
 
   const handleLogout = () => {
@@ -103,16 +103,24 @@ export default function Sidebar() {
         <div>
           {open && <p className="px-4 text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">AI Suite</p>}
           <div className="space-y-1">
-            {ai.map((m, i) => (
-              <div
-                key={i}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-[#0F172A] hover:text-white transition-all cursor-pointer group"
-                onClick={() => toast.info(`Opening ${m.label}...`)}
-              >
-                <m.icon size={20} className="text-slate-500 group-hover:text-blue-400" />
-                {open && <span className="text-sm font-medium">{m.label}</span>}
-              </div>
-            ))}
+            {ai.map((m, i) => {
+              const isActive = location.pathname === m.path;
+              return (
+                <Link
+                  key={i}
+                  to={m.path}
+                  className={cn(
+                    "flex items-center gap-3 px-4 py-3 rounded-xl transition-all group",
+                    isActive 
+                      ? "bg-blue-600 text-white shadow-lg shadow-blue-900/20" 
+                      : "text-slate-400 hover:bg-[#0F172A] hover:text-white"
+                  )}
+                >
+                  <m.icon size={20} className={cn(isActive ? "text-white" : "text-slate-500 group-hover:text-blue-400")} />
+                  {open && <span className="text-sm font-medium">{m.label}</span>}
+                </Link>
+              );
+            })}
           </div>
         </div>
       </div>
