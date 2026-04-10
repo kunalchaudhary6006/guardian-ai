@@ -62,6 +62,7 @@ const LandingLayout = ({ children }: { children: React.ReactNode }) => {
             <Link to="/pricing" className="text-sm text-slate-500 hover:text-white transition-colors">Pricing</Link>
             <Link to="/contact" className="text-sm text-slate-500 hover:text-white transition-colors">Contact</Link>
             <Link to="/privacy" className="text-sm text-slate-500 hover:text-white transition-colors">Privacy Policy</Link>
+            <Link to="/terms" className="text-sm text-slate-500 hover:text-white transition-colors">Terms & Conditions</Link>
             <Link to="/login" className="text-sm text-slate-500 hover:text-white transition-colors">Login</Link>
           </div>
           <p className="text-slate-600 text-sm">© 2024 Guardian AI. All rights reserved.</p>

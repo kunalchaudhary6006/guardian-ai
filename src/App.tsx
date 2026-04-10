@@ -21,6 +21,7 @@ import FinancialFraud from "./pages/FinancialFraud";
 import AIVerification from "./pages/AIVerification";
 import LogCenter from "./pages/LogCenter";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsAndConditions from "./pages/TermsAndConditions";
 import BrandSafety from "./pages/BrandSafety";
 
 const queryClient = new QueryClient();
@@ -49,6 +50,7 @@ const App = () => (
           <Route path="/verification" element={<AIVerification />} />
           <Route path="/logs" element={<LogCenter />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsAndConditions />} />
           <Route path="/brand-safety" element={<BrandSafety />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
