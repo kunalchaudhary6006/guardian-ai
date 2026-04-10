@@ -21,12 +21,12 @@ import {
 
 export default function Dashboard() {
   const modules = [
-    { title: "Content Moderation", icon: ShieldAlert },
-    { title: "Policy Enforcement", icon: FileCheck },
-    { title: "Research & Analytics", icon: Search },
-    { title: "Brand Safety", icon: ShieldCheck },
-    { title: "Threat Response", icon: ShieldBan },
-    { title: "Marketing Intelligence", icon: BarChart3 },
+    { title: "Content Moderation", icon: ShieldAlert, path: "/moderation" },
+    { title: "Policy Enforcement", icon: FileCheck, path: "/policy" },
+    { title: "Research & Analytics", icon: Search, path: "/analytics" },
+    { title: "Brand Safety", icon: ShieldCheck, path: "/threats" },
+    { title: "Threat Response", icon: ShieldBan, path: "/threats" },
+    { title: "Marketing Intelligence", icon: BarChart3, path: "/marketing" },
   ];
 
   return (
@@ -45,8 +45,8 @@ export default function Dashboard() {
               <div>
                 <h3 className="text-sm font-black text-slate-500 uppercase tracking-widest mb-4">AI Suite Quick Access</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <ModuleCard title="Financial Fraud Bot" icon={Lock} />
-                  <ModuleCard title="AI Verification Bot" icon={UserCheck} />
+                  <ModuleCard title="Financial Fraud Bot" icon={Lock} path="/moderation" />
+                  <ModuleCard title="AI Verification Bot" icon={UserCheck} path="/policy" />
                 </div>
               </div>
 
@@ -55,7 +55,7 @@ export default function Dashboard() {
                 <h3 className="text-sm font-black text-slate-500 uppercase tracking-widest mb-4">Core Infrastructure</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                   {modules.map((m, i) => (
-                    <ModuleCard key={i} title={m.title} icon={m.icon} />
+                    <ModuleCard key={i} title={m.title} icon={m.icon} path={m.path} />
                   ))}
                 </div>
               </div>

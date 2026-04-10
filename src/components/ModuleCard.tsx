@@ -2,15 +2,22 @@
 
 import React from 'react';
 import { ArrowRight, Layout } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface ModuleCardProps {
   title: string;
   icon?: React.ElementType;
+  path?: string;
 }
 
-export default function ModuleCard({ title, icon: Icon = Layout }: ModuleCardProps) {
+export default function ModuleCard({ title, icon: Icon = Layout, path = "/dashboard" }: ModuleCardProps) {
+  const navigate = useNavigate();
+
   return (
-    <div className="bg-[#0F172A] border border-[#1E293B] p-5 rounded-2xl hover:border-blue-500/50 hover:bg-[#1E293B]/50 transition-all cursor-pointer group shadow-lg">
+    <div 
+      onClick={() => navigate(path)}
+      className="bg-[#0F172A] border border-[#1E293B] p-5 rounded-2xl hover:border-blue-500/50 hover:bg-[#1E293B]/50 transition-all cursor-pointer group shadow-lg"
+    >
       <div className="flex items-start justify-between mb-4">
         <div className="p-2.5 bg-blue-500/10 rounded-xl text-blue-400 group-hover:scale-110 transition-transform">
           <Icon size={20} />
