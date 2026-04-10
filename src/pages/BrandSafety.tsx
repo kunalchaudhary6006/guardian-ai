@@ -104,7 +104,7 @@ export default function BrandSafety() {
       </div>
 
       {/* Modals */}
-      <Campaign ReportModal open={reportModalOpen} onOpenChange={setReportModalOpen} />
+      <CampaignReportModal open={reportModalOpen} onOpenChange={setReportModalOpen} />
       <NewCampaignModal open={newCampaignModalOpen} onOpenChange={setNewCampaignModalOpen} />
       <CreatorRiskGraphModal open={creatorModalOpen} onOpenChange={setCreatorModalOpen} creator={selectedCreator} />
     </DashboardLayout>
