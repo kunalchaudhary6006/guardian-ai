@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { 
@@ -16,11 +15,12 @@ import {
   Upload, 
   Link as LinkIcon, 
   Play, 
-  Settings2, 
   ShieldCheck,
   Zap,
   Clock,
-  CheckCircle2
+  CheckCircle2,
+  X,
+  FileText
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -28,8 +28,57 @@ export default function RawDataAnalyzer() {
   const [contentType, setContentType] = useState('text');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [step, setStep] = useState(0);
+  
+  // Input States
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [urlInput, setUrlInput] = useState("");
+  const [textInput, setTextInput] = useState("");
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      setUrlInput(""); // Clear URL if file is uploaded
+      
+      // Create preview for images/videos
+      if (file.type.startsWith('image/') || file.type.startsWith('video/')) {
+        setPreviewUrl(URL.createObjectURL(file));
+      } else {
+        setPreviewUrl(null);
+      }
+      
+      toast.success(`${file.name} uploaded successfully.`);
+    }
+  };
+
+  const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setUrlInput(val);
+    if (val) {
+      setSelectedFile(null); // Clear file if URL is entered
+      setPreviewUrl(val); // Attempt to preview URL
+    } else {
+      setPreviewUrl(null);
+    }
+  };
+
+  const clearInput = () => {
+    setSelectedFile(null);
+    setUrlInput("");
+    setTextInput("");
+    setPreviewUrl(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
 
   const handleRunAnalysis = () => {
+    if (!selectedFile && !urlInput && !textInput) {
+      toast.error("Please provide content to analyze.");
+      return;
+    }
+    
     setIsAnalyzing(true);
     setStep(1);
     
@@ -66,7 +115,7 @@ export default function RawDataAnalyzer() {
         ].map((type) => (
           <Card 
             key={type.id}
-            onClick={() => setContentType(type.id)}
+            onClick={() => { setContentType(type.id); clearInput(); }}
             className={`cursor-pointer border-2 transition-all rounded-3xl overflow-hidden ${
               contentType === type.id ? 'border-blue-500 bg-blue-500/5' : 'border-[#1E293B] bg-[#0F172A] hover:border-slate-700'
             }`}
@@ -89,25 +138,67 @@ export default function RawDataAnalyzer() {
         <div className="lg:col-span-2 space-y-6">
           <Card className="border-[#1E293B] bg-[#0F172A] rounded-[2.5rem] overflow-hidden shadow-xl">
             <CardContent className="p-8 space-y-6">
-              <div className="border-2 border-dashed border-[#1E293B] rounded-3xl p-12 flex flex-col items-center justify-center gap-4 bg-[#020617]/50 group hover:border-blue-500/50 transition-colors cursor-pointer">
-                <div className="w-16 h-16 bg-blue-600/10 rounded-full flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform">
-                  <Upload size={32} />
-                </div>
-                <div className="text-center">
-                  <p className="text-white font-bold">Drag & drop content here</p>
-                  <p className="text-xs text-slate-500 mt-1">or click to browse files</p>
-                </div>
-              </div>
-
-              <div className="relative">
-                <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-500">
-                  <LinkIcon size={18} />
-                </div>
-                <Input 
-                  placeholder="Paste URL for analysis..." 
-                  className="pl-12 h-14 bg-[#020617] border-[#1E293B] text-white rounded-2xl focus:ring-blue-500/20"
+              {/* Input Zone */}
+              {contentType === 'text' ? (
+                <textarea 
+                  value={textInput}
+                  onChange={(e) => setTextInput(e.target.value)}
+                  placeholder="Paste raw text here for AI analysis..."
+                  className="w-full min-h-[200px] bg-[#020617] border border-[#1E293B] text-white rounded-3xl p-6 focus:ring-blue-500/20 resize-none placeholder:text-slate-600"
                 />
-              </div>
+              ) : (
+                <div className="space-y-6">
+                  <div 
+                    onClick={() => fileInputRef.current?.click()}
+                    className="border-2 border-dashed border-[#1E293B] rounded-3xl p-12 flex flex-col items-center justify-center gap-4 bg-[#020617]/50 group hover:border-blue-500/50 transition-colors cursor-pointer relative overflow-hidden"
+                  >
+                    {previewUrl ? (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black">
+                        {contentType === 'image' ? (
+                          <img src={previewUrl} alt="Preview" className="max-h-full object-contain" />
+                        ) : (
+                          <video src={previewUrl} className="max-h-full" autoPlay muted loop />
+                        )}
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); clearInput(); }}
+                          className="absolute top-4 right-4 p-2 bg-rose-600 text-white rounded-full shadow-lg"
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="w-16 h-16 bg-blue-600/10 rounded-full flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform">
+                          <Upload size={32} />
+                        </div>
+                        <div className="text-center">
+                          <p className="text-white font-bold">Drag & drop {contentType} here</p>
+                          <p className="text-xs text-slate-500 mt-1">or click to browse files</p>
+                        </div>
+                      </>
+                    )}
+                    <input 
+                      type="file" 
+                      ref={fileInputRef} 
+                      className="hidden" 
+                      accept={contentType === 'image' ? 'image/*' : contentType === 'video' ? 'video/*' : 'audio/*'}
+                      onChange={handleFileChange} 
+                    />
+                  </div>
+
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-500">
+                      <LinkIcon size={18} />
+                    </div>
+                    <Input 
+                      value={urlInput}
+                      onChange={handleUrlChange}
+                      placeholder={`Paste ${contentType} URL for analysis...`} 
+                      className="pl-12 h-14 bg-[#020617] border-[#1E293B] text-white rounded-2xl focus:ring-blue-500/20"
+                    />
+                  </div>
+                </div>
+              )}
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-[#1E293B]">
                 <div className="space-y-4">
@@ -178,9 +269,18 @@ export default function RawDataAnalyzer() {
             <CardContent className="p-8 space-y-6">
               <h4 className="text-white font-bold uppercase tracking-widest text-xs">Pre-Run Summary</h4>
               <div className="space-y-4">
+                <div className="flex items-center justify-between p-4 bg-[#020617] border border-[#1E293B] rounded-2xl">
+                  <div className="flex items-center gap-3">
+                    <FileText size={16} className="text-slate-500" />
+                    <span className="text-xs text-slate-400">Source</span>
+                  </div>
+                  <span className="text-xs font-bold text-white truncate max-w-[120px]">
+                    {selectedFile ? selectedFile.name : urlInput ? 'URL' : textInput ? 'Raw Text' : 'None'}
+                  </span>
+                </div>
                 {[
-                  { label: 'Input Type', value: 'Video + Audio', icon: Video },
-                  { label: 'Models Selected', value: 'Vision + Speech', icon: Zap },
+                  { label: 'Input Type', value: contentType.charAt(0).toUpperCase() + contentType.slice(1), icon: contentType === 'video' ? Video : contentType === 'image' ? ImageIcon : Type },
+                  { label: 'Models Selected', value: 'Fusion Active', icon: Zap },
                   { label: 'Estimated Time', value: '6s', icon: Clock },
                   { label: 'Active Policy', value: 'Global Safety', icon: ShieldCheck },
                 ].map((item, i) => (
@@ -195,7 +295,7 @@ export default function RawDataAnalyzer() {
               </div>
               <Button 
                 onClick={handleRunAnalysis}
-                disabled={isAnalyzing}
+                disabled={isAnalyzing || (!selectedFile && !urlInput && !textInput)}
                 className="w-full bg-blue-600 hover:bg-blue-700 h-14 rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg shadow-blue-900/20 gap-2"
               >
                 {isAnalyzing ? <RefreshCw className="animate-spin" size={18} /> : <Play size={18} fill="currentColor" />}
