@@ -35,24 +35,24 @@ const MarketingDashboard = () => {
   return (
     <DashboardLayout>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900">Marketing Insights</h1>
-        <p className="text-slate-500">AI-driven analysis of campaign performance.</p>
+        <h1 className="text-3xl font-bold text-white">Marketing Insights</h1>
+        <p className="text-slate-400">AI-driven analysis of campaign performance.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         {[
-          { label: 'Total Reach', value: '124.5K', icon: Target, color: 'text-blue-600' },
-          { label: 'Avg. CTR', value: '4.2%', icon: MousePointer2, color: 'text-indigo-600' },
-          { label: 'Social Shares', value: '12.8K', icon: Share2, color: 'text-emerald-600' },
+          { label: 'Total Reach', value: '124.5K', icon: Target, color: 'text-blue-400' },
+          { label: 'Avg. CTR', value: '4.2%', icon: MousePointer2, color: 'text-indigo-400' },
+          { label: 'Social Shares', value: '12.8K', icon: Share2, color: 'text-emerald-400' },
         ].map((stat, i) => (
-          <Card key={i} className="border-none shadow-sm rounded-3xl cursor-pointer hover:bg-slate-50 transition-colors" onClick={() => toast.info(`Detailed report for ${stat.label}`)}>
+          <Card key={i} className="border-[#1E293B] bg-[#0F172A] shadow-sm rounded-3xl cursor-pointer hover:bg-[#1E293B]/50 transition-colors" onClick={() => toast.info(`Detailed report for ${stat.label}`)}>
             <CardContent className="p-6 flex items-center gap-4">
-              <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-[#020617] border border-[#1E293B] rounded-2xl flex items-center justify-center">
                 <stat.icon className={stat.color} size={24} />
               </div>
               <div>
                 <p className="text-sm font-medium text-slate-500">{stat.label}</p>
-                <h3 className="text-2xl font-bold text-slate-900">{stat.value}</h3>
+                <h3 className="text-2xl font-bold text-white">{stat.value}</h3>
               </div>
             </CardContent>
           </Card>
@@ -60,18 +60,19 @@ const MarketingDashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <Card className="border-none shadow-sm rounded-3xl">
+        <Card className="border-[#1E293B] bg-[#0F172A] shadow-sm rounded-3xl">
           <CardHeader>
-            <CardTitle className="text-lg font-semibold">Campaign Reach</CardTitle>
+            <CardTitle className="text-lg font-semibold text-white">Campaign Reach</CardTitle>
           </CardHeader>
           <CardContent className="h-[350px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={campaignData}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} />
-                <YAxis axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1E293B" />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} />
+                <YAxis axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} />
                 <Tooltip 
-                  contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                  contentStyle={{ backgroundColor: '#0F172A', borderRadius: '12px', border: '1px solid #1E293B', color: '#fff' }}
+                  itemStyle={{ color: '#fff' }}
                 />
                 <Bar dataKey="reach" fill="#3b82f6" radius={[6, 6, 0, 0]} />
               </BarChart>
@@ -79,7 +80,7 @@ const MarketingDashboard = () => {
           </CardContent>
         </Card>
 
-        <Card className="border-none shadow-sm bg-gradient-to-br from-indigo-600 to-blue-700 text-white rounded-3xl">
+        <Card className="border-none shadow-sm bg-gradient-to-br from-blue-600 to-indigo-700 text-white rounded-3xl">
           <CardHeader>
             <CardTitle className="text-lg font-semibold flex items-center gap-2">
               <Sparkles size={20} /> AI Recommendations

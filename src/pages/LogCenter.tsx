@@ -10,15 +10,15 @@ const LogCenter = () => {
   return (
     <DashboardLayout>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900">AI Log Center</h1>
-        <p className="text-slate-500">Centralized repository for all AI-driven security events and system logs.</p>
+        <h1 className="text-3xl font-bold text-white">AI Log Center</h1>
+        <p className="text-slate-400">Centralized repository for all AI-driven security events and system logs.</p>
       </div>
 
-      <Card className="border-none shadow-sm rounded-3xl overflow-hidden">
-        <CardHeader className="border-b border-slate-50 p-6">
+      <Card className="border-[#1E293B] bg-[#0F172A] shadow-sm rounded-3xl overflow-hidden">
+        <CardHeader className="border-b border-[#1E293B] p-6">
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-            <Input className="pl-12 bg-slate-50 border-none h-12 rounded-2xl" placeholder="Search logs by event, ID, or timestamp..." />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+            <Input className="pl-12 bg-[#020617] border-[#1E293B] text-white h-12 rounded-2xl focus-visible:ring-1 focus-visible:ring-blue-500" placeholder="Search logs by event, ID, or timestamp..." />
           </div>
         </CardHeader>
         <CardContent className="p-0">

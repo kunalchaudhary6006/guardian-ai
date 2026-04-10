@@ -88,48 +88,50 @@ const PolicyEnforcement = () => {
     <DashboardLayout>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Policy Enforcement</h1>
-          <p className="text-slate-500">Configure and manage automated safety rules.</p>
+          <h1 className="text-3xl font-bold text-white">Policy Enforcement</h1>
+          <p className="text-slate-400">Configure and manage automated safety rules.</p>
         </div>
         
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="bg-slate-900 hover:bg-slate-800 gap-2 rounded-2xl h-11 px-6 w-full sm:w-auto" onClick={handleOpenCreate}>
+            <Button className="bg-blue-600 hover:bg-blue-700 gap-2 rounded-2xl h-11 px-6 w-full sm:w-auto shadow-lg shadow-blue-900/20" onClick={handleOpenCreate}>
               <Plus size={18} /> Create New Policy
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px] rounded-3xl">
+          <DialogContent className="sm:max-w-[425px] rounded-3xl bg-[#0F172A] border-[#1E293B] text-white">
             <form onSubmit={handleSubmit}>
               <DialogHeader>
-                <DialogTitle>{editingPolicy ? 'Edit Policy' : 'Create New Policy'}</DialogTitle>
-                <DialogDescription>
+                <DialogTitle className="text-white">
+                  {editingPolicy ? 'Edit Policy' : 'Create New Policy'}
+                </DialogTitle>
+                <DialogDescription className="text-slate-400">
                   {editingPolicy ? 'Update the details of this safety rule.' : 'Define a new automated safety rule for your platform.'}
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="name">Policy Name</Label>
+                  <Label htmlFor="name" className="text-white">Policy Name</Label>
                   <Input 
                     id="name" 
                     placeholder="e.g. Fraud Detection" 
                     value={formData.name}
                     onChange={(e) => setFormData({...formData, name: e.target.value})}
-                    className="rounded-xl"
+                    className="rounded-xl bg-[#020617] border-[#1E293B] text-white"
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="description">Description</Label>
+                  <Label htmlFor="description" className="text-white">Description</Label>
                   <Textarea 
                     id="description" 
                     placeholder="Describe what this policy does..." 
                     value={formData.description}
                     onChange={(e) => setFormData({...formData, description: e.target.value})}
-                    className="rounded-xl min-h-[100px]"
+                    className="rounded-xl min-h-[100px] bg-[#020617] border-[#1E293B] text-white"
                   />
                 </div>
               </div>
               <DialogFooter>
-                <Button type="submit" className="w-full bg-slate-900 rounded-xl">
+                <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 rounded-xl">
                   {editingPolicy ? 'Update Policy' : 'Save Policy'}
                 </Button>
               </DialogFooter>
@@ -140,25 +142,25 @@ const PolicyEnforcement = () => {
 
       <div className="grid grid-cols-1 gap-4">
         {policies.map((policy) => (
-          <Card key={policy.id} className="border-none shadow-sm hover:shadow-md transition-all rounded-3xl overflow-hidden">
+          <Card key={policy.id} className="border-[#1E293B] bg-[#0F172A] shadow-sm hover:shadow-md transition-all rounded-3xl overflow-hidden">
             <CardContent className="p-6">
               <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
                 <div className="flex gap-4">
-                  <div className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center shrink-0">
-                    <Shield className="text-slate-600" size={24} />
+                  <div className="w-12 h-12 bg-[#020617] border border-[#1E293B] rounded-2xl flex items-center justify-center shrink-0">
+                    <Shield className="text-blue-400" size={24} />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-slate-900">{policy.name}</h3>
-                    <p className="text-slate-500 mt-1 text-sm leading-relaxed">{policy.description}</p>
+                    <h3 className="text-lg font-bold text-white">{policy.name}</h3>
+                    <p className="text-slate-400 mt-1 text-sm leading-relaxed">{policy.description}</p>
                     <div className="flex flex-wrap items-center gap-4 mt-4">
                       <button 
-                        className="text-xs font-bold text-primary hover:underline flex items-center gap-1"
+                        className="text-xs font-bold text-blue-400 hover:underline flex items-center gap-1"
                         onClick={() => toast.info(`Opening documentation for ${policy.name}...`)}
                       >
                         <FileText size={14} /> Documentation
                       </button>
                       <button 
-                        className="text-xs font-bold text-slate-400 hover:text-slate-600 flex items-center gap-1"
+                        className="text-xs font-bold text-slate-500 hover:text-slate-300 flex items-center gap-1"
                         onClick={() => toast.info(`Loading last 50 audit logs for ${policy.name}...`)}
                       >
                         <Info size={14} /> Audit Logs
@@ -166,20 +168,20 @@ const PolicyEnforcement = () => {
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center justify-between md:flex-col md:items-end gap-4 pt-4 md:pt-0 border-t md:border-none border-slate-50">
+                <div className="flex items-center justify-between md:flex-col md:items-end gap-4 pt-4 md:pt-0 border-t md:border-none border-[#1E293B]">
                   <div className="flex items-center space-x-3">
                     <Switch 
                       id={`policy-${policy.id}`} 
                       checked={policy.active} 
                       onCheckedChange={() => togglePolicy(policy.id)}
                     />
-                    <Label htmlFor={`policy-${policy.id}`} className="text-sm font-bold">
+                    <Label htmlFor={`policy-${policy.id}`} className="text-sm font-bold text-white">
                       {policy.active ? 'Active' : 'Disabled'}
                     </Label>
                   </div>
                   <div className="flex gap-2">
-                    <Button variant="ghost" size="sm" className="text-slate-400 hover:text-slate-900 rounded-xl" onClick={() => handleOpenEdit(policy)}>Edit</Button>
-                    <Button variant="ghost" size="sm" className="text-rose-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl" onClick={() => deletePolicy(policy.id)}>
+                    <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white rounded-xl" onClick={() => handleOpenEdit(policy)}>Edit</Button>
+                    <Button variant="ghost" size="sm" className="text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-xl" onClick={() => deletePolicy(policy.id)}>
                       <Trash2 size={16} />
                     </Button>
                   </div>

@@ -54,10 +54,7 @@ const Settings = () => {
         confirmed: true
       };
       localStorage.setItem('user', JSON.stringify(updatedUser));
-      
-      // Trigger storage event for other components (like Header) to update
       window.dispatchEvent(new Event('storage'));
-      
       setIsLoading(false);
       toast.success("Profile information updated successfully");
     }, 1000);
@@ -70,64 +67,68 @@ const Settings = () => {
   return (
     <DashboardLayout>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900">Settings</h1>
-        <p className="text-slate-500">Manage your account preferences and system configurations.</p>
+        <h1 className="text-3xl font-bold text-white">Settings</h1>
+        <p className="text-slate-400">Manage your account preferences and system configurations.</p>
       </div>
 
       <Tabs defaultValue="general" className="space-y-6">
-        <TabsList className="bg-white border border-slate-200 p-1 h-auto gap-1">
-          <TabsTrigger value="general" className="data-[state=active]:bg-slate-900 data-[state=active]:text-white px-4 py-2 rounded-md">General</TabsTrigger>
-          <TabsTrigger value="security" className="data-[state=active]:bg-slate-900 data-[state=active]:text-white px-4 py-2 rounded-md">Security</TabsTrigger>
-          <TabsTrigger value="notifications" className="data-[state=active]:bg-slate-900 data-[state=active]:text-white px-4 py-2 rounded-md">Notifications</TabsTrigger>
-          <TabsTrigger value="api" className="data-[state=active]:bg-slate-900 data-[state=active]:text-white px-4 py-2 rounded-md">API Access</TabsTrigger>
+        <TabsList className="bg-[#0F172A] border border-[#1E293B] p-1 h-auto gap-1">
+          <TabsTrigger value="general" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white px-4 py-2 rounded-md text-slate-400">General</TabsTrigger>
+          <TabsTrigger value="security" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white px-4 py-2 rounded-md text-slate-400">Security</TabsTrigger>
+          <TabsTrigger value="notifications" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white px-4 py-2 rounded-md text-slate-400">Notifications</TabsTrigger>
+          <TabsTrigger value="api" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white px-4 py-2 rounded-md text-slate-400">API Access</TabsTrigger>
         </TabsList>
 
         <TabsContent value="general">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="md:col-span-2 space-y-6">
-              <Card className="border-none shadow-sm">
+              <Card className="border-[#1E293B] bg-[#0F172A] shadow-sm">
                 <CardHeader>
-                  <CardTitle>Profile Information</CardTitle>
-                  <CardDescription>Update your personal details and public profile.</CardDescription>
+                  <CardTitle className="text-white">Profile Information</CardTitle>
+                  <CardDescription className="text-slate-400">Update your personal details and public profile.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="first-name">First Name</Label>
+                      <Label htmlFor="first-name" className="text-white">First Name</Label>
                       <Input 
                         id="first-name" 
                         value={profile.firstName} 
                         onChange={(e) => setProfile({...profile, firstName: e.target.value})}
+                        className="bg-[#020617] border-[#1E293B] text-white"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="last-name">Last Name</Label>
+                      <Label htmlFor="last-name" className="text-white">Last Name</Label>
                       <Input 
                         id="last-name" 
                         value={profile.lastName} 
                         onChange={(e) => setProfile({...profile, lastName: e.target.value})}
+                        className="bg-[#020617] border-[#1E293B] text-white"
                       />
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email Address</Label>
+                    <Label htmlFor="email" className="text-white">Email Address</Label>
                     <Input 
                       id="email" 
                       type="email" 
                       value={profile.email} 
                       onChange={(e) => setProfile({...profile, email: e.target.value})}
+                      className="bg-[#020617] border-[#1E293B] text-white"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="bio">Professional Bio</Label>
+                    <Label htmlFor="bio" className="text-white">Professional Bio</Label>
                     <Input 
                       id="bio" 
                       value={profile.bio} 
                       onChange={(e) => setProfile({...profile, bio: e.target.value})}
+                      className="bg-[#020617] border-[#1E293B] text-white"
                     />
                   </div>
                   <Button 
-                    className="bg-slate-900 hover:bg-slate-800" 
+                    className="bg-blue-600 hover:bg-blue-700" 
                     onClick={handleSaveProfile}
                     disabled={isLoading}
                   >
@@ -136,22 +137,22 @@ const Settings = () => {
                 </CardContent>
               </Card>
 
-              <Card className="border-none shadow-sm">
+              <Card className="border-[#1E293B] bg-[#0F172A] shadow-sm">
                 <CardHeader>
-                  <CardTitle>Regional Settings</CardTitle>
-                  <CardDescription>Configure your timezone and language preferences.</CardDescription>
+                  <CardTitle className="text-white">Regional Settings</CardTitle>
+                  <CardDescription className="text-slate-400">Configure your timezone and language preferences.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label>Language</Label>
+                      <Label className="text-white">Language</Label>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="outline" className="w-full justify-between">
+                          <Button variant="outline" className="w-full justify-between bg-[#020617] border-[#1E293B] text-white hover:bg-[#1E293B]">
                             {language} <Globe size={16} />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent className="w-full min-w-[200px] rounded-xl">
+                        <DropdownMenuContent className="w-full min-w-[200px] rounded-xl bg-[#0F172A] border-[#1E293B] text-white">
                           <DropdownMenuItem onClick={() => setLanguage("English (US)")}>English (US)</DropdownMenuItem>
                           <DropdownMenuItem onClick={() => setLanguage("Spanish")}>Spanish</DropdownMenuItem>
                           <DropdownMenuItem onClick={() => setLanguage("French")}>French</DropdownMenuItem>
@@ -160,14 +161,14 @@ const Settings = () => {
                       </DropdownMenu>
                     </div>
                     <div className="space-y-2">
-                      <Label>Timezone</Label>
+                      <Label className="text-white">Timezone</Label>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="outline" className="w-full justify-between">
+                          <Button variant="outline" className="w-full justify-between bg-[#020617] border-[#1E293B] text-white hover:bg-[#1E293B]">
                             {timezone}
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent className="w-full min-w-[200px] rounded-xl">
+                        <DropdownMenuContent className="w-full min-w-[200px] rounded-xl bg-[#0F172A] border-[#1E293B] text-white">
                           <DropdownMenuItem onClick={() => setTimezone("UTC-05:00 (EST)")}>UTC-05:00 (EST)</DropdownMenuItem>
                           <DropdownMenuItem onClick={() => setTimezone("UTC+00:00 (GMT)")}>UTC+00:00 (GMT)</DropdownMenuItem>
                           <DropdownMenuItem onClick={() => setTimezone("UTC+05:30 (IST)")}>UTC+05:30 (IST)</DropdownMenuItem>
@@ -180,12 +181,12 @@ const Settings = () => {
             </div>
 
             <div className="space-y-6">
-              <Card className="border-none shadow-sm">
+              <Card className="border-[#1E293B] bg-[#0F172A] shadow-sm">
                 <CardHeader>
-                  <CardTitle className="text-sm">Account Status</CardTitle>
+                  <CardTitle className="text-sm text-white">Account Status</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex items-center gap-3 p-3 bg-emerald-50 rounded-xl text-emerald-700">
+                  <div className="flex items-center gap-3 p-3 bg-emerald-500/10 rounded-xl text-emerald-400 border border-emerald-500/20">
                     <Shield size={20} />
                     <span className="text-sm font-bold">Verified Analyst</span>
                   </div>
@@ -197,19 +198,19 @@ const Settings = () => {
         </TabsContent>
 
         <TabsContent value="security">
-          <Card className="border-none shadow-sm">
+          <Card className="border-[#1E293B] bg-[#0F172A] shadow-sm">
             <CardHeader>
-              <CardTitle>Security Preferences</CardTitle>
-              <CardDescription>Manage your password and two-factor authentication.</CardDescription>
+              <CardTitle className="text-white">Security Preferences</CardTitle>
+              <CardDescription className="text-slate-400">Manage your password and two-factor authentication.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
+              <div className="flex items-center justify-between p-4 bg-[#020617] border border-[#1E293B] rounded-2xl">
                 <div className="flex gap-4">
-                  <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm">
-                    <Key className="text-slate-600" size={20} />
+                  <div className="w-10 h-10 bg-[#0F172A] rounded-xl flex items-center justify-center shadow-sm">
+                    <Key className="text-blue-400" size={20} />
                   </div>
                   <div>
-                    <p className="font-bold text-slate-900">Two-Factor Authentication</p>
+                    <p className="font-bold text-white">Two-Factor Authentication</p>
                     <p className="text-sm text-slate-500">Add an extra layer of security to your account.</p>
                   </div>
                 </div>
@@ -223,14 +224,14 @@ const Settings = () => {
               </div>
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label>Current Password</Label>
-                  <Input type="password" />
+                  <Label className="text-white">Current Password</Label>
+                  <Input type="password" className="bg-[#020617] border-[#1E293B] text-white" />
                 </div>
                 <div className="space-y-2">
-                  <Label>New Password</Label>
-                  <Input type="password" />
+                  <Label className="text-white">New Password</Label>
+                  <Input type="password" className="bg-[#020617] border-[#1E293B] text-white" />
                 </div>
-                <Button className="bg-slate-900 hover:bg-slate-800" onClick={handleUpdatePassword}>Update Password</Button>
+                <Button className="bg-blue-600 hover:bg-blue-700" onClick={handleUpdatePassword}>Update Password</Button>
               </div>
             </CardContent>
           </Card>
