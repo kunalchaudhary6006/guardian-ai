@@ -31,6 +31,7 @@ import { toast } from 'sonner';
 import MarketingChatbot from '@/components/MarketingChatbot';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid, BarChart, Bar } from 'recharts';
 import { useNavigate } from 'react-router-dom';
+import { downloadFile } from '@/utils/download';
 
 const performanceData = [
   { name: 'Mon', reach: 4500, ctr: 3.2, conv: 120 },
@@ -48,6 +49,33 @@ export default function MarketingDashboard() {
 
   const handleAction = (action: string) => {
     toast.info(`${action} initiated...`);
+  };
+
+  const handleDownloadReport = () => {
+    toast.promise(
+      new Promise((resolve) => {
+        setTimeout(() => {
+          const content = "Guardian AI - Marketing Intelligence Report\n" + 
+                         "Generated: " + new Date().toLocaleString() + "\n\n" +
+                         "SUMMARY:\n" +
+                         "Campaign Performance: 15% above baseline\n" +
+                         "ROI Forecast: 3.8x\n" +
+                         "Brand Safety Score: 92%\n\n" +
+                         "RECOMMENDATIONS:\n" +
+                         "1. Scale Meta Ads budget by 20%\n" +
+                         "2. Refresh creative assets for Instagram Reels\n" +
+                         "3. Pause low-performing keywords in Google Ads";
+          
+          downloadFile(content, "marketing-ai-report.pdf", "application/pdf");
+          resolve(true);
+        }, 2000);
+      }),
+      {
+        loading: "Generating comprehensive AI intelligence report...",
+        success: "Report downloaded successfully",
+        error: "Failed to generate report"
+      }
+    );
   };
 
   return (
@@ -312,7 +340,11 @@ export default function MarketingDashboard() {
                   <span className="text-blue-400 font-bold">Weekly Summary:</span> Your campaigns are performing 15% above baseline. Market intelligence suggests shifting 20% budget to Instagram Reels for the upcoming weekend.
                 </p>
               </div>
-              <Button variant="outline" className="w-full border-[#1E293B] text-white rounded-xl gap-2">
+              <Button 
+                onClick={handleDownloadReport}
+                variant="outline" 
+                className="w-full border-[#1E293B] text-white rounded-xl gap-2"
+              >
                 <Download size={16} /> Download AI Report (PDF)
               </Button>
             </CardContent>
