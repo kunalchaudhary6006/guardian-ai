@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -53,12 +53,14 @@ import {
   Search,
   Terminal,
   LayoutGrid,
-  List as ListIcon
+  List as ListIcon,
+  Camera
 } from 'lucide-react';
 import { toast } from "sonner";
 
 const Settings = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   // --- Comprehensive State Management ---
   const [settings, setSettings] = useState(() => {
@@ -70,7 +72,8 @@ const Settings = () => {
         company: 'Guardian Tech',
         orgType: 'Enterprise',
         timezone: 'UTC+5:30 (IST)',
-        language: 'English'
+        language: 'English',
+        avatar: null
       },
       preferences: {
         landingPage: 'Dashboard',
@@ -201,6 +204,23 @@ const Settings = () => {
   const handleRemoveMember = (id: number) => {
     updateNested('team', settings.team.filter((m: any) => m.id !== id));
     toast.error("Team member removed");
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        updateNested('profile.avatar', reader.result);
+        toast.success("Profile picture updated!");
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemovePhoto = () => {
+    updateNested('profile.avatar', null);
+    toast.info("Profile picture removed");
   };
 
   return (
@@ -390,10 +410,46 @@ const Settings = () => {
                   <CardTitle className="text-white">Profile Picture</CardTitle>
                 </CardHeader>
                 <CardContent className="flex flex-col items-center gap-4">
-                  <div className="w-24 h-24 bg-blue-600 rounded-3xl flex items-center justify-center text-3xl font-bold text-white shadow-xl shadow-blue-900/20">
-                    {settings.profile.name.substring(0, 2).toUpperCase()}
+                  <div className="relative group">
+                    <div className="w-24 h-24 bg-blue-600 rounded-3xl flex items-center justify-center text-3xl font-bold text-white shadow-xl shadow-blue-900/20 overflow-hidden">
+                      {settings.profile.avatar ? (
+                        <img src={settings.profile.avatar} alt="Profile" className="w-full h-full object-cover" />
+                      ) : (
+                        settings.profile.name.substring(0, 2).toUpperCase()
+                      )}
+                    </div>
+                    <button 
+                      onClick={() => fileInputRef.current?.click()}
+                      className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-3xl"
+                    >
+                      <Camera className="text-white" size={24} />
+                    </button>
                   </div>
-                  <Button variant="outline" className="w-full border-[#1E293B] text-white hover:bg-[#1E293B] rounded-xl">Change Photo</Button>
+                  <input 
+                    type="file" 
+                    ref={fileInputRef} 
+                    className="hidden" 
+                    accept="image/*" 
+                    onChange={handleFileChange} 
+                  />
+                  <div className="flex flex-col gap-2 w-full">
+                    <Button 
+                      onClick={() => fileInputRef.current?.click()}
+                      variant="outline" 
+                      className="w-full border-[#1E293B] text-white hover:bg-[#1E293B] rounded-xl"
+                    >
+                      Change Photo
+                    </Button>
+                    {settings.profile.avatar && (
+                      <Button 
+                        onClick={handleRemovePhoto}
+                        variant="ghost" 
+                        className="w-full text-rose-400 hover:bg-rose-500/10 rounded-xl"
+                      >
+                        Remove Photo
+                      </Button>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             </div>
