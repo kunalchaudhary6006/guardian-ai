@@ -24,14 +24,13 @@ const Pricing = () => {
     setIsProcessing(tier.name);
 
     const options = {
-      key: "rzp_test_YOUR_KEY_HERE", // Replace with your actual Razorpay Key ID
-      amount: (parseInt(tier.price.replace('$', '')) * 100).toString(), // Amount in paise
+      key: "rzp_test_YOUR_KEY_HERE",
+      amount: (parseInt(tier.price.replace('$', '')) * 100).toString(),
       currency: "USD",
       name: "Guardian AI",
       description: `Subscription for ${tier.name} Plan`,
       image: "/placeholder.svg",
       handler: (res: any) => {
-        console.log(res);
         toast.success("Payment Successful!", {
           description: `Transaction ID: ${res.razorpay_payment_id}`
         });
@@ -50,27 +49,15 @@ const Pricing = () => {
         email: "john@example.com",
         contact: "9999999999",
       },
-      notes: {
-        address: "Guardian AI Corporate Office",
-      },
       theme: {
-        color: "#0f172a",
+        color: "#3b82f6",
       },
     };
 
     try {
       const rzp1 = new (Razorpay as any)(options);
-      
-      rzp1.on("payment.failed", function (response: any) {
-        toast.error("Payment Failed", {
-          description: response.error.description
-        });
-        setIsProcessing(null);
-      });
-
       rzp1.open();
     } catch (error) {
-      console.error("Razorpay error:", error);
       toast.error("Could not initialize payment gateway.");
     } finally {
       setIsProcessing(null);
@@ -82,27 +69,14 @@ const Pricing = () => {
       name: 'Starter',
       price: billingCycle === 'monthly' ? '$49' : '$39',
       desc: 'Perfect for small communities and side projects.',
-      features: [
-        'Up to 50K scans',
-        'Basic moderation AI',
-        'Email alerts',
-        '7-day retention',
-        'Community support'
-      ],
+      features: ['Up to 50K scans', 'Basic moderation AI', 'Email alerts', '7-day retention', 'Community support'],
       button: 'Get Started',
     },
     {
       name: 'Pro',
       price: billingCycle === 'monthly' ? '$149' : '$119',
       desc: 'Advanced safety for growing platforms.',
-      features: [
-        'Up to 500K scans',
-        'Advanced AI models',
-        'Real-time alerts',
-        'Priority support',
-        '30-day retention',
-        'API access'
-      ],
+      features: ['Up to 500K scans', 'Advanced AI models', 'Real-time alerts', 'Priority support', '30-day retention', 'API access'],
       button: 'Get Started',
       popular: true,
     },
@@ -110,27 +84,14 @@ const Pricing = () => {
       name: 'Business',
       price: billingCycle === 'monthly' ? '$399' : '$349',
       desc: 'Scale your operations with custom workflows.',
-      features: [
-        'Up to 2M scans',
-        'Full AI suite',
-        'Custom workflows',
-        'Team collaboration',
-        '90-day retention',
-        'Webhooks + integrations'
-      ],
+      features: ['Up to 2M scans', 'Full AI suite', 'Custom workflows', 'Team collaboration', '90-day retention', 'Webhooks + integrations'],
       button: 'Upgrade Now',
     },
     {
       name: 'Enterprise',
       price: 'Custom',
       desc: 'Dedicated infrastructure for global scale.',
-      features: [
-        'Unlimited scans',
-        'Dedicated AI models',
-        'On-premise deployment',
-        'SLA + compliance',
-        'Dedicated manager'
-      ],
+      features: ['Unlimited scans', 'Dedicated AI models', 'On-premise deployment', 'SLA + compliance', 'Dedicated manager'],
       button: 'Contact Sales',
     }
   ];
@@ -139,26 +100,26 @@ const Pricing = () => {
     <LandingLayout>
       <section className="py-24 px-4">
         <div className="max-w-5xl mx-auto text-center mb-12">
-          <h1 className="text-4xl md:text-6xl font-extrabold text-slate-900 mb-6 tracking-tight">
+          <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-6 tracking-tight">
             Simple, transparent pricing
           </h1>
-          <p className="text-xl text-slate-600 mb-10">
+          <p className="text-xl text-slate-400 mb-10">
             Choose the plan that fits your platform's needs.
           </p>
 
           <div className="flex items-center justify-center gap-4 mb-12">
-            <span className={cn("text-sm font-medium", billingCycle === 'monthly' ? "text-slate-900" : "text-slate-400")}>Monthly</span>
+            <span className={cn("text-sm font-medium", billingCycle === 'monthly' ? "text-white" : "text-slate-500")}>Monthly</span>
             <button 
               onClick={() => setBillingCycle(billingCycle === 'monthly' ? 'yearly' : 'monthly')}
-              className="w-14 h-7 bg-slate-200 rounded-full p-1 transition-colors relative"
+              className="w-14 h-7 bg-[#1E293B] rounded-full p-1 transition-colors relative"
             >
               <div className={cn(
                 "w-5 h-5 bg-white rounded-full shadow-sm transition-transform",
                 billingCycle === 'yearly' ? "translate-x-7" : "translate-x-0"
               )} />
             </button>
-            <span className={cn("text-sm font-medium", billingCycle === 'yearly' ? "text-slate-900" : "text-slate-400")}>
-              Yearly <span className="text-emerald-500 font-bold ml-1">(Save up to 20%)</span>
+            <span className={cn("text-sm font-medium", billingCycle === 'yearly' ? "text-white" : "text-slate-500")}>
+              Yearly <span className="text-blue-400 font-bold ml-1">(Save up to 20%)</span>
             </span>
           </div>
         </div>
@@ -170,31 +131,31 @@ const Pricing = () => {
               className={cn(
                 "relative p-8 rounded-[2.5rem] border transition-all duration-300 flex flex-col",
                 tier.popular 
-                  ? "border-primary shadow-2xl shadow-primary/10 ring-1 ring-primary bg-white scale-105 z-10" 
-                  : "border-slate-100 shadow-sm bg-white hover:shadow-md"
+                  ? "border-blue-600 shadow-2xl shadow-blue-900/20 bg-[#0F172A] scale-105 z-10" 
+                  : "border-[#1E293B] bg-[#0F172A] hover:border-blue-500/30"
               )}
             >
               {tier.popular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-white text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest">
                   Most Popular
                 </div>
               )}
               
               <div className="mb-8">
-                <h3 className="text-xl font-bold text-slate-900 mb-2">{tier.name}</h3>
+                <h3 className="text-xl font-bold text-white mb-2">{tier.name}</h3>
                 <div className="flex items-baseline gap-1 mb-4">
-                  <span className="text-4xl font-black text-slate-900">{tier.price}</span>
+                  <span className="text-4xl font-black text-white">{tier.price}</span>
                   {tier.price !== 'Custom' && (
-                    <span className="text-slate-400 font-medium">/mo</span>
+                    <span className="text-slate-500 font-medium">/mo</span>
                   )}
                 </div>
-                <p className="text-slate-500 text-sm leading-relaxed">{tier.desc}</p>
+                <p className="text-slate-400 text-sm leading-relaxed">{tier.desc}</p>
               </div>
 
               <div className="space-y-4 mb-10 flex-1">
                 {tier.features.map((feature, j) => (
-                  <div key={j} className="flex items-start gap-3 text-sm text-slate-600">
-                    <CheckCircle2 className="text-emerald-500 shrink-0 mt-0.5" size={16} />
+                  <div key={j} className="flex items-start gap-3 text-sm text-slate-400">
+                    <CheckCircle2 className="text-blue-500 shrink-0 mt-0.5" size={16} />
                     <span>{feature}</span>
                   </div>
                 ))}
@@ -206,12 +167,10 @@ const Pricing = () => {
                 variant={tier.popular ? 'default' : 'outline'} 
                 className={cn(
                   "w-full rounded-2xl h-14 font-bold text-base transition-all",
-                  tier.popular ? "bg-slate-900 hover:bg-slate-800 shadow-lg shadow-slate-200" : "border-slate-200 hover:bg-slate-50"
+                  tier.popular ? "bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-900/20" : "border-[#1E293B] text-white hover:bg-[#1E293B]"
                 )}
               >
-                {isProcessing === tier.name ? (
-                  <Loader2 className="animate-spin mr-2" size={20} />
-                ) : null}
+                {isProcessing === tier.name ? <Loader2 className="animate-spin mr-2" size={20} /> : null}
                 {tier.button}
               </Button>
             </div>
