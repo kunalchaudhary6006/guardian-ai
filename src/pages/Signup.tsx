@@ -2,10 +2,11 @@
 
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowRight, CheckCircle2, Mail, ExternalLink } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Mail, ExternalLink, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 import Logo from '@/components/Logo';
 
@@ -13,9 +14,33 @@ const Signup = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [isEmailSent, setIsEmailSent] = useState(false);
+  const [password, setPassword] = useState("");
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
+
+  const validatePassword = (pwd: string) => {
+    const hasUpper = /[A-Z]/.test(pwd);
+    const hasLower = /[a-z]/.test(pwd);
+    const hasSpecial = /[@#$!%*?&]/.test(pwd);
+    const isLongEnough = pwd.length >= 8;
+    return { hasUpper, hasLower, hasSpecial, isLongEnough };
+  };
+
+  const pwdValidation = validatePassword(password);
+  const isPasswordValid = Object.values(pwdValidation).every(Boolean);
 
   const handleSignup = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
+    if (!isPasswordValid) {
+      toast.error("Password does not meet security requirements.");
+      return;
+    }
+
+    if (!acceptedTerms) {
+      toast.error("You must accept the Terms and Conditions.");
+      return;
+    }
+
     setIsLoading(true);
     
     const formData = new FormData(e.currentTarget);
@@ -26,8 +51,15 @@ const Signup = () => {
       setIsLoading(false);
       setIsEmailSent(true);
       
-      const mockUser = { email, name: firstName, confirmed: false };
-      localStorage.setItem('pending_user', JSON.stringify(mockUser));
+      // Store user credentials for login simulation
+      const userData = { 
+        email, 
+        password, 
+        name: firstName, 
+        confirmed: false 
+      };
+      localStorage.setItem('registered_user', JSON.stringify(userData));
+      localStorage.setItem('pending_user', JSON.stringify(userData));
       
       const newEmail = {
         id: Math.random().toString(36).substr(2, 9),
@@ -95,9 +127,50 @@ const Signup = () => {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
-                <Input id="password" name="password" type="password" placeholder="••••••••" required />
+                <Input 
+                  id="password" 
+                  name="password" 
+                  type="password" 
+                  placeholder="••••••••" 
+                  required 
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <div className="grid grid-cols-2 gap-2 mt-2">
+                  <div className={`text-[10px] flex items-center gap-1 ${pwdValidation.isLongEnough ? 'text-emerald-600' : 'text-slate-400'}`}>
+                    <ShieldCheck size={10} /> 8+ Characters
+                  </div>
+                  <div className={`text-[10px] flex items-center gap-1 ${pwdValidation.hasUpper ? 'text-emerald-600' : 'text-slate-400'}`}>
+                    <ShieldCheck size={10} /> Uppercase
+                  </div>
+                  <div className={`text-[10px] flex items-center gap-1 ${pwdValidation.hasLower ? 'text-emerald-600' : 'text-slate-400'}`}>
+                    <ShieldCheck size={10} /> Lowercase
+                  </div>
+                  <div className={`text-[10px] flex items-center gap-1 ${pwdValidation.hasSpecial ? 'text-emerald-600' : 'text-slate-400'}`}>
+                    <ShieldCheck size={10} /> Special (@#$)
+                  </div>
+                </div>
               </div>
-              <Button type="submit" disabled={isLoading} className="w-full bg-slate-900 hover:bg-slate-800 h-12 rounded-xl mt-4">
+
+              <div className="flex items-start space-x-2 pt-2">
+                <Checkbox 
+                  id="terms" 
+                  checked={acceptedTerms} 
+                  onCheckedChange={(checked) => setAcceptedTerms(checked as boolean)} 
+                />
+                <label
+                  htmlFor="terms"
+                  className="text-xs text-slate-500 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  I agree to the <Link to="#" className="text-primary hover:underline">Terms of Service</Link> and <Link to="#" className="text-primary hover:underline">Privacy Policy</Link>.
+                </label>
+              </div>
+
+              <Button 
+                type="submit" 
+                disabled={isLoading || !isPasswordValid || !acceptedTerms} 
+                className="w-full bg-slate-900 hover:bg-slate-800 h-12 rounded-xl mt-4"
+              >
                 {isLoading ? "Sending Email..." : "Create Account"} <ArrowRight className="ml-2" size={18} />
               </Button>
             </form>

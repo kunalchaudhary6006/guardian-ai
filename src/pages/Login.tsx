@@ -26,18 +26,20 @@ const Login = () => {
 
     const formData = new FormData(e.currentTarget);
     const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
 
     setTimeout(() => {
       setIsLoading(false);
-      const storedUser = localStorage.getItem('user');
+      const storedUser = localStorage.getItem('registered_user');
       
       if (storedUser) {
         const user = JSON.parse(storedUser);
-        if (user.email === email) {
+        if (user.email === email && user.password === password) {
           toast.success("Welcome back!");
+          localStorage.setItem('user', JSON.stringify({ ...user, confirmed: true }));
           navigate('/dashboard');
         } else {
-          toast.error("No user found with this email address.");
+          toast.error("Invalid email or password.");
         }
       } else {
         toast.error("No user found. Please sign up first.");
