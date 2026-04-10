@@ -1,19 +1,38 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Search, Upload, Link as LinkIcon, Play, RefreshCw, Database, Globe, ShieldAlert, Clock } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { 
+  Search, 
+  Upload, 
+  Link as LinkIcon, 
+  Play, 
+  RefreshCw, 
+  Database, 
+  Globe, 
+  ShieldAlert, 
+  Clock,
+  X,
+  FileText
+} from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function ResearchConsole() {
   const [prompt, setPrompt] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [mode, setMode] = useState('quick');
+  
+  // Functional states for external data
+  const [externalData, setExternalData] = useState<{ name: string, type: 'file' | 'url' }[]>([]);
+  const [isUrlInputOpen, setIsUrlInputOpen] = useState(false);
+  const [urlInput, setUrlInput] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleRunResearch = () => {
     if (!prompt.trim()) return;
@@ -25,6 +44,32 @@ export default function ResearchConsole() {
       toast.success("Research session completed. Dashboard updated with new insights.");
       setIsAnalyzing(false);
     }, 2500);
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setExternalData(prev => [...prev, { name: file.name, type: 'file' }]);
+      toast.success(`File "${file.name}" added to research context.`);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  const handleAddUrl = () => {
+    if (!urlInput.trim()) return;
+    try {
+      new URL(urlInput); // Basic validation
+      setExternalData(prev => [...prev, { name: urlInput, type: 'url' }]);
+      toast.success("URL added to research context.");
+      setUrlInput("");
+      setIsUrlInputOpen(false);
+    } catch (e) {
+      toast.error("Please enter a valid URL.");
+    }
+  };
+
+  const removeData = (index: number) => {
+    setExternalData(prev => prev.filter((_, i) => i !== index));
   };
 
   return (
@@ -61,6 +106,19 @@ export default function ResearchConsole() {
             </div>
           </div>
 
+          {/* External Data List */}
+          {externalData.length > 0 && (
+            <div className="flex flex-wrap gap-2 p-3 bg-[#020617] rounded-xl border border-[#1E293B]">
+              {externalData.map((data, i) => (
+                <Badge key={i} variant="secondary" className="bg-[#0F172A] text-slate-300 border-[#1E293B] gap-2 py-1 px-3">
+                  {data.type === 'file' ? <FileText size={12} /> : <LinkIcon size={12} />}
+                  <span className="max-w-[150px] truncate">{data.name}</span>
+                  <X size={12} className="cursor-pointer hover:text-rose-400" onClick={() => removeData(i)} />
+                </Badge>
+              ))}
+            </div>
+          )}
+
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pt-4 border-t border-[#1E293B]">
             <div className="space-y-4">
               <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Data Sources</p>
@@ -83,13 +141,44 @@ export default function ResearchConsole() {
 
             <div className="space-y-4">
               <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">External Input</p>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" className="flex-1 border-[#1E293B] text-white rounded-xl gap-2 text-xs">
-                  <Upload size={14} /> Upload File
-                </Button>
-                <Button variant="outline" size="sm" className="flex-1 border-[#1E293B] text-white rounded-xl gap-2 text-xs">
-                  <LinkIcon size={14} /> Add URL
-                </Button>
+              <div className="flex flex-col gap-3">
+                <div className="flex gap-2">
+                  <input 
+                    type="file" 
+                    ref={fileInputRef} 
+                    className="hidden" 
+                    onChange={handleFileUpload}
+                  />
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => fileInputRef.current?.click()}
+                    className="flex-1 border-[#1E293B] text-white rounded-xl gap-2 text-xs"
+                  >
+                    <Upload size={14} /> Upload File
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => setIsUrlInputOpen(!isUrlInputOpen)}
+                    className="flex-1 border-[#1E293B] text-white rounded-xl gap-2 text-xs"
+                  >
+                    <LinkIcon size={14} /> Add URL
+                  </Button>
+                </div>
+                
+                {isUrlInputOpen && (
+                  <div className="flex gap-2 animate-in slide-in-from-top-2">
+                    <Input 
+                      value={urlInput}
+                      onChange={(e) => setUrlInput(e.target.value)}
+                      placeholder="https://..."
+                      className="h-8 bg-[#020617] border-[#1E293B] text-xs rounded-lg"
+                      onKeyPress={(e) => e.key === 'Enter' && handleAddUrl()}
+                    />
+                    <Button size="sm" onClick={handleAddUrl} className="h-8 bg-blue-600 rounded-lg px-3">Add</Button>
+                  </div>
+                )}
               </div>
               <p className="text-[10px] text-slate-600 italic">Supported: CSV, JSON, PDF, TXT, Logs</p>
             </div>
