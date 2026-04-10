@@ -5,7 +5,10 @@ import { Send, Bot, User, Sparkles } from "lucide-react";
 
 export default function AIChat() {
   const [messages, setMessages] = useState<any[]>([
-    { role: "ai", text: "Hello! I'm your Guardian AI assistant. How can I help you secure your platform today?" }
+    { 
+      role: "ai", 
+      text: "Hey there! I'm your Guardian AI assistant. I've been keeping an eye on the system logs—everything looks pretty solid right now, but I'm here if you need help with anything or want to run a quick check on something specific. What's on your mind?" 
+    }
   ]);
   const [input, setInput] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -16,11 +19,34 @@ export default function AIChat() {
     }
   }, [messages]);
 
+  const getConversationalResponse = (userInput: string) => {
+    const lowerInput = userInput.toLowerCase();
+    
+    if (lowerInput.includes("hello") || lowerInput.includes("hi")) {
+      return "Hi! Hope you're having a smooth day. Is there anything security-related I can help you look into?";
+    }
+    
+    if (lowerInput.includes("status") || lowerInput.includes("how is the system")) {
+      return "The system is looking healthy! I just finished a background scan and didn't find any major red flags. Traffic patterns are normal for this time of day.";
+    }
+    
+    if (lowerInput.includes("threat") || lowerInput.includes("phishing") || lowerInput.includes("attack")) {
+      return "I'm actually seeing a slight uptick in suspicious login attempts from a few unfamiliar IPs. It's nothing to panic about yet, but it might be a good idea to double-check our rate-limiting policies just to be safe. Want me to show you the logs?";
+    }
+
+    if (lowerInput.includes("help") || lowerInput.includes("what can you do")) {
+      return "I can help you analyze traffic logs, identify potential security risks, or even help you configure your moderation rules. Just let me know what you're working on!";
+    }
+
+    return "That's interesting. From a security perspective, I'd say we should keep a close watch on how that impacts our user data. I'll keep monitoring the background processes and let you know if I spot anything unusual related to that.";
+  };
+
   const send = () => {
     if (!input.trim()) return;
 
     const userMsg = { role: "user", text: input };
     setMessages([...messages, userMsg]);
+    const currentInput = input;
     setInput("");
 
     setTimeout(() => {
@@ -28,7 +54,7 @@ export default function AIChat() {
         ...prev,
         {
           role: "ai",
-          text: "Analyzed: 94% confidence → Possible phishing attempt detected in recent logs. I recommend enabling IP rate limiting.",
+          text: getConversationalResponse(currentInput),
         },
       ]);
     }, 1000);
@@ -51,7 +77,7 @@ export default function AIChat() {
             }`}>
               {m.role === 'user' ? <User size={16} className="text-white" /> : <Bot size={16} className="text-blue-400" />}
             </div>
-            <div className={`max-w-[80%] p-3 rounded-2xl text-sm ${
+            <div className={`max-w-[80%] p-3 rounded-2xl text-sm leading-relaxed ${
               m.role === 'user' 
                 ? 'bg-blue-600 text-white rounded-tr-none' 
                 : 'bg-[#020617] border border-[#1E293B] text-slate-300 rounded-tl-none'
@@ -67,7 +93,7 @@ export default function AIChat() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyPress={(e) => e.key === 'Enter' && send()}
-          placeholder="Ask about threats..."
+          placeholder="Chat with your security assistant..."
           className="flex-1 bg-[#020617] border border-[#1E293B] text-white p-3 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition-colors"
         />
         <button 
