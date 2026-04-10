@@ -58,9 +58,10 @@ const LandingLayout = ({ children }: { children: React.ReactNode }) => {
           <div className="flex justify-center mb-6">
             <Logo size="sm" />
           </div>
-          <div className="flex justify-center gap-8 mb-8">
+          <div className="flex flex-wrap justify-center gap-8 mb-8">
             <Link to="/pricing" className="text-sm text-slate-500 hover:text-white transition-colors">Pricing</Link>
             <Link to="/contact" className="text-sm text-slate-500 hover:text-white transition-colors">Contact</Link>
+            <Link to="/privacy" className="text-sm text-slate-500 hover:text-white transition-colors">Privacy Policy</Link>
             <Link to="/login" className="text-sm text-slate-500 hover:text-white transition-colors">Login</Link>
           </div>
           <p className="text-slate-600 text-sm">© 2024 Guardian AI. All rights reserved.</p>

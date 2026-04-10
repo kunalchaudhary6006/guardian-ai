@@ -20,6 +20,7 @@ import NotFound from "./pages/NotFound";
 import FinancialFraud from "./pages/FinancialFraud";
 import AIVerification from "./pages/AIVerification";
 import LogCenter from "./pages/LogCenter";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 const queryClient = new QueryClient();
 
@@ -46,6 +47,7 @@ const App = () => (
           <Route path="/fraud" element={<FinancialFraud />} />
           <Route path="/verification" element={<AIVerification />} />
           <Route path="/logs" element={<LogCenter />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
