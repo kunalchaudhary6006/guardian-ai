@@ -2,7 +2,7 @@
 
 import React from 'react';
 import LandingLayout from '@/components/LandingLayout';
-import { Shield, ChevronRight, Mail, Globe, Clock } from 'lucide-react';
+import { Shield, ChevronRight, Mail, Globe, Clock, FileText, Lock } from 'lucide-react';
 
 const PrivacyPolicy = () => {
   const sections = [
