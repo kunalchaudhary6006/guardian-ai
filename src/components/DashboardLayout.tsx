@@ -10,9 +10,9 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
 
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    <div className="min-h-screen bg-[#020617] text-white flex">
       <Sidebar />
-      <div className="flex-1 lg:ml-64 flex flex-col">
+      <div className="flex-1 lg:ml-0 flex flex-col">
         <Header />
         <main className="p-4 lg:p-8">
           <div className="max-w-7xl mx-auto">
