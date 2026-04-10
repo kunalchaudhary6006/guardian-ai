@@ -1,136 +1,131 @@
 "use client";
 
-import React from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
 import { 
+  Menu, 
+  X, 
   LayoutDashboard, 
   ShieldAlert, 
-  Search, 
   FileCheck, 
-  BarChart3, 
-  ShieldCheck,
-  Settings as SettingsIcon,
-  LogOut,
-  Menu,
-  X,
-  HeadphonesIcon
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
-import Logo from './Logo';
+  Search, 
+  ShieldCheck, 
+  BarChart3,
+  ShieldBan,
+  UserCheck,
+  Database,
+  Lock,
+  LogOut
+} from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
-const navItems = [
-  { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
-  { icon: ShieldAlert, label: 'Content Moderation', path: '/moderation' },
-  { icon: ShieldCheck, label: 'Threat Intelligence', path: '/threats' },
-  { icon: FileCheck, label: 'Policy Enforcement', path: '/policy' },
-  { icon: Search, label: 'Research & Analytics', path: '/analytics' },
-  { icon: BarChart3, label: 'Marketing Insights', path: '/marketing' },
-];
-
-const Sidebar = () => {
+export default function Sidebar() {
+  const [open, setOpen] = useState(true);
   const location = useLocation();
   const navigate = useNavigate();
-  const [isOpen, setIsOpen] = React.useState(false);
+
+  const menu = [
+    { label: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
+    { label: "Content Moderation", icon: ShieldAlert, path: "/moderation" },
+    { label: "Policy Enforcement", icon: FileCheck, path: "/policy" },
+    { label: "Research & Analytics", icon: Search, path: "/analytics" },
+    { label: "Brand Safety", icon: ShieldCheck, path: "/threats" },
+    { label: "Threat Response", icon: ShieldBan, path: "/threats" },
+    { label: "Marketing Intelligence", icon: BarChart3, path: "/marketing" },
+  ];
+
+  const ai = [
+    { label: "Financial Fraud Bot", icon: Lock },
+    { label: "AI Verification Bot", icon: UserCheck },
+    { label: "AI Log Center", icon: Database },
+    { label: "Content Safety AI", icon: ShieldBan },
+  ];
 
   const handleLogout = () => {
-    toast.promise(new Promise((resolve) => setTimeout(resolve, 800)), {
-      loading: 'Logging out...',
-      success: () => {
-        localStorage.removeItem('user');
-        navigate('/');
-        return 'Logged out successfully';
-      },
-      error: 'Logout failed',
-    });
+    localStorage.removeItem('user');
+    toast.success("Logged out successfully");
+    navigate('/');
   };
 
   return (
-    <>
-      {/* Mobile Toggle */}
-      <div className="lg:hidden fixed top-4 left-4 z-50">
-        <Button variant="outline" size="icon" className="rounded-xl bg-white shadow-sm" onClick={() => setIsOpen(!isOpen)}>
-          {isOpen ? <X /> : <Menu />}
-        </Button>
+    <motion.div
+      animate={{ width: open ? 260 : 80 }}
+      className="h-screen bg-[#020617] border-r border-[#1E293B] text-white flex flex-col sticky top-0 z-50"
+    >
+      <div className="flex items-center justify-between p-6 mb-4">
+        {open && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex items-center gap-2"
+          >
+            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-900/20">
+              <ShieldCheck size={20} className="text-white" />
+            </div>
+            <h1 className="text-white font-black tracking-tighter text-xl uppercase">Guardian AI</h1>
+          </motion.div>
+        )}
+        <button 
+          onClick={() => setOpen(!open)}
+          className="p-2 hover:bg-[#0F172A] rounded-xl transition-colors text-slate-400 hover:text-white"
+        >
+          {open ? <X size={20} /> : <Menu size={20} />}
+        </button>
       </div>
 
-      {/* Sidebar */}
-      <aside className={cn(
-        "fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-slate-200 transition-transform duration-300 ease-in-out lg:translate-x-0 flex flex-col",
-        isOpen ? "translate-x-0" : "-translate-x-full"
-      )}>
-        <div className="p-6">
-          <Logo />
-          <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1 ml-10">Safety First</p>
-        </div>
-
-        <nav className="flex-1 px-4 space-y-1 mt-4">
-          {navItems.map((item) => {
-            const isActive = location.pathname === item.path;
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                onClick={() => setIsOpen(false)}
-                className={cn(
-                  "flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 group",
-                  isActive 
-                    ? "bg-slate-900 text-white shadow-lg shadow-slate-200" 
-                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-                )}
-              >
-                <item.icon size={20} className={cn(isActive ? "text-white" : "text-slate-400 group-hover:text-slate-900")} />
-                <span className="font-medium">{item.label}</span>
-              </Link>
-            );
-          })}
-        </nav>
-
-        <div className="p-4 border-t border-slate-100">
-          <div className="bg-slate-50 rounded-2xl p-4 mb-4">
-            <p className="text-xs font-semibold text-slate-400 uppercase mb-2">System Status</p>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-              <span className="text-sm font-medium text-slate-700">All Systems Operational</span>
-            </div>
-          </div>
-          
+      <div className="flex-1 overflow-y-auto px-3 space-y-8 custom-scrollbar">
+        <div>
+          {open && <p className="px-4 text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">Main Menu</p>}
           <div className="space-y-1">
-            <Link 
-              to="/contact"
-              onClick={() => setIsOpen(false)}
-              className={cn(
-                "w-full flex items-center gap-3 px-4 py-2.5 rounded-2xl transition-colors",
-                location.pathname === '/contact' ? "bg-slate-100 text-slate-900" : "text-slate-600 hover:text-slate-900"
-              )}
-            >
-              <HeadphonesIcon size={18} />
-              <span className="text-sm font-medium">Contact Support</span>
-            </Link>
-            <Link 
-              to="/settings"
-              onClick={() => setIsOpen(false)}
-              className={cn(
-                "w-full flex items-center gap-3 px-4 py-2.5 rounded-2xl transition-colors",
-                location.pathname === '/settings' ? "bg-slate-100 text-slate-900" : "text-slate-600 hover:text-slate-900"
-              )}
-            >
-              <SettingsIcon size={18} />
-              <span className="text-sm font-medium">Settings</span>
-            </Link>
-            <button 
-              onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-4 py-2.5 text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-2xl transition-colors"
-            >
-              <LogOut size={18} />
-              <span className="text-sm font-medium">Logout</span>
-            </button>
+            {menu.map((m, i) => {
+              const isActive = location.pathname === m.path;
+              return (
+                <Link
+                  key={i}
+                  to={m.path}
+                  className={cn(
+                    "flex items-center gap-3 px-4 py-3 rounded-xl transition-all group",
+                    isActive 
+                      ? "bg-blue-600 text-white shadow-lg shadow-blue-900/20" 
+                      : "text-slate-400 hover:bg-[#0F172A] hover:text-white"
+                  )}
+                >
+                  <m.icon size={20} className={cn(isActive ? "text-white" : "text-slate-500 group-hover:text-blue-400")} />
+                  {open && <span className="text-sm font-medium">{m.label}</span>}
+                </Link>
+              );
+            })}
           </div>
         </div>
-      </aside>
-    </>
-  );
-};
 
-export default Sidebar;
+        <div>
+          {open && <p className="px-4 text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">AI Suite</p>}
+          <div className="space-y-1">
+            {ai.map((m, i) => (
+              <div
+                key={i}
+                className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-[#0F172A] hover:text-white transition-all cursor-pointer group"
+                onClick={() => toast.info(`Opening ${m.label}...`)}
+              >
+                <m.icon size={20} className="text-slate-500 group-hover:text-blue-400" />
+                {open && <span className="text-sm font-medium">{m.label}</span>}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="p-4 border-t border-[#1E293B]">
+        <button 
+          onClick={handleLogout}
+          className="w-full flex items-center gap-3 px-4 py-3 text-rose-400 hover:bg-rose-500/10 rounded-xl transition-all group"
+        >
+          <LogOut size={20} className="group-hover:translate-x-1 transition-transform" />
+          {open && <span className="text-sm font-bold">Logout</span>}
+        </button>
+      </div>
+    </motion.div>
+  );
+}
