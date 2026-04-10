@@ -2,203 +2,280 @@
 
 import React, { useState } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
-import { Card, CardContent } from '@/components/ui/card';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import PolicyRuleSimulator from '@/components/PolicyRuleSimulator';
 import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogFooter, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogTrigger 
-} from '@/components/ui/dialog';
-import { FileText, Plus, Shield, Info, Trash2 } from 'lucide-react';
-import { toast } from "sonner";
+  Search, 
+  Plus, 
+  Shield, 
+  Zap, 
+  MoreHorizontal, 
+  Info, 
+  Lock, 
+  CheckCircle2,
+  AlertCircle,
+  Filter
+} from 'lucide-react';
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from '@/components/ui/table';
+import { toast } from 'sonner';
 
-const initialPolicies = [
-  { id: 1, name: 'Hate Speech Detection', description: 'Automatically flag and remove content containing hate speech patterns.', active: true },
-  { id: 2, name: 'Spam Prevention', description: 'Limit message frequency and detect repetitive automated content.', active: true },
-  { id: 3, name: 'NSFW Filtering', description: 'Use AI vision to detect and blur sexually explicit imagery.', active: false },
+// New Components
+import MetricsGrid from '@/components/PolicyEnforcement/MetricsGrid';
+import PolicyDetailDrawer from '@/components/PolicyEnforcement/PolicyDetailDrawer';
+import WorkflowBuilder from '@/components/PolicyEnforcement/WorkflowBuilder';
+
+const policies = [
+  { 
+    id: 1, 
+    name: 'No Hate Speech', 
+    summary: 'Detects hate, abusive, and discriminatory content using AI models',
+    models: ['NLP', 'Vision', 'XGBoost'],
+    risk: 89,
+    action: 'Flag Content',
+    status: 'Semi-Automated',
+    lastDecision: '2 hours ago'
+  },
+  { 
+    id: 2, 
+    name: 'Spam Prevention', 
+    summary: 'Identifies repetitive automated content and bot behavior',
+    models: ['NLP', 'KMeans'],
+    risk: 94,
+    action: 'Shadow Ban',
+    status: 'Fully Automated',
+    lastDecision: '14 mins ago'
+  },
+  { 
+    id: 3, 
+    name: 'NSFW Filtering', 
+    summary: 'AI vision models to detect sexually explicit imagery',
+    models: ['Vision AI', 'XGBoost'],
+    risk: 98,
+    action: 'Block Content',
+    status: 'Fully Automated',
+    lastDecision: 'Just now'
+  },
+  { 
+    id: 4, 
+    name: 'Financial Fraud', 
+    summary: 'Detects phishing and scam patterns in text and links',
+    models: ['NLP', 'Graph AI'],
+    risk: 72,
+    action: 'Notify User',
+    status: 'Manual Review',
+    lastDecision: '1 day ago'
+  },
 ];
 
-const PolicyEnforcement = () => {
-  const [policies, setPolicies] = useState(initialPolicies);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingPolicy, setEditingPolicy] = useState<any>(null);
-  const [formData, setFormData] = useState({ name: '', description: '' });
+export default function PolicyEnforcement() {
+  const [selectedPolicy, setSelectedPolicy] = useState<any>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const togglePolicy = (id: number) => {
-    setPolicies(prev => prev.map(p => {
-      if (p.id === id) {
-        const newState = !p.active;
-        toast.success(`${p.name} is now ${newState ? 'enabled' : 'disabled'}`);
-        return { ...p, active: newState };
-      }
-      return p;
-    }));
-  };
-
-  const handleOpenCreate = () => {
-    setEditingPolicy(null);
-    setFormData({ name: '', description: '' });
-    setIsDialogOpen(true);
-  };
-
-  const handleOpenEdit = (policy: any) => {
-    setEditingPolicy(policy);
-    setFormData({ name: policy.name, description: policy.description });
-    setIsDialogOpen(true);
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formData.name || !formData.description) {
-      toast.error("Please fill in all fields");
-      return;
-    }
-
-    if (editingPolicy) {
-      setPolicies(prev => prev.map(p => p.id === editingPolicy.id ? { ...p, ...formData } : p));
-      toast.success("Policy updated successfully");
-    } else {
-      const policy = {
-        id: Date.now(),
-        name: formData.name,
-        description: formData.description,
-        active: true
-      };
-      setPolicies([policy, ...policies]);
-      toast.success("New policy created successfully");
-    }
-    
-    setIsDialogOpen(false);
-  };
-
-  const deletePolicy = (id: number) => {
-    setPolicies(policies.filter(p => p.id !== id));
-    toast.error("Policy deleted");
+  const handleRowClick = (policy: any) => {
+    setSelectedPolicy(policy);
+    setDrawerOpen(true);
   };
 
   return (
     <DashboardLayout>
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-white">Policy Enforcement</h1>
-          <p className="text-slate-400">Configure and manage automated safety rules.</p>
+      {/* System Banner */}
+      <div className="mb-8 p-4 bg-blue-600/10 border border-blue-500/20 rounded-2xl flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white shadow-lg shadow-blue-900/20">
+            <Zap size={18} fill="currentColor" />
+          </div>
+          <div>
+            <p className="text-sm font-bold text-white">Model-Aligned Enforcement Active</p>
+            <p className="text-xs text-slate-400">This dashboard reflects Guardian AI’s internally developed detection, risk scoring, and enforcement models.</p>
+          </div>
         </div>
-        
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button className="bg-blue-600 hover:bg-blue-700 gap-2 rounded-2xl h-11 px-6 w-full sm:w-auto shadow-lg shadow-blue-900/20" onClick={handleOpenCreate}>
-              <Plus size={18} /> Create New Policy
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px] rounded-3xl bg-[#0F172A] border-[#1E293B] text-white">
-            <form onSubmit={handleSubmit}>
-              <DialogHeader>
-                <DialogTitle className="text-white">
-                  {editingPolicy ? 'Edit Policy' : 'Create New Policy'}
-                </DialogTitle>
-                <DialogDescription className="text-slate-400">
-                  {editingPolicy ? 'Update the details of this safety rule.' : 'Define a new automated safety rule for your platform.'}
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="name" className="text-white">Policy Name</Label>
-                  <Input 
-                    id="name" 
-                    placeholder="e.g. Fraud Detection" 
-                    value={formData.name}
-                    onChange={(e) => setFormData({...formData, name: e.target.value})}
-                    className="rounded-xl bg-[#020617] border-[#1E293B] text-white"
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="description" className="text-white">Description</Label>
-                  <Textarea 
-                    id="description" 
-                    placeholder="Describe what this policy does..." 
-                    value={formData.description}
-                    onChange={(e) => setFormData({...formData, description: e.target.value})}
-                    className="rounded-xl min-h-[100px] bg-[#020617] border-[#1E293B] text-white"
-                  />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 rounded-xl">
-                  {editingPolicy ? 'Update Policy' : 'Save Policy'}
-                </Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
+        <Badge className="bg-blue-600 text-white border-none px-3 py-1 font-black uppercase tracking-widest text-[10px]">Live</Badge>
       </div>
 
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div>
+          <h1 className="text-3xl font-black text-white uppercase tracking-tighter flex items-center gap-3">
+            <Shield className="text-blue-500" size={32} /> AI Policy Protection & Enforcement
+          </h1>
+          <p className="text-slate-400 text-sm mt-1">Policy enforcement powered directly by Guardian AI’s detection and risk intelligence models</p>
+        </div>
+        <div className="flex gap-3">
+          <div className="relative hidden md:block">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
+            <Input className="pl-10 bg-[#0F172A] border-[#1E293B] text-white rounded-xl h-11 w-64" placeholder="Search policies..." />
+          </div>
+          <Button className="bg-blue-600 hover:bg-blue-700 rounded-2xl gap-2 h-11 px-6 shadow-lg shadow-blue-900/20 font-bold">
+            <Plus size={18} /> Create New Policy
+          </Button>
+        </div>
+      </div>
+
+      {/* AI Model Alignment Info Strip */}
+      <div className="mb-8 p-4 bg-[#0F172A] border border-[#1E293B] rounded-2xl flex items-center gap-4">
+        <div className="p-2 bg-blue-600/10 rounded-lg text-blue-400">
+          <Info size={18} />
+        </div>
+        <p className="text-xs text-slate-400">
+          <span className="text-white font-bold">AI Models Powering This Dashboard:</span> All policies, scores, and actions displayed here are generated by Guardian AI’s proprietary machine learning models operating in real time.
+        </p>
+      </div>
+
+      {/* Metrics */}
+      <MetricsGrid />
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-4">
-          {policies.map((policy) => (
-            <Card key={policy.id} className="border-[#1E293B] bg-[#0F172A] shadow-sm hover:shadow-md transition-all rounded-3xl overflow-hidden">
-              <CardContent className="p-6">
-                <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
-                  <div className="flex gap-4">
-                    <div className="w-12 h-12 bg-[#020617] border border-[#1E293B] rounded-2xl flex items-center justify-center shrink-0">
-                      <Shield className="text-blue-400" size={24} />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-bold text-white">{policy.name}</h3>
-                      <p className="text-slate-400 mt-1 text-sm leading-relaxed">{policy.description}</p>
-                      <div className="flex flex-wrap items-center gap-4 mt-4">
-                        <button 
-                          className="text-xs font-bold text-blue-400 hover:underline flex items-center gap-1"
-                          onClick={() => toast.info(`Opening documentation for ${policy.name}...`)}
-                        >
-                          <FileText size={14} /> Documentation
-                        </button>
-                        <button 
-                          className="text-xs font-bold text-slate-500 hover:text-slate-300 flex items-center gap-1"
-                          onClick={() => toast.info(`Loading last 50 audit logs for ${policy.name}...`)}
-                        >
-                          <Info size={14} /> Audit Logs
-                        </button>
-                      </div>
-                    </div>
+        {/* Policy Table */}
+        <div className="lg:col-span-2 space-y-6">
+          <Card className="border-[#1E293B] bg-[#0F172A] rounded-[2.5rem] overflow-hidden shadow-xl">
+            <div className="p-6 border-b border-[#1E293B] flex items-center justify-between bg-[#020617]/50">
+              <h3 className="text-white font-bold">Active AI Policies</h3>
+              <div className="flex gap-2">
+                <Button variant="ghost" size="sm" className="text-slate-500 hover:text-white rounded-xl">
+                  <Filter size={14} className="mr-2" /> Filters
+                </Button>
+              </div>
+            </div>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader className="bg-[#020617]">
+                  <TableRow className="border-[#1E293B] hover:bg-transparent">
+                    <TableHead className="text-slate-500 text-[10px] uppercase font-black tracking-widest">Policy Name</TableHead>
+                    <TableHead className="text-slate-500 text-[10px] uppercase font-black tracking-widest">AI Models Applied</TableHead>
+                    <TableHead className="text-slate-500 text-[10px] uppercase font-black tracking-widest">AI Risk Intelligence</TableHead>
+                    <TableHead className="text-slate-500 text-[10px] uppercase font-black tracking-widest">Automation Status</TableHead>
+                    <TableHead className="text-slate-500 text-[10px] uppercase font-black tracking-widest text-right">Manage</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {policies.map((p) => (
+                    <TableRow 
+                      key={p.id} 
+                      className="border-[#1E293B] hover:bg-[#1E293B]/30 transition-colors cursor-pointer group"
+                      onClick={() => handleRowClick(p)}
+                    >
+                      <TableCell>
+                        <div>
+                          <p className="text-sm font-bold text-white group-hover:text-blue-400 transition-colors">{p.name}</p>
+                          <p className="text-[10px] text-slate-500 mt-0.5 truncate max-w-[200px]">{p.summary}</p>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex flex-wrap gap-1">
+                          {p.models.map(m => (
+                            <Badge key={m} variant="outline" className="border-[#1E293B] text-slate-400 text-[8px] uppercase font-black px-1.5 py-0">
+                              {m}
+                            </Badge>
+                          ))}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <div className="w-12 bg-[#020617] h-1.5 rounded-full overflow-hidden">
+                            <div className={`h-full ${p.risk > 90 ? 'bg-rose-500' : p.risk > 80 ? 'bg-blue-500' : 'bg-amber-500'}`} style={{ width: `${p.risk}%` }} />
+                          </div>
+                          <span className="text-xs font-bold text-white">{p.risk}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge className={`border-none text-[8px] font-black uppercase tracking-widest ${
+                          p.status === 'Fully Automated' ? 'bg-emerald-500/10 text-emerald-400' : 
+                          p.status === 'Semi-Automated' ? 'bg-blue-500/10 text-blue-400' : 
+                          'bg-slate-800 text-slate-500'
+                        }`}>
+                          {p.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button variant="ghost" size="icon" className="rounded-xl hover:bg-blue-500/10 text-slate-500 hover:text-blue-400">
+                          <MoreHorizontal size={16} />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </Card>
+
+          {/* Pricing Tiers / Feature Access */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[
+              { name: 'Starter Plan', desc: 'Basic AI detection models only', status: 'active' },
+              { name: 'Professional Plan', desc: 'Advanced risk scoring models', status: 'locked' },
+              { name: 'Enterprise Plan', desc: 'Full automation & graph-based detection', status: 'locked' },
+            ].map((tier) => (
+              <Card key={tier.name} className={`border-[#1E293B] bg-[#0F172A] rounded-2xl overflow-hidden relative ${tier.status === 'locked' ? 'opacity-60' : ''}`}>
+                <CardContent className="p-5">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="text-xs font-bold text-white">{tier.name}</h4>
+                    {tier.status === 'locked' && <Lock size={12} className="text-slate-500" />}
                   </div>
-                  <div className="flex items-center justify-between md:flex-col md:items-end gap-4 pt-4 md:pt-0 border-t md:border-none border-[#1E293B]">
-                    <div className="flex items-center space-x-3">
-                      <Switch 
-                        id={`policy-${policy.id}`} 
-                        checked={policy.active} 
-                        onCheckedChange={() => togglePolicy(policy.id)}
-                      />
-                      <Label htmlFor={`policy-${policy.id}`} className="text-sm font-bold text-white">
-                        {policy.active ? 'Active' : 'Disabled'}
-                      </Label>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white rounded-xl" onClick={() => handleOpenEdit(policy)}>Edit</Button>
-                      <Button variant="ghost" size="sm" className="text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-xl" onClick={() => deletePolicy(policy.id)}>
-                        <Trash2 size={16} />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                  <p className="text-[10px] text-slate-500">{tier.desc}</p>
+                  {tier.status === 'locked' && (
+                    <Button variant="link" className="p-0 h-auto text-[10px] font-black text-blue-400 uppercase tracking-widest mt-3">
+                      Upgrade Plan →
+                    </Button>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
+
+        {/* Workflow Builder */}
         <div className="space-y-8">
-          <PolicyRuleSimulator />
+          <WorkflowBuilder />
+
+          {/* Trust & System Labels */}
+          <div className="p-6 bg-[#0F172A] border border-[#1E293B] rounded-3xl space-y-4">
+            <h4 className="text-white font-bold text-sm uppercase tracking-widest">System Integrity</h4>
+            <div className="space-y-3">
+              {[
+                { label: 'Model-Driven Enforcement', icon: Zap },
+                { label: 'Explainable AI Decisions', icon: Brain },
+                { label: 'Audit-Ready Intelligence', icon: FileText },
+                { label: 'Enterprise-Grade Security', icon: Shield },
+              ].map((item) => (
+                <div key={item.label} className="flex items-center gap-3 text-xs text-slate-400">
+                  <item.icon size={14} className="text-blue-400" />
+                  <span>{item.label}</span>
+                </div>
+              ))}
+            </div>
+            <div className="pt-4 border-t border-[#1E293B] flex items-center justify-between">
+              <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest flex items-center gap-1">
+                <CheckCircle2 size={10} /> Demo Mode Enabled
+              </span>
+              <span className="text-[10px] text-slate-600 italic">v2.4.1-stable</span>
+            </div>
+          </div>
         </div>
+      </div>
+
+      {/* Detail Drawer */}
+      <PolicyDetailDrawer 
+        policy={selectedPolicy} 
+        open={drawerOpen} 
+        onOpenChange={setDrawerOpen} 
+      />
+
+      {/* Footer */}
+      <div className="mt-12 pt-8 border-t border-[#1E293B] text-center">
+        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+          Powered by Guardian AI • Real-time AI detection, enforcement, and audit intelligence
+        </p>
       </div>
     </DashboardLayout>
   );
-};
-
-export default PolicyEnforcement;
+}
