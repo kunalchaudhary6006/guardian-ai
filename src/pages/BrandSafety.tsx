@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { FileText, Plus, ShieldCheck } from 'lucide-react';
 import KPIOverview from '@/components/BrandSafety/KPIOverview';
 import CampaignsTable from '@/components/BrandSafety/CampaignsTable';
@@ -103,7 +104,7 @@ export default function BrandSafety() {
       </div>
 
       {/* Modals */}
-      <CampaignReportModal open={reportModalOpen} onOpenChange={setReportModalOpen} />
+      <Campaign ReportModal open={reportModalOpen} onOpenChange={setReportModalOpen} />
       <NewCampaignModal open={newCampaignModalOpen} onOpenChange={setNewCampaignModalOpen} />
       <CreatorRiskGraphModal open={creatorModalOpen} onOpenChange={setCreatorModalOpen} creator={selectedCreator} />
     </DashboardLayout>
