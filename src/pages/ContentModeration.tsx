@@ -2,152 +2,120 @@
 
 import React, { useState } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Search, Filter, ShieldAlert, CheckCircle, XCircle } from 'lucide-react';
-import ModerationLiveQueue from '@/components/ModerationLiveQueue';
-import { cn } from '@/lib/utils';
-import { toast } from "sonner";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { 
+  LayoutDashboard, 
+  Zap, 
+  Database, 
+  ShieldCheck, 
+  History, 
+  Search,
+  Bell,
+  Settings
+} from 'lucide-react';
+import RawDataAnalyzer from '@/components/Moderation/RawDataAnalyzer';
+import ModerationResults from '@/components/Moderation/ModerationResults';
+import AutoIngestion from '@/components/Moderation/AutoIngestion';
+import AuditHistory from '@/components/Moderation/AuditHistory';
 
-const initialQueue = [
-  { id: 'MOD-1024', user: 'user_882', content: 'Suspicious link detected in private message...', risk: 'High', type: 'Spam', status: 'Pending' },
-  { id: 'MOD-1025', user: 'alpha_tester', content: 'Potential hate speech identified in community forum...', risk: 'Critical', type: 'Hate Speech', status: 'Pending' },
-  { id: 'MOD-1026', user: 'new_member_2', content: 'Inappropriate image upload attempt...', risk: 'Medium', type: 'NSFW', status: 'Pending' },
-  { id: 'MOD-1027', user: 'bot_hunter', content: 'Automated behavior pattern detected...', risk: 'Low', type: 'Bot Activity', status: 'Pending' },
-];
-
-const ContentModeration = () => {
-  const [queue, setQueue] = useState(initialQueue);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [riskFilter, setRiskFilter] = useState<string | null>(null);
-
-  const handleAction = (id: string, action: 'approve' | 'reject') => {
-    setQueue(prev => prev.filter(item => item.id !== id));
-    toast.success(`Item ${id} has been ${action === 'approve' ? 'approved' : 'rejected'}.`);
-  };
-
-  const filteredQueue = queue.filter(item => {
-    const matchesSearch = item.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.user.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.content.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesRisk = riskFilter ? item.risk === riskFilter : true;
-    return matchesSearch && matchesRisk;
-  });
+export default function ContentModeration() {
+  const [activeTab, setActiveTab] = useState('analyzer');
 
   return (
     <DashboardLayout>
+      {/* Global App Shell Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-white">Content Moderation</h1>
-          <p className="text-slate-400">Review and manage flagged content across all platforms.</p>
+          <h1 className="text-3xl font-black text-white uppercase tracking-tighter flex items-center gap-3">
+            <ShieldCheck className="text-blue-500" size={32} /> Content Moderation Dashboard
+          </h1>
+          <p className="text-slate-400 text-sm mt-1">Manual + Auto Raw Data Input System · Production Workspace</p>
         </div>
-        <div className="flex gap-3">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="rounded-2xl gap-2 h-11 px-6 border-[#1E293B] bg-[#0F172A] text-white hover:bg-[#1E293B]">
-                <Filter size={18} /> {riskFilter || 'Filter'}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="rounded-xl bg-[#0F172A] border-[#1E293B] text-white">
-              <DropdownMenuItem onClick={() => setRiskFilter(null)}>All Risks</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setRiskFilter('Critical')}>Critical</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setRiskFilter('High')}>High</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <Button 
-            className="bg-blue-600 hover:bg-blue-700 rounded-2xl gap-2 h-11 px-6 shadow-lg shadow-blue-900/20" 
-            onClick={() => toast.info("Bulk action initiated")}
-            disabled={queue.length === 0}
-          >
-            <ShieldAlert size={18} /> Bulk Approve
+        <div className="flex items-center gap-3">
+          <div className="relative hidden md:block">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
+            <input 
+              className="pl-10 pr-4 py-2 bg-[#0F172A] border border-[#1E293B] text-white rounded-xl text-xs focus:outline-none focus:border-blue-500 w-64"
+              placeholder="Search Content, User, or Case ID..."
+            />
+          </div>
+          <Button variant="ghost" size="icon" className="text-slate-400 hover:text-white rounded-xl hover:bg-[#0F172A]">
+            <Bell size={20} />
+          </Button>
+          <Button variant="ghost" size="icon" className="text-slate-400 hover:text-white rounded-xl hover:bg-[#0F172A]">
+            <Settings size={20} />
           </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2">
-          <Card className="border-[#1E293B] bg-[#0F172A] shadow-sm rounded-3xl overflow-hidden">
-            <CardHeader className="border-b border-[#1E293B] p-6">
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
-                <Input 
-                  className="pl-12 bg-[#020617] border-[#1E293B] text-white h-12 rounded-2xl focus-visible:ring-1 focus-visible:ring-blue-500" 
-                  placeholder="Search by ID, user, or content..." 
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-            </CardHeader>
-            <CardContent className="p-0">
-              <div className="overflow-x-auto">
-                <table className="w-full text-left">
-                  <thead>
-                    <tr className="bg-[#020617]/50 text-slate-500 text-xs uppercase tracking-wider">
-                      <th className="px-6 py-4 font-semibold">ID</th>
-                      <th className="px-6 py-4 font-semibold">User</th>
-                      <th className="px-6 py-4 font-semibold">Content Preview</th>
-                      <th className="px-6 py-4 font-semibold">Risk Level</th>
-                      <th className="px-6 py-4 font-semibold">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[#1E293B]">
-                    {filteredQueue.map((item) => (
-                      <tr key={item.id} className="hover:bg-[#1E293B]/30 transition-colors group">
-                        <td className="px-6 py-4 text-sm font-medium text-white">{item.id}</td>
-                        <td className="px-6 py-4 text-sm text-slate-400">{item.user}</td>
-                        <td className="px-6 py-4 text-sm text-slate-400 max-w-xs truncate">{item.content}</td>
-                        <td className="px-6 py-4">
-                          <Badge className={cn(
-                            "font-medium rounded-full px-3",
-                            item.risk === 'Critical' ? "bg-rose-500/10 text-rose-400 border-rose-500/20" :
-                            item.risk === 'High' ? "bg-orange-500/10 text-orange-400 border-orange-500/20" :
-                            "bg-amber-500/10 text-amber-400 border-amber-500/20"
-                          )}>
-                            {item.risk}
-                          </Badge>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-2">
-                            <Button 
-                              size="icon" 
-                              variant="ghost" 
-                              className="h-9 w-9 rounded-xl text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10"
-                              onClick={() => handleAction(item.id, 'approve')}
-                            >
-                              <CheckCircle size={18} />
-                            </Button>
-                            <Button 
-                              size="icon" 
-                              variant="ghost" 
-                              className="h-9 w-9 rounded-xl text-rose-400 hover:text-rose-300 hover:bg-rose-500/10"
-                              onClick={() => handleAction(item.id, 'reject')}
-                            >
-                              <XCircle size={18} />
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </CardContent>
-          </Card>
+      {/* Navigation Tabs */}
+      <Tabs defaultValue="analyzer" onValueChange={setActiveTab} className="space-y-8">
+        <div className="overflow-x-auto pb-2">
+          <TabsList className="bg-[#0F172A] border border-[#1E293B] p-1 h-auto gap-1 inline-flex">
+            <TabsTrigger value="overview" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white px-6 py-2.5 rounded-xl text-slate-400 text-xs font-bold uppercase tracking-widest gap-2">
+              <LayoutDashboard size={14} /> Overview
+            </TabsTrigger>
+            <TabsTrigger value="analyzer" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white px-6 py-2.5 rounded-xl text-slate-400 text-xs font-bold uppercase tracking-widest gap-2">
+              <Zap size={14} /> Raw Data Analyzer
+            </TabsTrigger>
+            <TabsTrigger value="results" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white px-6 py-2.5 rounded-xl text-slate-400 text-xs font-bold uppercase tracking-widest gap-2">
+              <ShieldCheck size={14} /> Results Explorer
+            </TabsTrigger>
+            <TabsTrigger value="auto" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white px-6 py-2.5 rounded-xl text-slate-400 text-xs font-bold uppercase tracking-widest gap-2">
+              <Database size={14} /> Auto Ingestion
+            </TabsTrigger>
+            <TabsTrigger value="history" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white px-6 py-2.5 rounded-xl text-slate-400 text-xs font-bold uppercase tracking-widest gap-2">
+              <History size={14} /> Audit & History
+            </TabsTrigger>
+          </TabsList>
         </div>
-        <div className="space-y-8">
-          <ModerationLiveQueue />
-        </div>
-      </div>
+
+        <TabsContent value="overview" className="animate-in fade-in duration-300">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="md:col-span-2 space-y-8">
+              <div className="p-12 bg-[#0F172A] border border-[#1E293B] rounded-[2.5rem] text-center space-y-4">
+                <div className="w-20 h-20 bg-blue-600/10 rounded-full flex items-center justify-center text-blue-400 mx-auto">
+                  <LayoutDashboard size={40} />
+                </div>
+                <h2 className="text-2xl font-black text-white uppercase tracking-tighter">Moderation Overview</h2>
+                <p className="text-slate-400 max-w-md mx-auto">Select a module from the navigation above to start analyzing content or managing platform integrations.</p>
+              </div>
+            </div>
+            <div className="space-y-8">
+              <div className="p-6 bg-[#0F172A] border border-[#1E293B] rounded-3xl">
+                <h4 className="text-white font-bold mb-4">System Status</h4>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-slate-500">Active Models</span>
+                    <span className="text-xs font-bold text-emerald-400">4 / 4 Online</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-slate-500">Queue Load</span>
+                    <span className="text-xs font-bold text-white">Minimal</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="analyzer" className="animate-in fade-in duration-300">
+          <RawDataAnalyzer />
+        </TabsContent>
+
+        <TabsContent value="results" className="animate-in fade-in duration-300">
+          <ModerationResults />
+        </TabsContent>
+
+        <TabsContent value="auto" className="animate-in fade-in duration-300">
+          <AutoIngestion />
+        </TabsContent>
+
+        <TabsContent value="history" className="animate-in fade-in duration-300">
+          <AuditHistory />
+        </TabsContent>
+      </Tabs>
     </DashboardLayout>
   );
-};
-
-export default ContentModeration;
+}
