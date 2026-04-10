@@ -16,7 +16,8 @@ import {
   Database,
   Lock,
   LogOut,
-  Shield
+  Shield,
+  Layout
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -34,7 +35,8 @@ export default function Sidebar() {
     { label: "Research & Analytics", icon: Search, path: "/analytics" },
     { label: "Brand Safety", icon: Shield, path: "/brand-safety" },
     { label: "Threat Intelligence", icon: ShieldBan, path: "/threats" },
-    { label: "Marketing Intelligence", icon: BarChart3, path: "/marketing" },
+    { label: "Marketing Intelligence", icon: "/marketing" },
+    { label: "Creative Studio", icon: Layout, path: "/studio" },
   ];
 
   const ai = [
@@ -82,10 +84,11 @@ export default function Sidebar() {
           <div className="space-y-1">
             {menu.map((m, i) => {
               const isActive = location.pathname === m.path;
+              const Icon = typeof m.icon === 'string' ? BarChart3 : m.icon;
               return (
                 <Link
                   key={i}
-                  to={m.path}
+                  to={m.path || '#'}
                   className={cn(
                     "flex items-center gap-3 px-4 py-3 rounded-xl transition-all group",
                     isActive 
@@ -93,7 +96,7 @@ export default function Sidebar() {
                       : "text-slate-400 hover:bg-[#0F172A] hover:text-white"
                   )}
                 >
-                  <m.icon size={20} className={cn(isActive ? "text-white" : "text-slate-500 group-hover:text-blue-400")} />
+                  <Icon size={20} className={cn(isActive ? "text-white" : "text-slate-500 group-hover:text-blue-400")} />
                   {open && <span className="text-sm font-medium">{m.label}</span>}
                 </Link>
               );
