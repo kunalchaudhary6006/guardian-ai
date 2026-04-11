@@ -14,6 +14,8 @@ import ThreatIntelligence from "./pages/ThreatIntelligence";
 import PolicyEnforcement from "./pages/PolicyEnforcement";
 import ResearchAnalytics from "./pages/ResearchAnalytics";
 import MarketingDashboard from "./pages/MarketingDashboard";
+import MarketingCommandCenter from "./pages/MarketingCommandCenter";
+import InfluencerIntelligence from "./pages/InfluencerIntelligence";
 import Settings from "./pages/Settings";
 import MockInbox from "./pages/MockInbox";
 import NotFound from "./pages/NotFound";
@@ -52,7 +54,8 @@ const App = () => (
           <Route path="/integrations" element={<Integrations />} />
           <Route path="/analytics" element={<ResearchAnalytics />} />
           <Route path="/threats" element={<ThreatIntelligence />} />
-          <Route path="/marketing" element={<MarketingDashboard />} />
+          <Route path="/marketing" element={<MarketingCommandCenter />} />
+          <Route path="/influencers" element={<InfluencerIntelligence />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/fraud" element={<FinancialFraud />} />
           <Route path="/verification" element={<AIVerification />} />

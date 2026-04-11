@@ -21,7 +21,8 @@ import {
   Fingerprint,
   Zap,
   Globe,
-  TowerControl
+  TowerControl,
+  Users
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -53,7 +54,8 @@ export default function Sidebar() {
     { label: "Activity", icon: ActivityIcon, path: "/activity" },
     { label: "Violations", icon: ShieldAlert, path: "/moderation" },
     { label: "Enforcement", icon: FileCheck, path: "/policy" },
-    { label: "Marketing Intelligence", icon: Sparkles, path: "/marketing" },
+    { label: "Marketing Command", icon: Sparkles, path: "/marketing" },
+    { label: "Influencer Intel", icon: Users, path: "/influencers" },
     { label: "Analytics", icon: Search, path: "/analytics" },
     { label: "Settings", icon: Shield, path: "/settings" },
   ];
