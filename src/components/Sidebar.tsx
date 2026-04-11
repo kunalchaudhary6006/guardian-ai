@@ -19,7 +19,8 @@ import {
   Shield,
   Activity as ActivityIcon,
   Baby,
-  Share2
+  Share2,
+  Sparkles
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -45,6 +46,7 @@ export default function Sidebar() {
     { label: "Financial Fraud Bot", icon: Lock, path: "/fraud" },
     { label: "AI Verification Bot", icon: UserCheck, path: "/verification" },
     { label: "AI Log Center", icon: Database, path: "/logs" },
+    { label: "Marketing Intelligence", icon: Sparkles, path: "/marketing" },
   ];
 
   const handleLogout = () => {
