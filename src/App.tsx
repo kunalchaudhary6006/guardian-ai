@@ -23,6 +23,9 @@ import LogCenter from "./pages/LogCenter";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsAndConditions from "./pages/TermsAndConditions";
 import BrandSafety from "./pages/BrandSafety";
+import Integrations from "./pages/Integrations";
+import ChildSafety from "./pages/ChildSafety";
+import Activity from "./pages/Activity";
 
 const queryClient = new QueryClient();
 
@@ -40,10 +43,13 @@ const App = () => (
           <Route path="/signup" element={<Signup />} />
           <Route path="/inbox" element={<MockInbox />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/activity" element={<Activity />} />
           <Route path="/moderation" element={<ContentModeration />} />
-          <Route path="/threats" element={<ThreatIntelligence />} />
           <Route path="/policy" element={<PolicyEnforcement />} />
+          <Route path="/child-safety" element={<ChildSafety />} />
+          <Route path="/integrations" element={<Integrations />} />
           <Route path="/analytics" element={<ResearchAnalytics />} />
+          <Route path="/threats" element={<ThreatIntelligence />} />
           <Route path="/marketing" element={<MarketingDashboard />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/fraud" element={<FinancialFraud />} />

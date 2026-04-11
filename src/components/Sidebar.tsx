@@ -16,7 +16,10 @@ import {
   Database,
   Lock,
   LogOut,
-  Shield
+  Shield,
+  Activity as ActivityIcon,
+  Baby,
+  Share2
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -29,19 +32,19 @@ export default function Sidebar() {
 
   const menu = [
     { label: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
-    { label: "Content Moderation", icon: ShieldAlert, path: "/moderation" },
-    { label: "Policy Enforcement", icon: FileCheck, path: "/policy" },
-    { label: "Research & Analytics", icon: Search, path: "/analytics" },
-    { label: "Brand Safety", icon: Shield, path: "/brand-safety" },
-    { label: "Threat Intelligence", icon: ShieldBan, path: "/threats" },
-    { label: "Marketing Intelligence", icon: BarChart3, path: "/marketing" },
+    { label: "Activity", icon: ActivityIcon, path: "/activity" },
+    { label: "Violations", icon: ShieldAlert, path: "/moderation" },
+    { label: "Enforcement", icon: FileCheck, path: "/policy" },
+    { label: "Child Safety", icon: Baby, path: "/child-safety" },
+    { label: "Integrations", icon: Share2, path: "/integrations" },
+    { label: "Analytics", icon: Search, path: "/analytics" },
+    { label: "Settings", icon: Shield, path: "/settings" },
   ];
 
   const ai = [
     { label: "Financial Fraud Bot", icon: Lock, path: "/fraud" },
     { label: "AI Verification Bot", icon: UserCheck, path: "/verification" },
     { label: "AI Log Center", icon: Database, path: "/logs" },
-    { label: "Content Safety AI", icon: ShieldBan, path: "/moderation" },
   ];
 
   const handleLogout = () => {
@@ -70,7 +73,7 @@ export default function Sidebar() {
         )}
         <button 
           onClick={() => setOpen(!open)}
-          className="p-2 bg-[#0F172A] border border-[#1E293B] hover:bg-[#1E293B] rounded-xl transition-colors text-slate-400 hover:text-white"
+          className="p-2 bg-[#0B1220] border border-[#1E293B] hover:bg-[#1E293B] rounded-xl transition-colors text-slate-400 hover:text-white"
         >
           {open ? <X size={20} /> : <Menu size={20} />}
         </button>
@@ -82,16 +85,16 @@ export default function Sidebar() {
           <div className="space-y-1">
             {menu.map((m, i) => {
               const isActive = location.pathname === m.path;
-              const Icon = typeof m.icon === 'string' ? BarChart3 : m.icon;
+              const Icon = m.icon;
               return (
                 <Link
                   key={i}
-                  to={m.path || '#'}
+                  to={m.path}
                   className={cn(
                     "flex items-center gap-3 px-4 py-3 rounded-xl transition-all group border border-transparent",
                     isActive 
                       ? "bg-blue-600 text-white shadow-lg shadow-blue-900/20 border-blue-500" 
-                      : "text-slate-400 bg-[#0F172A]/30 border-[#1E293B]/50 hover:bg-[#0F172A] hover:text-white hover:border-[#1E293B]"
+                      : "text-slate-400 bg-[#0B1220]/30 border-[#1E293B]/50 hover:bg-[#0B1220] hover:text-white hover:border-[#1E293B]"
                   )}
                 >
                   <Icon size={20} className={cn(isActive ? "text-white" : "text-slate-500 group-hover:text-blue-400")} />
@@ -115,7 +118,7 @@ export default function Sidebar() {
                     "flex items-center gap-3 px-4 py-3 rounded-xl transition-all group border border-transparent",
                     isActive 
                       ? "bg-blue-600 text-white shadow-lg shadow-blue-900/20 border-blue-500" 
-                      : "text-slate-400 bg-[#0F172A]/30 border-[#1E293B]/50 hover:bg-[#0F172A] hover:text-white hover:border-[#1E293B]"
+                      : "text-slate-400 bg-[#0B1220]/30 border-[#1E293B]/50 hover:bg-[#0B1220] hover:text-white hover:border-[#1E293B]"
                   )}
                 >
                   <m.icon size={20} className={cn(isActive ? "text-white" : "text-slate-500 group-hover:text-blue-400")} />
