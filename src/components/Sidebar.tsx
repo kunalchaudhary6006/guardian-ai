@@ -70,7 +70,7 @@ export default function Sidebar() {
         )}
         <button 
           onClick={() => setOpen(!open)}
-          className="p-2 hover:bg-[#0F172A] rounded-xl transition-colors text-slate-400 hover:text-white"
+          className="p-2 bg-[#0F172A] border border-[#1E293B] hover:bg-[#1E293B] rounded-xl transition-colors text-slate-400 hover:text-white"
         >
           {open ? <X size={20} /> : <Menu size={20} />}
         </button>
@@ -88,10 +88,10 @@ export default function Sidebar() {
                   key={i}
                   to={m.path || '#'}
                   className={cn(
-                    "flex items-center gap-3 px-4 py-3 rounded-xl transition-all group",
+                    "flex items-center gap-3 px-4 py-3 rounded-xl transition-all group border border-transparent",
                     isActive 
-                      ? "bg-blue-600 text-white shadow-lg shadow-blue-900/20" 
-                      : "text-slate-400 hover:bg-[#0F172A] hover:text-white"
+                      ? "bg-blue-600 text-white shadow-lg shadow-blue-900/20 border-blue-500" 
+                      : "text-slate-400 bg-[#0F172A]/30 border-[#1E293B]/50 hover:bg-[#0F172A] hover:text-white hover:border-[#1E293B]"
                   )}
                 >
                   <Icon size={20} className={cn(isActive ? "text-white" : "text-slate-500 group-hover:text-blue-400")} />
@@ -112,10 +112,10 @@ export default function Sidebar() {
                   key={i}
                   to={m.path}
                   className={cn(
-                    "flex items-center gap-3 px-4 py-3 rounded-xl transition-all group",
+                    "flex items-center gap-3 px-4 py-3 rounded-xl transition-all group border border-transparent",
                     isActive 
-                      ? "bg-blue-600 text-white shadow-lg shadow-blue-900/20" 
-                      : "text-slate-400 hover:bg-[#0F172A] hover:text-white"
+                      ? "bg-blue-600 text-white shadow-lg shadow-blue-900/20 border-blue-500" 
+                      : "text-slate-400 bg-[#0F172A]/30 border-[#1E293B]/50 hover:bg-[#0F172A] hover:text-white hover:border-[#1E293B]"
                   )}
                 >
                   <m.icon size={20} className={cn(isActive ? "text-white" : "text-slate-500 group-hover:text-blue-400")} />
@@ -130,7 +130,7 @@ export default function Sidebar() {
       <div className="p-4 border-t border-[#1E293B]">
         <button 
           onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-4 py-3 text-rose-400 hover:bg-rose-500/10 rounded-xl transition-all group"
+          className="w-full flex items-center gap-3 px-4 py-3 text-rose-400 bg-rose-500/5 border border-rose-500/10 hover:bg-rose-500/10 rounded-xl transition-all group"
         >
           <LogOut size={20} className="group-hover:translate-x-1 transition-transform" />
           {open && <span className="text-sm font-bold">Logout</span>}

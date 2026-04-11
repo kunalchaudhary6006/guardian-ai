@@ -117,7 +117,7 @@ export default function RawDataAnalyzer() {
             key={type.id}
             onClick={() => { setContentType(type.id); clearInput(); }}
             className={`cursor-pointer border-2 transition-all rounded-3xl overflow-hidden ${
-              contentType === type.id ? 'border-blue-500 bg-blue-500/5' : 'border-[#1E293B] bg-[#0F172A] hover:border-slate-700'
+              contentType === type.id ? 'border-blue-500 bg-blue-500/10' : 'border-[#1E293B] bg-[#0F172A] hover:border-slate-700'
             }`}
           >
             <CardContent className="p-6 flex flex-col items-center text-center gap-4">
@@ -293,14 +293,23 @@ export default function RawDataAnalyzer() {
                   </div>
                 ))}
               </div>
-              <Button 
-                onClick={handleRunAnalysis}
-                disabled={isAnalyzing || (!selectedFile && !urlInput && !textInput)}
-                className="w-full bg-blue-600 hover:bg-blue-700 h-14 rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg shadow-blue-900/20 gap-2"
-              >
-                {isAnalyzing ? <RefreshCw className="animate-spin" size={18} /> : <Play size={18} fill="currentColor" />}
-                Run Analysis
-              </Button>
+              <div className="space-y-3">
+                <Button 
+                  onClick={handleRunAnalysis}
+                  disabled={isAnalyzing || (!selectedFile && !urlInput && !textInput)}
+                  className="w-full bg-blue-600 hover:bg-blue-700 h-14 rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg shadow-blue-900/20 gap-2"
+                >
+                  {isAnalyzing ? <RefreshCw className="animate-spin" size={18} /> : <Play size={18} fill="currentColor" />}
+                  Run Analysis
+                </Button>
+                <Button 
+                  onClick={clearInput}
+                  variant="outline"
+                  className="w-full border-[#1E293B] text-slate-300 hover:bg-[#1E293B] hover:text-white rounded-2xl h-12 font-bold uppercase tracking-widest text-[10px]"
+                >
+                  Clear All Inputs
+                </Button>
+              </div>
               <p className="text-[10px] text-slate-500 text-center">Shortcut: Ctrl + Enter</p>
             </CardContent>
           </Card>

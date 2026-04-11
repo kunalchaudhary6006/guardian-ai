@@ -17,7 +17,7 @@ export default function CampaignsTable() {
     <div className="bg-[#0F172A] border border-[#1E293B] rounded-3xl overflow-hidden shadow-xl">
       <div className="p-6 border-b border-[#1E293B] flex items-center justify-between">
         <h3 className="text-white font-bold">Active Campaigns</h3>
-        <Button variant="ghost" size="sm" className="text-slate-500 hover:text-white">View All</Button>
+        <Button variant="outline" size="sm" className="text-slate-300 border-[#1E293B] bg-[#020617] hover:bg-[#1E293B] hover:text-white rounded-xl">View All</Button>
       </div>
       <div className="overflow-x-auto">
         <Table>
@@ -61,7 +61,7 @@ export default function CampaignsTable() {
                   </div>
                 </TableCell>
                 <TableCell className="text-right">
-                  <Button variant="ghost" size="icon" className="rounded-xl hover:bg-blue-500/10 text-slate-500 hover:text-blue-400">
+                  <Button variant="outline" size="icon" className="rounded-xl border-[#1E293B] bg-[#020617] hover:bg-blue-500/10 text-slate-400 hover:text-blue-400">
                     <Eye size={16} />
                   </Button>
                 </TableCell>
