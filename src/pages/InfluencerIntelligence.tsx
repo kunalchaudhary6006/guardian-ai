@@ -13,25 +13,15 @@ export default function InfluencerIntelligence() {
   const [isVerifying, setIsVerifying] = useState(false);
   const [monitoringActive, setMonitoringActive] = useState(false);
 
-  // Hook that handles fetching & monitoring
-  const {
-    influencer: fetchedInfluencer,
-    loading,
-    riskScore,
-    riskLevel,
-    monitorActive,
-    toggleMonitoring,
-  } = useInfluencer('1'); // Replace with dynamic ID if you have a selector
-
-  // When the user clicks “Verify Influencer”
-  const handleVerify = () => {
+  // Handle verification click
+  const handleVerify = async () => {
     if (!influencer) return;
     setIsVerifying(true);
     toast.loading('AI is analyzing the profile...');
-    // The hook already populates `influencer` and risk data;
-    // we just wait for the async fetch to finish.
+    // The hook inside InfluencerInput will fetch data and update state;
+    // we just wait briefly to let the UI show the loading state.
     setTimeout(() => {
-      setIsVerifying(false);
+      toast.dismiss();
       toast.success('Influencer verification complete!');
     }, 2000);
   };
@@ -97,7 +87,8 @@ export default function InfluencerIntelligence() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center gap-2">
-                  <Label htmlFor="monitor-toggle" className="text-xs text-slate-400">Enable Continuous Monitoring</Label>
+                  <Label htmlFor="monitor-toggle" className="text-xs text-slate-400">
+                    Monitor Continuously                    </Label>
                   <Switch 
                     id="monitor-toggle" 
                     checked={monitorActive} 
