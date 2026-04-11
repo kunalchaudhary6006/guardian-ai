@@ -130,7 +130,7 @@ export default function AuditHistory() {
               <CardTitle className="text-lg font-black uppercase tracking-widest">Audit Controls</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Button className="w-full bg-white text-blue-600 hover:bg-white/90 rounded-2xl h-12 font-black uppercase tracking-widest text-xs gap-2">
+              <Button className="w-full bg-blue-500 text-white hover:bg-blue-400 rounded-2xl h-12 font-black uppercase tracking-widest text-xs gap-2 border-none">
                 <Download size={16} /> Export Compliance Report
               </Button>
               <Button variant="outline" className="w-full border-white/30 text-white hover:bg-white/10 rounded-2xl h-12 font-black uppercase tracking-widest text-xs gap-2">

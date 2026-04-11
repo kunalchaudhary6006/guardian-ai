@@ -152,7 +152,7 @@ export default function ModerationResults() {
             <CardContent className="space-y-4">
               <Button 
                 onClick={() => handleAction('Allow')}
-                className="w-full bg-white text-blue-600 hover:bg-white/90 rounded-2xl h-12 font-black uppercase tracking-widest text-xs gap-2"
+                className="w-full bg-blue-500 text-white hover:bg-blue-400 rounded-2xl h-12 font-black uppercase tracking-widest text-xs gap-2 border-none"
               >
                 <CheckCircle2 size={16} /> Allow Content
               </Button>

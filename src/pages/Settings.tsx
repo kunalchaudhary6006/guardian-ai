@@ -572,13 +572,13 @@ const Settings = () => {
                     <div className="flex items-center gap-2 bg-black/20 p-1 rounded-lg">
                       <button 
                         onClick={() => updateNested('billing.cycle', 'monthly')}
-                        className={`px-3 py-1 text-[10px] font-bold rounded ${settings.billing.cycle === 'monthly' ? 'bg-white text-blue-600' : 'text-white'}`}
+                        className={`px-3 py-1 text-[10px] font-bold rounded transition-colors ${settings.billing.cycle === 'monthly' ? 'bg-blue-500 text-white' : 'text-white hover:bg-white/10'}`}
                       >
                         MONTHLY
                       </button>
                       <button 
                         onClick={() => updateNested('billing.cycle', 'yearly')}
-                        className={`px-3 py-1 text-[10px] font-bold rounded ${settings.billing.cycle === 'yearly' ? 'bg-white text-blue-600' : 'text-white'}`}
+                        className={`px-3 py-1 text-[10px] font-bold rounded transition-colors ${settings.billing.cycle === 'yearly' ? 'bg-blue-500 text-white' : 'text-white hover:bg-white/10'}`}
                       >
                         YEARLY
                       </button>

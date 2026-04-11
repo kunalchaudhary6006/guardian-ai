@@ -32,7 +32,7 @@ export default function DecisionActions() {
         <div className="grid grid-cols-1 gap-3">
           <Button 
             onClick={() => handleAction('approve')}
-            className="bg-white text-blue-600 hover:bg-white/90 rounded-2xl h-12 font-black uppercase tracking-widest text-xs gap-2"
+            className="bg-blue-500 text-white hover:bg-blue-400 rounded-2xl h-12 font-black uppercase tracking-widest text-xs gap-2 border-none"
           >
             <CheckCircle2 size={16} /> Auto-Approve
           </Button>
