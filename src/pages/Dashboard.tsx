@@ -8,6 +8,7 @@ import ModuleCard from "@/components/ModuleCard";
 import AIChat from "@/components/AIChat";
 import ContentSafetyAI from "@/components/ContentSafetyAI";
 import ActivityFeed from "@/components/ActivityFeed";
+import MarketingIntelligencePanel from "@/components/MarketingIntelligencePanel";
 import { 
   ShieldAlert, 
   FileCheck, 
@@ -16,17 +17,13 @@ import {
   BarChart3, 
   ShieldBan,
   Lock,
-  UserCheck,
-  Shield,
-  Smartphone,
-  Globe,
-  Cloud,
   Zap,
   Eye,
-  Baby,
   Activity as ActivityIcon,
-  Share2,
-  Sparkles
+  Sparkles,
+  Smartphone,
+  Globe,
+  Cloud
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -80,6 +77,9 @@ export default function Dashboard() {
             <div className="lg:col-span-2 space-y-8">
               <AlertPanel />
 
+              {/* Marketing Intelligence Panel */}
+              <MarketingIntelligencePanel />
+
               {/* Enforcement Panel */}
               <Card className="border-none bg-gradient-to-br from-blue-600 to-indigo-700 rounded-[2.5rem] text-white shadow-2xl shadow-blue-900/20">
                 <CardHeader className="flex flex-row items-center justify-between">
@@ -106,7 +106,7 @@ export default function Dashboard() {
                 </CardContent>
               </Card>
 
-              {/* Core Modules - Exactly 6 Features */}
+              {/* Core Modules */}
               <div>
                 <h3 className="text-sm font-black text-slate-500 uppercase tracking-widest mb-4">360° AI Safety Enforcement</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
