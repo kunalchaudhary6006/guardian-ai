@@ -17,7 +17,9 @@ import {
   Lock, 
   CheckCircle2,
   AlertCircle,
-  Filter
+  Filter,
+  Brain,
+  FileText
 } from 'lucide-react';
 import { 
   Table, 
