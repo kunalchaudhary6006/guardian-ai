@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Send, Bot, User, Sparkles, Paperclip, Image as ImageIcon, FileText, Zap, MapPin, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 export default function AIChat() {
   const [messages, setMessages] = useState<any[]>([
@@ -103,7 +104,7 @@ export default function AIChat() {
               <div className="ml-11 mr-11 w-full max-w-[80%] p-4 bg-blue-600/5 border border-blue-500/20 rounded-2xl space-y-3 animate-in fade-in slide-in-from-top-2">
                 <div className="flex justify-between items-center">
                   <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">AI Intelligence Report</span>
-                  <Badge className={m.structured.risk > 70 ? "bg-rose-500/10 text-rose-500" : "bg-emerald-500/10 text-emerald-500"}>
+                  <Badge className={m.structured.risk > 70 ? "bg-rose-500/10 text-rose-500" : "bg-emerald-500/10 text-emerald-500"} cn={cn}>
                     Risk: {m.structured.risk}/100
                   </Badge>
                 </div>
