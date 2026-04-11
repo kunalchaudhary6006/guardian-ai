@@ -28,6 +28,7 @@ import {
 import { ResponsiveContainer, LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import { toast } from 'sonner';
 import AIChat from '@/components/AIChat';
+import { cn } from "@/lib/utils";
 
 const anomalyData = [
   { time: '12:00', actual: 400, baseline: 380 },
@@ -350,7 +351,7 @@ export default function NITRS() {
                     </td>
                     <td className="px-8 py-5 text-xs text-slate-500">{c.evidence}</td>
                     <td className="px-8 py-5 text-right">
-                      <Badge className={c.status === 'Active' ? 'bg-rose-500/10 text-rose-500' : 'bg-amber-500/10 text-amber-500'}>
+                      <Badge className={c.status === 'Active' ? 'bg-rose-500/10 text-rose-500' : 'bg-amber-500/10 text-amber-400'}>
                         {c.status}
                       </Badge>
                     </td>
