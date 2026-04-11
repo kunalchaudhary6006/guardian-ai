@@ -82,7 +82,7 @@ const Header = () => {
             <Button 
               variant="outline" 
               size="icon" 
-              className="text-slate-400 hover:text-white relative rounded-full bg-[#0F172A] border-[#1E293B] hover:bg-[#1E293B]"
+              className="text-blue-400 hover:text-white relative rounded-full bg-blue-600/10 border-blue-500/30 hover:bg-blue-600 transition-all"
             >
               <Bell size={20} />
               <span className="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full border-2 border-[#020617]" />
@@ -104,7 +104,7 @@ const Header = () => {
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="gap-3 px-3 bg-[#0F172A] border-[#1E293B] hover:bg-[#1E293B] rounded-xl">
+            <Button variant="outline" className="gap-3 px-3 bg-blue-600/10 border-blue-500/30 hover:bg-blue-600/20 rounded-xl transition-all">
               <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white text-xs font-bold shadow-lg shadow-blue-900/20">
                 {getInitials(user.name)}
               </div>

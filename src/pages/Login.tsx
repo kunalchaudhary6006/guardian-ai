@@ -67,18 +67,18 @@ const Login = () => {
             <div className="space-y-2">
               <div className="flex justify-between">
                 <Label htmlFor="password">Password</Label>
-                <button type="button" className="text-xs text-primary hover:underline">Forgot password?</button>
+                <button type="button" className="text-xs text-blue-600 hover:underline font-bold">Forgot password?</button>
               </div>
               <Input id="password" name="password" type="password" placeholder="••••••••" required />
             </div>
-            <Button type="submit" disabled={isLoading} className="w-full bg-slate-900 hover:bg-slate-800 h-12 rounded-xl">
+            <Button type="submit" disabled={isLoading} className="w-full bg-blue-600 hover:bg-blue-700 h-12 rounded-xl text-white font-bold shadow-lg shadow-blue-900/20">
               {isLoading ? "Logging in..." : "Log In"} <ArrowRight className="ml-2" size={18} />
             </Button>
           </form>
 
           <div className="mt-8 pt-6 border-t border-slate-100 text-center">
             <p className="text-sm text-slate-600">
-              Don't have an account? <Link to="/signup" className="text-primary font-bold hover:underline">Sign up for free</Link>
+              Don't have an account? <Link to="/signup" className="text-blue-600 font-bold hover:underline">Sign up for free</Link>
             </p>
           </div>
         </div>

@@ -62,13 +62,13 @@ export default function WelcomeHeader() {
       <div className="flex gap-3 w-full md:w-auto">
         <button 
           onClick={handleDownloadReport}
-          className="flex-1 md:flex-none border border-[#1E293B] hover:bg-[#1E293B] text-white px-5 py-2.5 rounded-xl transition-colors flex items-center justify-center gap-2 text-sm font-medium"
+          className="flex-1 md:flex-none bg-blue-600/10 border border-blue-500/30 hover:bg-blue-600/20 text-blue-400 px-5 py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 text-sm font-bold"
         >
           <FileText size={18} /> Reports
         </button>
         <button 
           onClick={handleRunScan}
-          className="flex-1 md:flex-none bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl transition-all shadow-lg shadow-blue-900/20 flex items-center justify-center gap-2 text-sm font-medium"
+          className="flex-1 md:flex-none bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl transition-all shadow-lg shadow-blue-900/20 flex items-center justify-center gap-2 text-sm font-bold"
         >
           <Zap size={18} fill="currentColor" /> Run Scan
         </button>

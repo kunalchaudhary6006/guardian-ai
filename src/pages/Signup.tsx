@@ -82,14 +82,14 @@ const Signup = () => {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
         <div className="max-w-md w-full text-center">
-          <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Mail className="text-primary" size={40} />
+          <div className="w-20 h-20 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Mail className="text-blue-600" size={40} />
           </div>
           <h1 className="text-3xl font-bold text-slate-900 mb-4">Check your email</h1>
           <p className="text-slate-600 mb-8">
             We've sent a confirmation link to your email address. You can view it in our prototype inbox.
           </p>
-          <Button asChild className="w-full bg-slate-900 hover:bg-slate-800 h-12 rounded-xl gap-2">
+          <Button asChild className="w-full bg-blue-600 hover:bg-blue-700 h-12 rounded-xl gap-2 text-white font-bold shadow-lg shadow-blue-900/20">
             <Link to="/inbox">Open Prototype Inbox <ExternalLink size={18} /></Link>
           </Button>
         </div>
@@ -162,14 +162,14 @@ const Signup = () => {
                   htmlFor="terms"
                   className="text-xs text-slate-500 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
-                  I agree to the <Link to="#" className="text-primary hover:underline">Terms of Service</Link> and <Link to="#" className="text-primary hover:underline">Privacy Policy</Link>.
+                  I agree to the <Link to="/terms" className="text-blue-600 hover:underline font-bold">Terms of Service</Link> and <Link to="/privacy" className="text-blue-600 hover:underline font-bold">Privacy Policy</Link>.
                 </label>
               </div>
 
               <Button 
                 type="submit" 
                 disabled={isLoading || !isPasswordValid || !acceptedTerms} 
-                className="w-full bg-slate-900 hover:bg-slate-800 h-12 rounded-xl mt-4"
+                className="w-full bg-blue-600 hover:bg-blue-700 h-12 rounded-xl mt-4 text-white font-bold shadow-lg shadow-blue-900/20"
               >
                 {isLoading ? "Sending Email..." : "Create Account"} <ArrowRight className="ml-2" size={18} />
               </Button>
@@ -177,7 +177,7 @@ const Signup = () => {
 
             <div className="mt-8 pt-6 border-t border-slate-100 text-center">
               <p className="text-sm text-slate-600">
-                Already have an account? <Link to="/login" className="text-primary font-bold hover:underline">Log in</Link>
+                Already have an account? <Link to="/login" className="text-blue-600 font-bold hover:underline">Log in</Link>
               </p>
             </div>
           </div>
@@ -195,8 +195,8 @@ const Signup = () => {
               'Enterprise-grade security'
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-4">
-                <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center">
-                  <CheckCircle2 className="text-primary" size={16} />
+                <div className="w-6 h-6 bg-blue-600/20 rounded-full flex items-center justify-center">
+                  <CheckCircle2 className="text-blue-500" size={16} />
                 </div>
                 <span className="text-lg text-slate-300">{item}</span>
               </div>

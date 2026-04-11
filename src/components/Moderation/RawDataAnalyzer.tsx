@@ -305,7 +305,7 @@ export default function RawDataAnalyzer() {
                 <Button 
                   onClick={clearInput}
                   variant="outline"
-                  className="w-full border-[#1E293B] text-slate-300 hover:bg-[#1E293B] hover:text-white rounded-2xl h-12 font-bold uppercase tracking-widest text-[10px]"
+                  className="w-full bg-rose-500/10 border-rose-500/30 text-rose-400 hover:bg-rose-500/20 rounded-2xl h-12 font-bold uppercase tracking-widest text-[10px]"
                 >
                   Clear All Inputs
                 </Button>
