@@ -136,7 +136,7 @@ const Pricing = () => {
               )}
             >
               {tier.popular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest shadow-lg shadow-blue-900/40">
                   Most Popular
                 </div>
               )}
@@ -164,10 +164,9 @@ const Pricing = () => {
               <Button 
                 onClick={() => handlePayment(tier)}
                 disabled={isProcessing === tier.name}
-                variant={tier.popular ? 'default' : 'outline'} 
                 className={cn(
-                  "w-full rounded-2xl h-14 font-bold text-base transition-all",
-                  tier.popular ? "bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-900/20" : "border-[#1E293B] text-white hover:bg-[#1E293B]"
+                  "w-full rounded-2xl h-14 font-bold text-base transition-all bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-900/20",
+                  !tier.popular && "bg-blue-600/90"
                 )}
               >
                 {isProcessing === tier.name ? <Loader2 className="animate-spin mr-2" size={20} /> : null}

@@ -32,22 +32,20 @@ export default function DecisionActions() {
         <div className="grid grid-cols-1 gap-3">
           <Button 
             onClick={() => handleAction('approve')}
-            className="bg-blue-500 text-white hover:bg-blue-400 rounded-2xl h-12 font-black uppercase tracking-widest text-xs gap-2 border-none"
+            className="bg-blue-500 text-white hover:bg-blue-400 rounded-2xl h-12 font-black uppercase tracking-widest text-xs gap-2 border-none shadow-lg shadow-blue-900/40"
           >
             <CheckCircle2 size={16} /> Auto-Approve
           </Button>
           <div className="grid grid-cols-2 gap-3">
             <Button 
               onClick={() => handleAction('review')}
-              variant="outline" 
-              className="border-white/30 text-white hover:bg-white/10 rounded-2xl h-12 font-black uppercase tracking-widest text-[10px] gap-2"
+              className="bg-white/10 border-white/30 text-white hover:bg-white/20 rounded-2xl h-12 font-black uppercase tracking-widest text-[10px] gap-2"
             >
               <AlertTriangle size={14} /> Manual Review
             </Button>
             <Button 
               onClick={() => handleAction('block')}
-              variant="outline" 
-              className="border-rose-400/30 text-rose-200 hover:bg-rose-500/20 rounded-2xl h-12 font-black uppercase tracking-widest text-[10px] gap-2"
+              className="bg-rose-600/20 border-rose-400/30 text-rose-200 hover:bg-rose-600/30 rounded-2xl h-12 font-black uppercase tracking-widest text-[10px] gap-2"
             >
               <XCircle size={14} /> Block Ad
             </Button>
