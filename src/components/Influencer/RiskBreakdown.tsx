@@ -1,8 +1,6 @@
-"use client";
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from 'recharts';
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 
 export default function RiskBreakdown({ data }: { data: any }) {
   const chartData = [
@@ -24,20 +22,20 @@ export default function RiskBreakdown({ data }: { data: any }) {
             <BarChart data={chartData} layout="vertical">
               <XAxis type="number" hide domain={[0, 100]} />
               <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12, fontWeight: 'bold'}} width={100} />
-              <Tooltip cursor={{fill: 'transparent'}} contentStyle={{backgroundColor: '#0F172A', border: '1px solid #1E293B', borderRadius: '12px'}} />
+              <Tooltip contentStyle={{ backgroundColor: '#0F172A', border: '1px solid #1E293B', borderRadius: '12px' }} />
               <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={24}>
                 {chartData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
+                  <Cell key={index} fill={entry.color} />
                 ))}
               </Bar>
-            </BarChart>
+            </ResponsiveContainer>
           </ResponsiveContainer>
         </div>
         <div className="mt-6 grid grid-cols-2 md:grid-cols-5 gap-4">
           {chartData.map((item, i) => (
             <div key={i} className="text-center">
               <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">{item.name}</p>
-              <p className="text-sm font-black text-white">{item.value}%</p>
+              <p className="text-sm font-bold text-white">{item.value}%</p>
             </div>
           ))}
         </div>
