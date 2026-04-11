@@ -26,6 +26,7 @@ import BrandSafety from "./pages/BrandSafety";
 import Integrations from "./pages/Integrations";
 import ChildSafety from "./pages/ChildSafety";
 import Activity from "./pages/Activity";
+import IdentityVerification from "./pages/IdentityVerification";
 
 const queryClient = new QueryClient();
 
@@ -54,6 +55,7 @@ const App = () => (
           <Route path="/settings" element={<Settings />} />
           <Route path="/fraud" element={<FinancialFraud />} />
           <Route path="/verification" element={<AIVerification />} />
+          <Route path="/identity-verification" element={<IdentityVerification />} />
           <Route path="/logs" element={<LogCenter />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsAndConditions />} />

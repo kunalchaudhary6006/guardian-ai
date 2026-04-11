@@ -20,7 +20,8 @@ import {
   Activity as ActivityIcon,
   Baby,
   Share2,
-  Sparkles
+  Sparkles,
+  Fingerprint
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -42,6 +43,7 @@ export default function Sidebar() {
   ];
 
   const ai = [
+    { label: "Identity Verification", icon: Fingerprint, path: "/identity-verification" },
     { label: "Financial Fraud Bot", icon: Lock, path: "/fraud" },
     { label: "AI Verification Bot", icon: UserCheck, path: "/verification" },
     { label: "AI Log Center", icon: Database, path: "/logs" },
