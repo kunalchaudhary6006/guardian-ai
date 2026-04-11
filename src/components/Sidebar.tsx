@@ -36,6 +36,7 @@ export default function Sidebar() {
     { label: "Activity", icon: ActivityIcon, path: "/activity" },
     { label: "Violations", icon: ShieldAlert, path: "/moderation" },
     { label: "Enforcement", icon: FileCheck, path: "/policy" },
+    { label: "Marketing Intelligence", icon: Sparkles, path: "/marketing" },
     { label: "Analytics", icon: Search, path: "/analytics" },
     { label: "Settings", icon: Shield, path: "/settings" },
   ];
@@ -44,7 +45,6 @@ export default function Sidebar() {
     { label: "Financial Fraud Bot", icon: Lock, path: "/fraud" },
     { label: "AI Verification Bot", icon: UserCheck, path: "/verification" },
     { label: "AI Log Center", icon: Database, path: "/logs" },
-    { label: "Marketing Intelligence", icon: Sparkles, path: "/marketing" },
     { label: "Child Safety", icon: Baby, path: "/child-safety" },
     { label: "Integrations", icon: Share2, path: "/integrations" },
   ];
