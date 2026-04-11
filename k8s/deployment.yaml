@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deploymentmetadata:
+  name: guardian-ai-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: guardian-ai
+  template:
+    metadata:
+      labels:
+        app: guardian-ai
+    spec:
+      containers:
+        - name: api-gateway
+          image: guardian-ai/api-gateway:latest
+          ports:
+            - containerPort: 3002
+          envFrom:
+            - configMapRef:
+                name: guardian-ai-config
+            - secretRef:
+                name: guardian-ai-secret        - name: auth-service
+          image: guardian-ai/auth-service:latest
+          ports:
+            - containerPort: 3001
+          envFrom:
+            - configMapRef:
+                name: guardian-ai-config            - secretRef:
+                name: guardian-ai-secret
+        - name: ai-orchestrator
+          image: guardian-ai/ai-orchestrator:latest
+          ports:
+            - containerPort: 3003
+          envFrom:
+            - configMapRef:
+                name: guardian-ai-config            - secretRef:
+                name: guardian-ai-secret
+        - name: text-classifier
+          image: guardian-ai/text-classifier:latest
+          ports:
+            - containerPort: 3004
+          envFrom:
+            - configMapRef:
+                name: guardian-ai-config
+            - secretRef:
+                name: guardian-ai-secret
+        - name: image-classifier
+          image: guardian-ai/image-classifier:latest
+          ports:
+            - containerPort: 3005
+          envFrom:
+            - configMapRef:
+                name: guardian-ai-config            - secretRef:
+                name: guardian-ai-secret
+        # Additional model services can be added similarly
+      </spec>

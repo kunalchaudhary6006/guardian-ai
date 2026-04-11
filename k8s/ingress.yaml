@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: guardian-ai-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/canary: "true"
+spec:
+  rules:
+    - host: guardian.ai.com      http:
+        paths:
+          - path: /api-gateway
+            pathType: Prefix
+            backend:
+              service:
+                name: guardian-ai-service
+                port:
+                  number: 80
+          - path: /ai-orchestrator
+            pathType: Prefix
+            backend:
+              service:
+                name: guardian-ai-orchestrator
+                port:
+                  number: 3003
+          - path: /models            pathType: Prefix
+            backend:
+              service:
+                name: guardian-ai-service
+                port:
+                  number: 80
