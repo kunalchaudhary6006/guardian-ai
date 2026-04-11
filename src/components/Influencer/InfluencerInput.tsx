@@ -8,18 +8,12 @@ import { useInfluencer } from '@/hooks/useInfluencer';
 export default function InfluencerInput({ onVerify, isVerifying }: { onVerify: (v: string) => void, isVerifying: boolean }) {
   const [input, setInput] = useState('');
   const {
-    fetchInfluencer,
     loading,
     riskScore,
     riskLevel,
     monitorActive,
     toggleMonitoring,
-  } = useInfluencer('1'); // <-- replace with dynamic ID if needed
-
-  const handleVerify = () => {
-    if (!input) return;
-    onVerify(input);
-  };
+  } = useInfluencer('1'); // Replace with dynamic ID if needed
 
   return (
     <Card className="border-blue-500/30 bg-[#0F172A] rounded-[2.5rem] shadow-2xl shadow-blue-900/10">
@@ -27,7 +21,7 @@ export default function InfluencerInput({ onVerify, isVerifying }: { onVerify: (
         <div className="flex flex-col md:flex-row gap-4">
           <div className="relative flex-1">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={20} />
-            <Input
+            <Input 
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Enter Username (@davidkim), Profile URL, or ID..."
@@ -36,7 +30,7 @@ export default function InfluencerInput({ onVerify, isVerifying }: { onVerify: (
             />
           </div>
           <Button 
-            onClick={handleVerify}
+            onClick={() => onVerify(input)}
             disabled={isVerifying || !input}
             className="h-14 px-8 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-bold shadow-lg shadow-blue-900/20 gap-2"
           >
@@ -71,7 +65,8 @@ export default function InfluencerInput({ onVerify, isVerifying }: { onVerify: (
             </Label>
           <Switch 
             id="monitor-toggle" 
-            checked={monitorActive}             onCheckedChange={toggleMonitoring} 
+            checked={monitorActive} 
+            onCheckedChange={toggleMonitoring} 
           />
         </div>
       </CardContent>

@@ -15,32 +15,22 @@ export default function InfluencerIntelligence() {
   const [isVerifying, setIsVerifying] = useState(false);
   const [monitoringActive, setMonitoringActive] = useState(false);
 
-  // Hook that handles fetching & monitoring
-  const {
-    influencer: fetchedInfluencer,
-    loading,
-    riskScore,
-    riskLevel,
-    monitorActive,
-    toggleMonitoring,
-  } = useInfluencer('1'); // Replace with dynamic ID if you have a selector
-
-  // When the user clicks “Verify Influencer”
-  const handleVerify = () => {
+  // Handle verification click
+  const handleVerify = async () => {
     if (!influencer) return;
     setIsVerifying(true);
     toast.loading('AI is analyzing the profile...');
-    // The hook already populates `influencer` and risk data;
-    // we just wait for the async fetch to finish.
+    // The hook inside InfluencerInput will fetch data and update state;
+    // we just wait briefly to let the UI show the loading state.
     setTimeout(() => {
-      setIsVerifying(false);
+      toast.dismiss();
       toast.success('Influencer verification complete!');
     }, 2000);
   };
 
   return (
     <DashboardLayout>
-      {/* Header – same as before */}
+      {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-3xl font-black text-white uppercase tracking-tighter flex items-center gap-3">
@@ -50,8 +40,7 @@ export default function InfluencerIntelligence() {
         </div>
         <div className="flex gap-3">
           <Button 
-            variant="outline" 
-            onClick={() => setIsVerifying(false)} 
+            variant="outline"             onClick={() => setIsVerifying(false)} 
             className="rounded-2xl border-[#1E293B] bg-[#0F172A] text-white hover:bg-[#1E293B] gap-2 h-11 px-6"
           >
             <TrendingUp size={18} /> Compare
@@ -99,10 +88,12 @@ export default function InfluencerIntelligence() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center gap-2">
-                  <Label htmlFor="monitor-toggle" className="text-xs text-slate-400">Enable Continuous Monitoring</Label>
+                  <Label htmlFor="monitor-toggle" className="text-xs text-slate-400">
+                    Monitor Continuously
+                    </Label>
                   <Switch 
                     id="monitor-toggle" 
-                    checked={monitorActive} 
+                    checked={monitoringActive} 
                     onCheckedChange={toggleMonitoring} 
                   />
                 </div>
