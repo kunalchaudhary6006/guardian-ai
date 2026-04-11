@@ -24,7 +24,8 @@ import {
   Zap,
   Eye,
   Baby,
-  Activity as ActivityIcon
+  Activity as ActivityIcon,
+  Share2
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -35,9 +36,9 @@ export default function Dashboard() {
     { title: "Violations", icon: ShieldAlert, path: "/moderation" },
     { title: "Enforcement", icon: FileCheck, path: "/policy" },
     { title: "Child Safety", icon: Baby, path: "/child-safety" },
-    { title: "Integrations", icon: Shield, path: "/integrations" },
+    { title: "Integrations", icon: Share2, path: "/integrations" },
     { title: "Analytics", icon: Search, path: "/analytics" },
-    { title: "Marketing Intelligence", icon: BarChart3, path: "/marketing" },
+    { title: "Activity", icon: ActivityIcon, path: "/activity" },
   ];
 
   return (
