@@ -1,26 +1,24 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { Send, Bot, User, Sparkles } from "lucide-react";
+import { Send, Bot, User, Sparkles, Paperclip, Image as ImageIcon, FileText, Zap, MapPin, ShieldCheck } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 export default function AIChat() {
   const [messages, setMessages] = useState<any[]>([
     { 
       role: "ai", 
-      text: "Hey! I'm Guardian AI. I'm currently monitoring your platform's traffic, moderation queues, and global threat intelligence. Everything looks stable at the moment, but I'm here if you need a deep dive into any specific area. What can I check for you?" 
+      text: "I'm your AI Intelligence Copilot. I have full access to NITRS anomaly logs, threat feeds, and predictive models. How can I assist your investigation today?",
+      structured: {
+        summary: "System operational. No critical escalations in the last 10 minutes.",
+        risk: 12,
+        models: ["Anomaly Detection", "RAG Engine"]
+      }
     }
   ]);
   const [input, setInput] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
-
-  // Simulated "Live" System State
-  const [systemStats, setSystemStats] = useState({
-    pendingModeration: 12,
-    activeThreats: 2,
-    blockedIPs: 145,
-    lastScanTime: "2 minutes ago",
-    globalThreatLevel: "Elevated"
-  });
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -28,116 +26,137 @@ export default function AIChat() {
     }
   }, [messages]);
 
-  // Periodically "update" stats to simulate live monitoring
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setSystemStats(prev => ({
-        ...prev,
-        pendingModeration: prev.pendingModeration + (Math.random() > 0.7 ? 1 : 0),
-        activeThreats: Math.max(0, prev.activeThreats + (Math.random() > 0.9 ? 1 : -1))
-      }));
-    }, 10000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const getConversationalResponse = (userInput: string) => {
-    const lowerInput = userInput.toLowerCase();
-    
-    if (lowerInput.includes("moderation") || lowerInput.includes("queue") || lowerInput.includes("flagged")) {
-      return `I'm seeing ${systemStats.pendingModeration} items currently waiting in the moderation queue. Most of them are low-risk, but there's one flagged for potential hate speech that you might want to look at soon. Should I open the moderation panel for you?`;
-    }
-    
-    if (lowerInput.includes("threat") || lowerInput.includes("attack") || lowerInput.includes("security")) {
-      return `The global threat level is currently ${systemStats.globalThreatLevel}. I've blocked ${systemStats.blockedIPs} suspicious addresses in the last hour. There are ${systemStats.activeThreats} active investigations ongoing regarding brute-force attempts on the login endpoint.`;
-    }
-    
-    if (lowerInput.includes("policy") || lowerInput.includes("rules")) {
-      return "Your safety policies are all active. The 'Hate Speech Detection' rule has been the most active today, triggering about 45 times. Everything seems to be filtering correctly according to your current configuration.";
-    }
-
-    if (lowerInput.includes("status") || lowerInput.includes("how is everything")) {
-      return `Overall, the system is healthy. Last full scan was ${systemStats.lastScanTime}. We've got ${systemStats.pendingModeration} moderation tasks pending and ${systemStats.activeThreats} minor security anomalies being handled. Nothing critical that requires your immediate attention right now!`;
-    }
-
-    if (lowerInput.includes("who are you") || lowerInput.includes("help")) {
-      return "I'm your dedicated security co-pilot. I monitor your entire Guardian AI infrastructure in real-time. You can ask me about moderation backlogs, active security threats, policy performance, or just for a general system health check.";
-    }
-
-    const genericResponses = [
-      "I'll keep a close eye on that. My logs show that related processes are running within normal parameters for now.",
-      "That's a good point. I'm cross-referencing that with our historical threat data to see if there's a pattern we should be worried about.",
-      "I'm monitoring the background traffic for any spikes related to that. I'll alert you immediately if I see anything suspicious.",
-      "Understood. I've added that to my priority monitoring list for this session."
-    ];
-
-    return genericResponses[Math.floor(Math.random() * genericResponses.length)];
-  };
-
-  const send = () => {
+  const handleSend = () => {
     if (!input.trim()) return;
 
     const userMsg = { role: "user", text: input };
-    setMessages([...messages, userMsg]);
-    const currentInput = input;
+    setMessages(prev => [...prev, userMsg]);
+    const currentInput = input.toLowerCase();
     setInput("");
 
     setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "ai",
-          text: getConversationalResponse(currentInput),
-        },
-      ]);
-    }, 800);
+      let response: any = { role: "ai" };
+      
+      if (currentInput.includes("threat") || currentInput.includes("attack")) {
+        response.text = "I've analyzed the current threat landscape. A coordinated DDoS attempt is being mitigated in the Asia-Pacific region.";
+        response.structured = {
+          type: "Cyber Attack (DDoS)",
+          risk: 88,
+          location: "Asia-Pacific",
+          models: ["Traffic Analysis", "Anomaly Detection"],
+          action: "Block IP clusters & Alert Cyber Unit"
+        };
+      } else if (currentInput.includes("fraud") || currentInput.includes("money")) {
+        response.text = "Financial fraud models have flagged a suspicious transaction chain involving 12 accounts.";
+        response.structured = {
+          type: "Financial Fraud",
+          risk: 74,
+          location: "Global / Digital",
+          models: ["Graph AI", "NLP Fusion"],
+          action: "Freeze transactions & Initiate Case"
+        };
+      } else {
+        response.text = "I'm cross-referencing your query with our real-time intelligence database. Everything appears stable within this vector.";
+        response.structured = {
+          summary: "Normal activity detected.",
+          risk: 15,
+          models: ["RAG Intelligence"],
+          action: "Continue Monitoring"
+        };
+      }
+
+      setMessages(prev => [...prev, response]);
+    }, 1000);
   };
 
   return (
-    <div className="bg-[#0F172A] border border-[#1E293B] p-5 rounded-2xl h-[400px] flex flex-col shadow-xl">
+    <div className="bg-[#0F172A] border border-[#1E293B] p-5 rounded-[2.5rem] h-[600px] flex flex-col shadow-2xl">
       <div className="flex items-center justify-between mb-4 pb-4 border-b border-[#1E293B]">
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
           <h3 className="text-white font-bold flex items-center gap-2">
-            <Sparkles className="text-blue-400" size={18} /> AI Security Assistant
+            <Sparkles className="text-blue-400" size={18} /> Intelligence Copilot
           </h3>
         </div>
-        <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Live Monitoring</span>
+        <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">RAG Engine Active</span>
       </div>
 
-      <div ref={scrollRef} className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto space-y-6 pr-2 custom-scrollbar">
         {messages.map((m, i) => (
-          <div key={i} className={`flex gap-3 ${m.role === 'user' ? 'flex-row-reverse' : ''}`}>
-            <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
-              m.role === 'user' ? 'bg-blue-600' : 'bg-slate-800'
-            }`}>
-              {m.role === 'user' ? <User size={16} className="text-white" /> : <Bot size={16} className="text-blue-400" />}
+          <div key={i} className={`flex flex-col gap-3 ${m.role === 'user' ? 'items-end' : 'items-start'}`}>
+            <div className={`flex gap-3 ${m.role === 'user' ? 'flex-row-reverse' : ''}`}>
+              <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
+                m.role === 'user' ? 'bg-blue-600' : 'bg-slate-800'
+              }`}>
+                {m.role === 'user' ? <User size={16} className="text-white" /> : <Bot size={16} className="text-blue-400" />}
+              </div>
+              <div className={`max-w-[85%] p-4 rounded-2xl text-sm leading-relaxed ${
+                m.role === 'user' 
+                  ? 'bg-blue-600 text-white rounded-tr-none shadow-lg shadow-blue-900/20' 
+                  : 'bg-[#020617] border border-[#1E293B] text-slate-300 rounded-tl-none'
+              }`}>
+                {m.text}
+              </div>
             </div>
-            <div className={`max-w-[85%] p-3 rounded-2xl text-sm leading-relaxed ${
-              m.role === 'user' 
-                ? 'bg-blue-600 text-white rounded-tr-none shadow-lg shadow-blue-900/20' 
-                : 'bg-[#020617] border border-[#1E293B] text-slate-300 rounded-tl-none'
-            }`}>
-              {m.text}
-            </div>
+
+            {m.structured && (
+              <div className="ml-11 mr-11 w-full max-w-[80%] p-4 bg-blue-600/5 border border-blue-500/20 rounded-2xl space-y-3 animate-in fade-in slide-in-from-top-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">AI Intelligence Report</span>
+                  <Badge className={m.structured.risk > 70 ? "bg-rose-500/10 text-rose-500" : "bg-emerald-500/10 text-emerald-500"}>
+                    Risk: {m.structured.risk}/100
+                  </Badge>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  {m.structured.type && (
+                    <div className="space-y-1">
+                      <p className="text-[8px] text-slate-500 font-bold uppercase">Threat Type</p>
+                      <p className="text-xs text-white font-bold">{m.structured.type}</p>
+                    </div>
+                  )}
+                  {m.structured.location && (
+                    <div className="space-y-1">
+                      <p className="text-[8px] text-slate-500 font-bold uppercase">Location</p>
+                      <p className="text-xs text-white font-bold flex items-center gap-1"><MapPin size={10} /> {m.structured.location}</p>
+                    </div>
+                  )}
+                </div>
+                <div className="pt-2 border-t border-blue-500/10">
+                  <p className="text-[8px] text-slate-500 font-bold uppercase mb-1">Recommended Action</p>
+                  <p className="text-xs text-emerald-400 font-bold flex items-center gap-2">
+                    <Zap size={12} fill="currentColor" /> {m.structured.action || 'Continue Monitoring'}
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         ))}
       </div>
 
       <div className="flex gap-2 mt-4 pt-4 border-t border-[#1E293B]">
+        <Button variant="ghost" size="icon" className="text-slate-500 hover:text-white rounded-xl">
+          <Paperclip size={18} />
+        </Button>
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && send()}
-          placeholder="Ask about moderation, threats, or system status..."
+          onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+          placeholder="Investigate incidents, ask about threats..."
           className="flex-1 bg-[#020617] border border-[#1E293B] text-white p-3 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition-colors placeholder:text-slate-600"
         />
-        <button 
-          onClick={send} 
+        <Button 
+          onClick={handleSend} 
           className="bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-xl transition-all shadow-lg shadow-blue-900/20 active:scale-95"
         >
           <Send size={18} />
-        </button>
+        </Button>
       </div>
     </div>
   );
 }
+
+const Badge = ({ children, className }: { children: React.ReactNode, className?: string }) => (
+  <span className={cn("px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest border", className)}>
+    {children}
+  </span>
+);

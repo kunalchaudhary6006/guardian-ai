@@ -27,6 +27,7 @@ import Integrations from "./pages/Integrations";
 import ChildSafety from "./pages/ChildSafety";
 import Activity from "./pages/Activity";
 import IdentityVerification from "./pages/IdentityVerification";
+import NITRS from "./pages/NITRS";
 
 const queryClient = new QueryClient();
 
@@ -60,6 +61,7 @@ const App = () => (
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsAndConditions />} />
           <Route path="/brand-safety" element={<BrandSafety />} />
+          <Route path="/nitrs" element={<NITRS />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
