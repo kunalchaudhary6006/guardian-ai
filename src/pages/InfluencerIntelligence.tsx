@@ -10,7 +10,6 @@ import TrendMonitoring from '@/components/Influencer/TrendMonitoring';
 import AIInsights from '@/components/Influencer/AIInsights';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { ShieldCheck, TrendingUp, FileText } from 'lucide-react';
@@ -24,17 +23,14 @@ export default function InfluencerIntelligence() {
   const [riskLevel, setRiskLevel] = useState<'Low' | 'Medium' | 'High'>('Low');
 
   const handleVerify = async () => {
-    if (!influencer) return;
     setIsVerifying(true);
     toast.loading('AI is analyzing the profile...');
     
-    // Simulate verification
     setTimeout(() => {
       toast.dismiss();
       toast.success('Influencer verification complete!');
       setIsVerifying(false);
       
-      // Set mock influencer data
       setInfluencer({
         name: 'David Kim',
         handle: '@davidkim',
@@ -66,7 +62,6 @@ export default function InfluencerIntelligence() {
 
   return (
     <DashboardLayout>
-      {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-3xl font-black text-white uppercase tracking-tighter flex items-center gap-3">
@@ -90,35 +85,27 @@ export default function InfluencerIntelligence() {
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="space-y-8">
-        {/* Input Section */}
         <InfluencerInput 
           onVerify={handleVerify} 
           isVerifying={isVerifying} 
-          monitorActive={monitoringActive} 
-          toggleMonitoring={toggleMonitoring} 
         />
 
-        {/* When we have data, show the profile & insights */}
         {influencer && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Profile & Basic Stats */}
             <div className="lg:col-span-2 space-y-8">
               <InfluencerProfile data={influencer} />
               <SafetyIndex score={riskScore} risk={riskLevel} />
-              <RiskBreakdown data={influencer?.breakdown} />
+              <RiskBreakdown data={influencer} />
             </div>
 
-            {/* Trend & Monitoring */}
             <div className="space-y-8">
               <TrendMonitoring data={influencer} />
-              <AIInsights insights={influencer?.insights} />
+              <AIInsights insights={influencer.insights} />
             </div>
           </div>
         )}
 
-        {/* Monitoring Controls */}
         <Card className="border-[#1E293B] bg-[#0F172A] rounded-3xl shadow-xl">
           <CardHeader className="p-8 border-b border-[#1E293B]">
             <CardTitle className="text-white text-sm uppercase tracking-widest">Monitoring Controls</CardTitle>

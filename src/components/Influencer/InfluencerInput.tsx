@@ -2,18 +2,20 @@ import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import { Search, Zap, RefreshCw } from 'lucide-react';
 import { useInfluencer } from '@/hooks/useInfluencer';
 
 export default function InfluencerInput({ onVerify, isVerifying }: { onVerify: (v: string) => void, isVerifying: boolean }) {
   const [input, setInput] = useState('');
   const {
-    loading,
     riskScore,
     riskLevel,
     monitorActive,
     toggleMonitoring,
-  } = useInfluencer('1'); // Replace with dynamic ID if needed
+  } = useInfluencer('1');
 
   return (
     <Card className="border-blue-500/30 bg-[#0F172A] rounded-[2.5rem] shadow-2xl shadow-blue-900/10">
@@ -39,36 +41,40 @@ export default function InfluencerInput({ onVerify, isVerifying }: { onVerify: (
           </Button>
         </div>
 
-        {/* Real‑time risk display */}
         {riskScore != null && (
-          <div className="mt-4 flex items-center justify-between">
-            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-              Current Risk Score
-            </span>
-            <span className={`text-[10px] font-bold ${riskLevel === 'Low' ? 'text-emerald-600' : riskLevel === 'Medium' ? 'text-amber-600' : 'text-rose-600'}">
-              {riskScore}%
-            </span>
+          <div className="mt-6 pt-6 border-t border-[#1E293B] flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                  Current Risk Score
+                </span>
+                <div className="flex items-center gap-3">
+                  <span className={`text-xl font-black ${riskLevel === 'Low' ? 'text-emerald-500' : riskLevel === 'Medium' ? 'text-amber-500' : 'text-rose-500'}`}>
+                    {riskScore.toFixed(1)}%
+                  </span>
+                  <Badge
+                    className={`border-none font-black uppercase tracking-widest text-[8px] ${
+                      riskLevel === 'Low' ? 'bg-emerald-500/10 text-emerald-400' :
+                      riskLevel === 'Medium' ? 'bg-amber-500/10 text-amber-400' : 'bg-rose-500/10 text-rose-400'
+                    }`}
+                  >
+                    {riskLevel} Risk
+                  </Badge>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 bg-[#020617] p-3 rounded-2xl border border-[#1E293B]">
+                <Label htmlFor="monitor-toggle" className="text-xs text-slate-400 cursor-pointer">
+                  Continuous Monitoring
+                </Label>
+                <Switch 
+                  id="monitor-toggle" 
+                  checked={monitorActive} 
+                  onCheckedChange={toggleMonitoring} 
+                />
+              </div>
+            </div>
           </div>
-          <Badge
-            className={`border-none font-black uppercase tracking-widest text-[8px] ${
-              riskLevel === 'Low' ? 'bg-emerald-500/10 text-emerald-400' :
-              riskLevel === 'Medium' ? 'bg-amber-500/10 text-amber-400' : 'bg-rose-500/10 text-rose-400'
-            }`}
-            >{riskLevel}
-          </Badge>
-        </div>
-
-        {/* Monitoring toggle */}
-        <div className="mt-4 flex items-center gap-2">
-          <Label htmlFor="monitor-toggle" className="text-xs text-slate-400">
-            Monitor Continuously
-            </Label>
-          <Switch 
-            id="monitor-toggle" 
-            checked={monitorActive} 
-            onCheckedChange={toggleMonitoring} 
-          />
-        </div>
+        )}
       </CardContent>
     </Card>
   );
