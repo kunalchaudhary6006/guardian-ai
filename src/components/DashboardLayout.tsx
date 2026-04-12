@@ -10,7 +10,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
 
   return (
-    <div className="min-h-screen bg-[#020617] text-white flex">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex">
       <Sidebar />
       <div className="flex-1 lg:ml-0 flex flex-col">
         <Header />

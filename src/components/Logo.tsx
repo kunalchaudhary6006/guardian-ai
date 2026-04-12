@@ -26,7 +26,7 @@ const Logo = ({ className, iconOnly = false, size = 'md' }: LogoProps) => {
   return (
     <div className={cn("flex items-center gap-3", className)}>
       <div className={cn(
-        "bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-900/20",
+        "bg-slate-900 rounded-xl flex items-center justify-center shadow-lg shadow-slate-200",
         containerSize[size]
       )}>
         <Shield 
@@ -38,14 +38,14 @@ const Logo = ({ className, iconOnly = false, size = 'md' }: LogoProps) => {
       {!iconOnly && (
         <div className="flex flex-col leading-none">
           <span className={cn(
-            "font-black text-white tracking-tight uppercase",
+            "font-black text-slate-900 tracking-tight uppercase",
             size === 'sm' ? 'text-base' : size === 'lg' ? 'text-2xl' : 'text-xl'
           )}>
             Guardian AI
           </span>
           {size !== 'sm' && (
             <span className={cn(
-              "text-slate-500 font-medium tracking-wide mt-0.5",
+              "text-slate-400 font-bold tracking-wide mt-0.5 uppercase",
               size === 'lg' ? 'text-[10px]' : 'text-[8px]'
             )}>
               Where Safety Meets Technology
