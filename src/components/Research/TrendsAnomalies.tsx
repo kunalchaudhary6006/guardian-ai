@@ -1,9 +1,9 @@
 "use client";
 
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceDot } from 'recharts';
-import { Activity, AlertCircle } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceDot } from "recharts";
+import { Activity, AlertTriangle } from "lucide-react";
 
 const data = [
   { time: '00:00', value: 400 },
@@ -16,6 +16,17 @@ const data = [
 ];
 
 export default function TrendsAnomalies() {
+  const [data, setData] = useState<any[]>(data);
+  const [activeAnomaly, setActiveAnomaly] = useState(null);
+
+  const handleMouseEnter = (index: number) => {
+    setActiveAnomaly(index);
+  };
+
+  const handleMouseLeave = () => {
+    setActiveAnomaly(null);
+  };
+
   return (
     <Card className="border-[#1E293B] bg-[#0F172A] rounded-3xl shadow-xl">
       <CardHeader className="flex flex-row items-center justify-between">
@@ -24,12 +35,12 @@ export default function TrendsAnomalies() {
         </CardTitle>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-blue-500 rounded-full" />
-            <span className="text-[10px] text-slate-500 font-bold uppercase">Historical</span>
+            <div className="w-2 h-2 bg-rose-500 rounded-full animate-pulse" />
+            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Historical</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 bg-rose-500 rounded-full" />
-            <span className="text-[10px] text-slate-500 font-bold uppercase">Anomaly</span>
+            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Anomaly</span>
           </div>
         </div>
       </CardHeader>
@@ -52,7 +63,7 @@ export default function TrendsAnomalies() {
                         {data.anomaly && (
                           <div className="mt-2 pt-2 border-t border-[#1E293B]">
                             <p className="text-[10px] text-rose-400 font-bold uppercase flex items-center gap-1">
-                              <AlertCircle size={10} /> Anomaly Detected
+                              <AlertTriangle size={10} /> Anomaly Detected
                             </p>
                             <p className="text-[10px] text-slate-400 mt-1">Activity spike 2.6× above baseline</p>
                           </div>
@@ -64,10 +75,8 @@ export default function TrendsAnomalies() {
                 }}
               />
               <Line 
-                type="monotone" 
-                dataKey="value" 
-                stroke="#3b82f6" 
-                strokeWidth={3} 
+                type="monotone"                 dataKey="value" 
+                stroke="#3b82f6"                 strokeWidth={3} 
                 dot={(props) => {
                   const { cx, cy, payload } = props;
                   if (payload.anomaly) {
@@ -78,7 +87,7 @@ export default function TrendsAnomalies() {
               />
             </LineChart>
           </ResponsiveContainer>
-        </div>
+        </CardContent>
       </CardContent>
     </Card>
   );

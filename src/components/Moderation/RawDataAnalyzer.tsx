@@ -5,22 +5,25 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Slider } from '@/components/ui/slider';
-import { Switch } from '@/components/ui/switch';
+import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
 import { 
-  Type, 
-  Image as ImageIcon, 
-  Video, 
-  Mic, 
+  Search, 
   Upload, 
   Link as LinkIcon, 
-  Play, 
-  ShieldCheck,
-  Zap,
+  Play,   RefreshCw, 
+  Database, 
+  Globe, 
+  ShieldAlert, 
   Clock,
-  CheckCircle2,
   X,
-  FileText
+  FileText,
+  TrendingUp,
+  AlertTriangle,
+  CheckCircle2,
+  Play,
+  Pause,
+  Download
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -28,14 +31,13 @@ export default function RawDataAnalyzer() {
   const [contentType, setContentType] = useState('text');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [step, setStep] = useState(0);
-  
-  // Input States
+    // Input States
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [urlInput, setUrlInput] = useState("");
   const [textInput, setTextInput] = useState("");
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -49,8 +51,7 @@ export default function RawDataAnalyzer() {
       } else {
         setPreviewUrl(null);
       }
-      
-      toast.success(`${file.name} uploaded successfully.`);
+            toast.success(`${file.name} uploaded successfully.`);
     }
   };
 
@@ -93,11 +94,11 @@ export default function RawDataAnalyzer() {
     let currentStep = 1;
     const interval = setInterval(() => {
       if (currentStep < steps.length) {
-        currentStep++;
         setStep(currentStep);
+        setStep(currentStep + 1);
       } else {
         clearInterval(interval);
-        toast.success("Analysis complete! Case GDN-20260203-8472 generated.");
+        toast.success("Analysis completed! Case GDN-20260203-8472 generated.");
         setIsAnalyzing(false);
       }
     }, 1000);
@@ -108,14 +109,13 @@ export default function RawDataAnalyzer() {
       {/* Content Type Selector */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {[
-          { id: 'text', label: 'Text Moderation', icon: Type, cta: 'Paste Text / Upload File' },
-          { id: 'image', label: 'Image Moderation', icon: ImageIcon, cta: 'Upload Image / Paste URL' },
-          { id: 'video', label: 'Video Moderation', icon: Video, cta: 'Upload Video / Paste URL' },
-          { id: 'audio', label: 'Audio Moderation', icon: Mic, cta: 'Upload Audio / Live Stream' },
+          { id: 'text', label: 'Text Modular', icon: Type, cta: 'Paste Text / Upload File' },
+          { id: 'image', label: 'Image Modular', icon: ImageIcon, cta: 'Upload Image / Paste URL' },
+          { id: 'video', label: 'Video Modular', icon: Video, cta: 'Upload Video / Paste URL' },
+          { id: 'audio', label: 'Audio Modular', icon: Mic, cta: 'Upload Audio / Live Stream' },
         ].map((type) => (
           <Card 
-            key={type.id}
-            onClick={() => { setContentType(type.id); clearInput(); }}
+            key={type.id}             onClick={() => { setContentType(type.id); clearInput(); }} 
             className={`cursor-pointer border-2 transition-all rounded-3xl overflow-hidden ${
               contentType === type.id ? 'border-blue-500 bg-blue-500/10' : 'border-[#1E293B] bg-[#0F172A] hover:border-slate-700'
             }`}
@@ -148,16 +148,15 @@ export default function RawDataAnalyzer() {
                 />
               ) : (
                 <div className="space-y-6">
-                  <div 
-                    onClick={() => fileInputRef.current?.click()}
+                  <div                     onClick={() => fileInputRef.current?.click()}
                     className="border-2 border-dashed border-[#1E293B] rounded-3xl p-12 flex flex-col items-center justify-center gap-4 bg-[#020617]/50 group hover:border-blue-500/50 transition-colors cursor-pointer relative overflow-hidden"
                   >
                     {previewUrl ? (
                       <div className="absolute inset-0 flex items-center justify-center bg-black">
                         {contentType === 'image' ? (
-                          <img src={previewUrl} alt="Preview" className="max-h-full object-contain" />
+                          <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
                         ) : (
-                          <video src={previewUrl} className="max-h-full" autoPlay muted loop />
+                          <video src={previewUrl} className="w-full h-full" autoPlay muted loop />
                         )}
                         <button 
                           onClick={(e) => { e.stopPropagation(); clearInput(); }}
@@ -185,56 +184,28 @@ export default function RawDataAnalyzer() {
                       onChange={handleFileChange} 
                     />
                   </div>
-
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-500">
-                      <LinkIcon size={18} />
-                    </div>
-                    <Input 
-                      value={urlInput}
-                      onChange={handleUrlChange}
-                      placeholder={`Paste ${contentType} URL for analysis...`} 
-                      className="pl-12 h-14 bg-[#020617] border-[#1E293B] text-white rounded-2xl focus:ring-blue-500/20"
-                    />
-                  </div>
                 </div>
-              )}
+              </div>
+            </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-[#1E293B]">
-                <div className="space-y-4">
-                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Model Selection</p>
-                  <div className="grid grid-cols-2 gap-3">
-                    {['NLP (Text)', 'Vision (Image)', 'Temporal (Video)', 'Speech (Audio)'].map((m) => (
-                      <div key={m} className="flex items-center justify-between p-3 bg-[#020617] rounded-xl border border-[#1E293B]">
-                        <span className="text-xs text-slate-300">{m}</span>
-                        <Switch defaultChecked />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div className="space-y-4">
-                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Moderation Settings</p>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <Label className="text-xs text-slate-400">Explainability</Label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6">
+              <div className="space-y-4">
+                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Model Selection</p>
+                <div className="grid grid-cols-2 gap-3">
+                  {['NLP (Text)', 'Vision (Image)', 'Temporal (Video)', 'Speech (Audio)'].map((m) => (
+                    <div key={m} className="flex items-center justify-between p-3 bg-[#020617] rounded-xl border border-[#1E293B]">
+                      <span className="text-xs text-slate-300">{m}</span>
                       <Switch defaultChecked />
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex justify-between">
-                        <Label className="text-xs text-slate-400">Confidence Threshold</Label>
-                        <span className="text-xs font-bold text-blue-400">85%</span>
-                      </div>
-                      <Slider defaultValue={[85]} max={100} step={1} />
                     </div>
                   </div>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* Execution Status */}
           {isAnalyzing && (
-            <Card className="border-blue-500/30 bg-[#0F172A] rounded-3xl overflow-hidden animate-in slide-in-from-top-4">
+            <Card className="border-[#1E293B] bg-[#0F172A] rounded-3xl overflow-hidden animate-in animate-fade-in slide-in-from-top-4">
               <CardContent className="p-8">
                 <div className="flex items-center justify-between mb-8">
                   <h4 className="text-white font-bold flex items-center gap-2">
@@ -242,13 +213,13 @@ export default function RawDataAnalyzer() {
                   </h4>
                   <Badge className="bg-blue-600/10 text-blue-400 border-blue-500/20">Step {step} of 5</Badge>
                 </div>
-                <div className="relative flex justify-between before:absolute before:top-5 before:left-0 before:w-full before:h-0.5 before:bg-[#1E293B] z-0">
+                <div className="relative flex justify-between before:absolute before:top-5 before:left-0 before:bottom-2 before:w-full before:h-0.5 before:bg-[#1E293B] z-0">
                   {[1, 2, 3, 4, 5].map((s) => (
                     <div key={s} className="relative z-10 flex flex-col items-center gap-2">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all ${
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all ${
                         step >= s ? 'bg-blue-600 border-blue-600 text-white' : 'bg-[#020617] border-[#1E293B] text-slate-600'
-                      }`}>
-                        {step > s ? <CheckCircle2 size={20} /> : <span className="text-xs font-bold">{s}</span>}
+                      }">
+                        {step > s ? <CheckCircle2 size={20} /> : <span className="text-xs font-bold">{step}</span>}
                       </div>
                     </div>
                   ))}
@@ -260,76 +231,48 @@ export default function RawDataAnalyzer() {
                 </div>
               </CardContent>
             </Card>
-          )}
-        </div>
+          </div>
 
-        {/* Pre-Run Summary */}
-        <div className="space-y-6">
-          <Card className="border-[#1E293B] bg-[#0F172A] rounded-[2.5rem] shadow-xl">
-            <CardContent className="p-8 space-y-6">
-              <h4 className="text-white font-bold uppercase tracking-widest text-xs">Pre-Run Summary</h4>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-[#020617] border border-[#1E293B] rounded-2xl">
+          {/* Pre-Run Summary */}
+          <div className="space-y-6">
+            <div className="p-4 bg-[#020617] border border-[#1E293B] rounded-2xl">
+              <p className="text-[10px] text-slate-500 leading-relaxed">
+                <span className="text-blue-400 font-bold uppercase tracking-widest mb-1">Source</span>
+                {selectedFile ? selectedFile.name : urlInput ? 'URL' : textInput ? 'Raw Text' : 'None'}
+              </p>
+              {selectedFile && (
+                <div className="flex items-center gap-3">
                   <div className="flex items-center gap-3">
-                    <FileText size={16} className="text-slate-500" />
-                    <span className="text-xs text-slate-400">Source</span>
-                  </div>
-                  <span className="text-xs font-bold text-white truncate max-w-[120px]">
-                    {selectedFile ? selectedFile.name : urlInput ? 'URL' : textInput ? 'Raw Text' : 'None'}
-                  </span>
-                </div>
-                {[
-                  { label: 'Input Type', value: contentType.charAt(0).toUpperCase() + contentType.slice(1), icon: contentType === 'video' ? Video : contentType === 'image' ? ImageIcon : Type },
-                  { label: 'Models Selected', value: 'Fusion Active', icon: Zap },
-                  { label: 'Estimated Time', value: '6s', icon: Clock },
-                  { label: 'Active Policy', value: 'Global Safety', icon: ShieldCheck },
-                ].map((item, i) => (
-                  <div key={i} className="flex items-center justify-between p-4 bg-[#020617] border border-[#1E293B] rounded-2xl">
-                    <div className="flex items-center gap-3">
-                      <item.icon size={16} className="text-slate-500" />
-                      <span className="text-xs text-slate-400">{item.label}</span>
+                    <div className="w-8 h-8 bg-[#020617] rounded-lg flex items-center justify-center text-blue-400">
+                      <FileText size={18} />
                     </div>
-                    <span className="text-xs font-bold text-white">{item.value}</span>
+                    <div>
+                      <p className="text-xs font-bold text-white">{selectedFile ? selectedFile.name : 'URL'}</p>
+                    </div>
                   </div>
-                ))}
+                </div>
               </div>
               <div className="space-y-3">
                 <Button 
-                  onClick={handleRunAnalysis}
-                  disabled={isAnalyzing || (!selectedFile && !urlInput && !textInput)}
-                  className="w-full bg-blue-600 hover:bg-blue-700 h-14 rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg shadow-blue-900/20 gap-2"
+                  onClick={() => handleRunAnalysis()}                   disabled={isAnalyzing || !selectedFile && !urlInput && !textInput}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-2xl h-14 font-bold gap-2 shadow-lg shadow-blue-900/20"
                 >
                   {isAnalyzing ? <RefreshCw className="animate-spin" size={18} /> : <Play size={18} fill="currentColor" />}
                   Run Analysis
                 </Button>
                 <Button 
-                  onClick={clearInput}
-                  variant="outline"
-                  className="w-full bg-rose-500/10 border-rose-500/30 text-rose-400 hover:bg-rose-500/20 rounded-2xl h-12 font-bold uppercase tracking-widest text-[10px]"
+                  onClick={() => clearInput()} 
+                  variant="outline" 
+                  className="w-full border-[#1E293B] text-white rounded-xl h-12 font-bold uppercase tracking-widest gap-2"
                 >
                   Clear All Inputs
                 </Button>
               </div>
               <p className="text-[10px] text-slate-500 text-center">Shortcut: Ctrl + Enter</p>
-            </CardContent>
-          </Card>
+            </Card>
+          </div>
         </div>
       </div>
     </div>
   );
 }
-
-const Badge = ({ children, className }: { children: React.ReactNode, className?: string }) => (
-  <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider border ${className}`}>
-    {children}
-  </span>
-);
-
-const RefreshCw = ({ className, size }: { className?: string, size?: number }) => (
-  <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
-    <path d="M21 3v5h-5" />
-    <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
-    <path d="M3 21v-5h5" />
-  </svg>
-);
