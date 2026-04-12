@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from 'recharts';
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 
 export default function RiskBreakdown({ data }: { data: any }) {
   const chartData = [
@@ -28,7 +28,7 @@ export default function RiskBreakdown({ data }: { data: any }) {
                   <Cell key={index} fill={entry.color} />
                 ))}
               </Bar>
-            </BarChart>
+            </ResponsiveContainer>
           </ResponsiveContainer>
         </div>
         <div className="mt-6 grid grid-cols-2 md:grid-cols-5 gap-4">

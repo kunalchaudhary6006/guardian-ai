@@ -1,9 +1,9 @@
 "use client";
 
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Search, TrendingUp, ShieldAlert, ChevronRight } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Search, TrendingUp, ShieldAlert, ChevronRight } from 'lucide-react';
 
 const clusters = [
   { topic: 'Election Misinformation', risk: 'High', growth: '+31%', confidence: 0.91, keywords: ['vote', 'fraud', 'stolen'] },
@@ -35,7 +35,7 @@ export default function TopicClusters() {
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-[10px] text-slate-500 uppercase font-bold">Confidence</p>
+                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Confidence</p>
                 <p className="text-xs font-black text-indigo-400">{cluster.confidence * 100}%</p>
               </div>
             </div>
@@ -47,7 +47,10 @@ export default function TopicClusters() {
               ))}
             </div>
           </div>
-        </div>
+        ))}
+        <button className="w-full py-2 text-[10px] font-black text-slate-500 hover:text-indigo-400 uppercase tracking-widest transition-colors">
+          View All Clusters
+        </button>
       </CardContent>
     </Card>
   );
